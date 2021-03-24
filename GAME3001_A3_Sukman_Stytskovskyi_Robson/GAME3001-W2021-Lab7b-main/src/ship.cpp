@@ -25,6 +25,9 @@ Ship::Ship() : m_maxSpeed(10.0f)
 	setLOSDistance(400.0f); // 5 ppf x 80 feet
 	setLOSColour(glm::vec4(1, 0, 0, 1));
 
+	setDetectionRadius(50.f);
+	setDRColour((glm::vec4(1, 0, 0, 1)));
+
 	m_dbgMode = false;
 }
 
@@ -45,6 +48,8 @@ void Ship::draw()
 	{
 		// draw LOS
 		Util::DrawLine(getTransform()->position, getTransform()->position + getCurrentDirection() * getLOSDistance(), getLOSColour());
+		// draw Detection Radius
+		Util::DrawCircle(getTransform()->position, getDetectionRadius(), getDRColour());
 	}
 }
 

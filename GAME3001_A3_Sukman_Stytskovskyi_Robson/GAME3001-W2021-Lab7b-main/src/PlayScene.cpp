@@ -33,6 +33,7 @@ void PlayScene::update()
 	updateDisplayList();
 
 	m_CheckShipLOS(m_pTarget);
+	m_CheckShipDR(m_pTarget);
 }
 
 void PlayScene::clean()
@@ -130,7 +131,7 @@ void PlayScene::GUI_Function()
 	// See examples by uncommenting the following - also look at imgui_demo.cpp in the IMGUI filter
 	//ImGui::ShowDemoWindow();
 	
-	ImGui::Begin("GAME3001 - Lab 7", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("GAME3001 - A3", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar);
 
 	// allow ship rotation
 	static int angle;
@@ -211,4 +212,32 @@ void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
 
 		m_pShip->setHasLOS(hasLOS);
 	}
+}
+
+void PlayScene::m_CheckShipDR(DisplayObject* target_object)
+{
+	//if target is within the Detection Radius
+	auto ShipToTargetDistance = Util::distance(m_pShip->getTransform()->position, target_object->getTransform()->position);
+	if (ShipToTargetDistance - 20 <= m_pShip->getDetectionRadius())
+	{
+		std::vector<DisplayObject*> contactList;
+		for (auto object : getDisplayList())
+		{
+			// check if object is farther than than the target
+			auto ShipToObjectDistance = Util::distance(m_pShip->getTransform()->position, object->getTransform()->position);
+
+			if (ShipToObjectDistance <= ShipToTargetDistance)
+			{
+				if ((object->getType() != m_pShip->getType()) && (object->getType() != target_object->getType()))
+				{
+					contactList.push_back(object);
+				}
+			}
+		}
+		contactList.push_back(target_object); // add the target to the end of the list
+		auto hasDR = CollisionManager::DRCheck(m_pShip->getDetectionRadius(), contactList, target_object);
+
+		m_pShip->setInDR(hasDR);
+	}
+	else m_pShip->setInDR(false);
 }

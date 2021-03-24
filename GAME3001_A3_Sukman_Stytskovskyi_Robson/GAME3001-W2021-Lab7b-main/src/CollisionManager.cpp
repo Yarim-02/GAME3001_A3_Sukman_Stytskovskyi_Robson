@@ -343,6 +343,29 @@ bool CollisionManager::LOSCheck(glm::vec2 start_point, glm::vec2 end_point, cons
 	return false;
 }
 
+bool CollisionManager::DRCheck(float radius, const std::vector<DisplayObject*>& objects, DisplayObject* target)
+{
+	for (auto object : objects)
+	{
+		auto objectOffset = glm::vec2(object->getWidth() * 0.5f, object->getHeight() * 0.5f);
+
+		// check if an object in the list is within the radius
+		if (squaredDistance(object->getTransform()->position, target->getTransform()->position) <= (int)radius)
+		{
+			// if the collision is with the target object the DR is true
+			if (object->getType() == target->getType())
+			{
+				return true;
+			}
+			// if collision is with an object in the list that is not the target then DR is false
+			return false;
+		}
+	}
+
+	// if there is no object within the radius then DR is false
+	return false;
+}
+
 
 CollisionManager::CollisionManager()
 = default;
