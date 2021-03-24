@@ -24,6 +24,8 @@ Ship::Ship() : m_maxSpeed(10.0f)
 
 	setLOSDistance(400.0f); // 5 ppf x 80 feet
 	setLOSColour(glm::vec4(1, 0, 0, 1));
+
+	m_dbgMode = false;
 }
 
 
@@ -39,8 +41,11 @@ void Ship::draw()
 	// draw the ship
 	TextureManager::Instance()->draw("ship", x, y, getCurrentHeading(), 255, true);
 
-	// draw LOS
-	Util::DrawLine(getTransform()->position, getTransform()->position + getCurrentDirection() * getLOSDistance(), getLOSColour());
+	if (m_dbgMode)
+	{
+		// draw LOS
+		Util::DrawLine(getTransform()->position, getTransform()->position + getCurrentDirection() * getLOSDistance(), getLOSColour());
+	}
 }
 
 
@@ -96,6 +101,11 @@ float Ship::getMaxSpeed() const
 void Ship::setMaxSpeed(float newSpeed)
 {
 	m_maxSpeed = newSpeed;
+}
+
+void Ship::flipDbg()
+{
+	m_dbgMode = !m_dbgMode;
 }
 
 void Ship::m_checkBounds()

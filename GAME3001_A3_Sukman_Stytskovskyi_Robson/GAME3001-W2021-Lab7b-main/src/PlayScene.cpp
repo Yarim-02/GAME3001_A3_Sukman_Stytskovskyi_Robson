@@ -68,8 +68,10 @@ void PlayScene::handleEvents()
 	{
 	}
 
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_G))
+	// Toggles Debug Mode
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_H))
 	{
+		m_pShip->flipDbg();
 	}
 	
 }

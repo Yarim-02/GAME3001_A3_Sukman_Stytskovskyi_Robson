@@ -30,6 +30,7 @@ public:
 	
 	// setters
 	void setMaxSpeed(float newSpeed);
+	void flipDbg();
 
 private:
 	void m_checkBounds();
@@ -38,6 +39,7 @@ private:
 	float m_maxSpeed;
 	float m_turnRate;
 
+	bool m_dbgMode;
 };
 
 
