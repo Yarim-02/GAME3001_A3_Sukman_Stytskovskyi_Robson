@@ -40,6 +40,9 @@ private:
 	float m_turnRate;
 
 	bool m_dbgMode;
+
+	std::string m_currentAction;
+	int m_frameCounter = 0;
 };
 
 

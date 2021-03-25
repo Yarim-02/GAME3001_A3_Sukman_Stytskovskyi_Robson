@@ -54,7 +54,6 @@ private:
 	std::vector<Tile*> m_pPatrolPath;
 	void m_buildGrid();
 
-	std::string currentEnemyAction;
 	int m_frameCounter = 0;
 	int patrolSize;
 	

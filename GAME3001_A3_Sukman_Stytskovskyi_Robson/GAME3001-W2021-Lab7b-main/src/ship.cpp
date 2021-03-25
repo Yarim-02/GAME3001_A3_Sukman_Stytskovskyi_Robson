@@ -7,6 +7,9 @@
 Ship::Ship() : m_maxSpeed(10.0f)
 {
 	TextureManager::Instance()->load("../Assets/textures/IdleSkeleton1.png","Skeleton");
+	TextureManager::Instance()->load("../Assets/textures/RightWalkingSkeleton1.png", "RightWalkingSkeleton1");
+	TextureManager::Instance()->load("../Assets/textures/RightWalkingSkeleton2.png", "RightWalkingSkeleton2");
+	TextureManager::Instance()->load("../Assets/textures/RightWalkingSkeleton3.png", "RightWalkingSkeleton3");
 
 	auto size = TextureManager::Instance()->getTextureSize("Skeleton");
 	setWidth(size.x);
@@ -29,6 +32,7 @@ Ship::Ship() : m_maxSpeed(10.0f)
 	setDRColour((glm::vec4(1, 0, 0, 1)));
 
 	m_dbgMode = false;
+	m_currentAction = "Patrol";
 }
 
 
@@ -41,9 +45,31 @@ void Ship::draw()
 	const auto x = getTransform()->position.x;
 	const auto y = getTransform()->position.y;
 
-	// draw the ship
-	TextureManager::Instance()->draw("Skeleton", x, y, getCurrentHeading(), 255, true);
 
+	if(m_currentAction == "Patrol")
+	{
+		if (m_frameCounter < 5)
+		{
+			TextureManager::Instance()->draw("RightWalkingSkeleton1",
+				x, y, getCurrentHeading(), 255, true);
+		}
+		else if (m_frameCounter < 10)
+		{
+			TextureManager::Instance()->draw("RightWalkingSkeleton2",
+				x, y, getCurrentHeading(), 255, true);
+		}
+		else if (m_frameCounter < 15)
+		{
+			TextureManager::Instance()->draw("RightWalkingSkeleton3",
+				x, y, getCurrentHeading(), 255, true);
+	
+		}
+	}
+	else
+	{
+		TextureManager::Instance()->draw("Skeleton", x, y, getCurrentHeading(), 255, true);
+	}
+	
 	if (m_dbgMode)
 	{
 		// draw LOS
@@ -58,6 +84,10 @@ void Ship::update()
 {
 	/*move();
 	m_checkBounds();*/
+	if (m_frameCounter > 13)
+		m_frameCounter = 0;
+
+	m_frameCounter++;
 }
 
 void Ship::clean()

@@ -210,9 +210,10 @@ void PlayScene::start()
 	std::cout << "------------------------" << std::endl;
 	std::cout << decisionTree->MakeDecision() << std::endl;
 	std::cout << "------------------------\n" << std::endl;
-	currentEnemyAction = decisionTree->MakeDecision();
+	
 
 	patrolSize = m_pPatrolPath.size();
+	
 
 }
 
