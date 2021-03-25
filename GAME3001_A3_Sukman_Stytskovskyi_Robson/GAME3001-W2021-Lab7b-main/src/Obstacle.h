@@ -7,7 +7,7 @@ class Obstacle final : public DisplayObject
 {
 public:
 	// constructors
-	Obstacle();
+	Obstacle(std::string fileNameAndType, std::string FileName);
 	
 	// destructor
 	~Obstacle();
@@ -17,6 +17,7 @@ public:
 	void update() override;
 	void clean() override;
 private:
+	std::string m_fileName;
 	
 };
 

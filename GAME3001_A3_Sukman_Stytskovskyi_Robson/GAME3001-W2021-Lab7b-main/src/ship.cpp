@@ -6,9 +6,9 @@
 
 Ship::Ship() : m_maxSpeed(10.0f)
 {
-	TextureManager::Instance()->load("../Assets/textures/ship3.png","ship");
+	TextureManager::Instance()->load("../Assets/textures/IdleSkeleton1.png","Skeleton");
 
-	auto size = TextureManager::Instance()->getTextureSize("ship");
+	auto size = TextureManager::Instance()->getTextureSize("Skeleton");
 	setWidth(size.x);
 	setHeight(size.y);
 
@@ -42,7 +42,7 @@ void Ship::draw()
 	const auto y = getTransform()->position.y;
 
 	// draw the ship
-	TextureManager::Instance()->draw("ship", x, y, getCurrentHeading(), 255, true);
+	TextureManager::Instance()->draw("Skeleton", x, y, getCurrentHeading(), 255, true);
 
 	if (m_dbgMode)
 	{

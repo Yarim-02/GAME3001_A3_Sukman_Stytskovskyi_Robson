@@ -10,6 +10,7 @@
 #include "ship.h"
 #include "SpaceShip.h"
 #include "Target.h"
+#include "Tile.h"
 
 class PlayScene : public Scene
 {
@@ -42,6 +43,21 @@ private:
 	void m_CheckShipDR(DisplayObject* object);
 
 	DecisionTree* decisionTree;
+
+	//Tile Stuff
+	std::vector<Tile*> m_pGrid;
+	void m_setGridEnabled(bool state);
+	bool m_getGridEnabled() const;
+	Tile* m_getTile(int col, int row);
+	Tile* m_getTile(glm::vec2 grid_position);
+
+	std::vector<Tile*> m_pPatrolPath;
+	void m_buildGrid();
+
+	std::string currentEnemyAction;
+	int m_frameCounter = 0;
+	int patrolSize;
+	
 };
 
 

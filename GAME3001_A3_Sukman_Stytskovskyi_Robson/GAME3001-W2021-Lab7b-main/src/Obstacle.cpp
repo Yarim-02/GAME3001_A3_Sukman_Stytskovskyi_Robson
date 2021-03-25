@@ -4,11 +4,12 @@
 #include "SoundManager.h"
 #include "TextureManager.h"
 
-Obstacle::Obstacle()
+Obstacle::Obstacle(std::string fileNameAndType, std::string fileName)
 {
-	TextureManager::Instance()->load("../Assets/textures/obstacle.png", "obstacle");
+	m_fileName = fileName;
+	TextureManager::Instance()->load("../Assets/textures/" + fileNameAndType, fileName);
 
-	auto size = TextureManager::Instance()->getTextureSize("obstacle");
+	auto size = TextureManager::Instance()->getTextureSize(fileName);
 	setWidth(size.x);
 	setHeight(size.y);
 
@@ -25,8 +26,8 @@ Obstacle::~Obstacle()
 
 void Obstacle::draw()
 {
-	TextureManager::Instance()->draw("obstacle", 
-		getTransform()->position.x, getTransform()->position.y, 0, 255, true);
+	TextureManager::Instance()->draw(m_fileName, 
+		getTransform()->position.x, getTransform()->position.y, 0, 255, false);
 }
 
 void Obstacle::update()

@@ -18,7 +18,9 @@ Tile::~Tile()
 
 void Tile::draw()
 {
-	Util::DrawRect(getTransform()->position, getWidth(), getHeight());
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
+	Util::DrawRect(getTransform()->position, getWidth(), getHeight(), glm::vec4(50.0, 0.0, 75.0, 255.0));
+	//Util::DrawCircle(getTransform()->position + offset, getWidth() / 2, glm::vec4(1, 0, 0, 1));
 }
 
 void Tile::update()
