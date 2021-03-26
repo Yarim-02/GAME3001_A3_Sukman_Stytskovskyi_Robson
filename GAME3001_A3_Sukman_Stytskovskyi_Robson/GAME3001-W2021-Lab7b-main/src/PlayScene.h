@@ -10,6 +10,7 @@
 #include "ship.h"
 #include "SpaceShip.h"
 #include "Target.h"
+#include "Bullet.h"
 
 class PlayScene : public Scene
 {
@@ -35,6 +36,7 @@ private:
 
 	Target* m_pTarget;
 	Ship* m_pShip;
+	Bullet* m_pBullet;
 	Obstacle* m_pObstacle1;
 	Obstacle* m_pObstacle2;
 	Obstacle* m_pObstacle3;

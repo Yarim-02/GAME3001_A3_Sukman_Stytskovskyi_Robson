@@ -67,6 +67,8 @@ void PlayScene::handleEvents()
 	
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
 	{
+		m_pBullet = new Bullet(m_pShip->getTransform()->position, m_pTarget->getTransform()->position);
+		addChild(m_pBullet, 3);
 	}
 
 	// Toggles Debug Mode
@@ -106,8 +108,6 @@ void PlayScene::start()
 	m_pTarget = new Target();
 	m_pTarget->getTransform()->position = glm::vec2(600.0f, 300.0f);
 	addChild(m_pTarget);
-
-
 
 	// create a dummy DecisionTree
 	decisionTree = new DecisionTree();

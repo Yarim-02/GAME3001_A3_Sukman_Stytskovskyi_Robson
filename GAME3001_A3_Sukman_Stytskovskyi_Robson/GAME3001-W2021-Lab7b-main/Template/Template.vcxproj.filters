@@ -180,6 +180,10 @@
     <ClCompile Include="..\src\DecisionTree.cpp">
       <Filter>Decision</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Bullet.h">
+      <Filter>Game Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Bullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
