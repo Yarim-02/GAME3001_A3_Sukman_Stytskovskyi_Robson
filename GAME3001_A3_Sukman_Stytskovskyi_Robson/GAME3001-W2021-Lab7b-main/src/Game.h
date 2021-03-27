@@ -74,6 +74,7 @@ private:
 	// storage structures
 	std::shared_ptr<SDL_Window> m_pWindow;
 	static Game* s_pInstance;
+
 };
 
 typedef Game TheGame;

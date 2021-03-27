@@ -55,6 +55,7 @@ bool Game::init(const char* title, const int x, const int y, const int width, co
 			// create a new SDL Renderer and store it in the Singleton
 			const auto renderer = (Config::make_resource(SDL_CreateRenderer(m_pWindow.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)));
 			Renderer::Instance()->setRenderer(renderer);
+
 			
 			if (Renderer::Instance()->getRenderer() != nullptr) // render init success
 			{
@@ -128,6 +129,7 @@ Uint32 Game::getFrames() const
 {
 	return m_frames;
 }
+
 
 float Game::getDeltaTime() const
 {

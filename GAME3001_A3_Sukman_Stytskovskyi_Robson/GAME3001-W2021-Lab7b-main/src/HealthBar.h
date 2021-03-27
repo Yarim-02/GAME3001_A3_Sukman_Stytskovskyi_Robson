@@ -22,7 +22,7 @@ public:
 	void setDest(SDL_Rect* dest);
 
 private:
-	int m_healthPoints;
+	int m_healthPoints = 100;
 	SDL_Rect* m_dest;
 	
 	

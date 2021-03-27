@@ -265,6 +265,8 @@ void Ship::draw()
 		// draw Detection Radius
 		Util::DrawCircle(getTransform()->position, getDetectionRadius(), getDRColour());
 	}
+
+	m_healthBar.draw();
 }
 
 
@@ -279,12 +281,11 @@ void Ship::update()
 	m_frameCounter++;
 	m_position = getTransform()->position;
 
-	m_healthBarDestRect->x = getTransform()->position.x + (size.x / 2) - 50;
-	m_healthBarDestRect->y = getTransform()->position.y + 8;
+	m_healthBarDestRect->x = getTransform()->position.x + (size.x / 2) - 67.5f;
+	m_healthBarDestRect->y = getTransform()->position.y - (size.y / 1.5 );
 	m_healthBarDestRect->w = m_healthBar.getHealthPoints() ;
 	m_healthBarDestRect->h = 4;
 	m_healthBar.setDest(m_healthBarDestRect);
-	m_healthBar.draw();
 }
 
 void Ship::clean()
