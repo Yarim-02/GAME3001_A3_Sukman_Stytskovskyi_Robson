@@ -7,6 +7,8 @@
 #include "imgui_sdl.h"
 #include "Renderer.h"
 #include "Util.h"
+#include "stdlib.h"
+#include "time.h"
 
 PlayScene::PlayScene()
 {
@@ -65,6 +67,11 @@ void PlayScene::draw()
 
 void PlayScene::update()
 {
+	srand(time(NULL));
+	m_randomSwitch = 0 + rand() % 2;
+
+	std::cout << "Random switch = " << m_randomSwitch << "\n";
+
 	if (m_frameCounter % 5 == 0)
 	{
 		m_lastEnemyPosition = m_pShip->getTransform()->position;
@@ -82,10 +89,7 @@ void PlayScene::update()
 			getTransform()->position.x + offset.x - m_pShip->getTransform()->position.x), (m_pPatrolPath[m_patrolPathPosition
 				+ 1]->getTransform()->position.y + offset.y - m_pShip->getTransform()->position.y))));
 
-		m_pShip->moveForward();
-		m_pShip->move();
-
-
+		
 		if (Util::distance(m_pShip->getTransform()->position, m_pPatrolPath[m_patrolPathPosition + 1]->getTransform()->position + offset) < 5.0f)
 		{
 			m_patrolPathPosition++;
@@ -96,7 +100,11 @@ void PlayScene::update()
 		{
 			m_patrolPathPosition = -1;
 		}
-
+	}
+	if (m_pShip->getCurrentAction() == "Patrol" || m_pShip->getCurrentAction() == "Wandering")
+	{
+		m_pShip->moveForward();
+		m_pShip->move();
 		if ((m_pShip->getTransform()->position.x > m_lastEnemyPosition.x) && !(m_pShip->getTransform()->position.y
 		> m_lastEnemyPosition.y + 2) && !(m_pShip->getTransform()->position.y
 			< m_lastEnemyPosition.y - 2))
@@ -115,7 +123,7 @@ void PlayScene::update()
 		{
 			m_pShip->setAnimationState("WalkingLeft");
 		}
-		if ((m_pShip->getTransform()->position.y < m_lastEnemyPosition.y) && (m_pShip->getAnimationState() != "WalkingRight"))
+		if ((m_pShip->getTransform()->position.y < m_lastEnemyPosition.y))
 		{
 			m_pShip->setAnimationState("WalkingUp");
 		}
@@ -138,9 +146,34 @@ void PlayScene::update()
 			m_pShip->getRigidBody()->isColliding == true;
 			std::cout << "Enemy collision with obstacle\n";
 			m_pShip->setCurrentAction("Stopped");
+			if (m_randomSwitch == 0)
+				m_pShip->turnRight();
+			else if (m_randomSwitch == 1)
+				m_pShip->turnLeft();
 		}
 	}
-
+	for each (auto & Tile in m_pGrid)
+	{
+		if (Tile->getTileStatus() == IMPASSABLE)
+		{
+			if (CollisionManager::lineRectCheck(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, Tile->getTransform()->position, Tile->getWidth(), Tile->getHeight()))
+			{
+				m_pShip->getRigidBody()->isColliding == true;
+				std::cout << "Enemy collision with obstacle\n";
+				m_pShip->setCurrentAction("Stopped");
+				if (m_randomSwitch == 0)
+					m_pShip->turnRight();
+				else if (m_randomSwitch == 1)
+					m_pShip->turnLeft();
+			}
+		}
+	}
+	if (m_pShip->getCurrentAction() == "Stopped")
+	{
+		m_pShip->moveForward();
+		m_pShip->move();
+		m_pShip->setCurrentAction("Wandering");
+	}
 }
 
 void PlayScene::clean()

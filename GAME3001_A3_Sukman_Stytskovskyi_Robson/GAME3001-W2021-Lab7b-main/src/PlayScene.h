@@ -57,6 +57,8 @@ private:
 	int m_frameCounter = 0;
 	int m_patrolPathPosition = 0;
 	glm::vec2 m_lastEnemyPosition;
+
+	bool m_randomSwitch = 0;
 };
 
 

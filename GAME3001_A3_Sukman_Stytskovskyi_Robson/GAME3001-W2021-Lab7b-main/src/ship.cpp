@@ -54,7 +54,7 @@ Ship::Ship() : m_maxSpeed(10.0f)
 
 	setCurrentHeading(0.0f);// current facing angle
 	setCurrentDirection(glm::vec2(1.0f, 0.0f)); // facing right
-	m_turnRate = 5.0f; // 5 degrees per frame
+	m_turnRate = 90.0f; // 90 degrees per frame
 
 	setLOSDistance(400.0f); // 5 ppf x 80 feet
 	setLOSColour(glm::vec4(1, 0, 0, 1));
@@ -83,24 +83,24 @@ void Ship::draw()
 	const auto y = getTransform()->position.y;
 
 
-	if(m_currentAction == "Patrol")
+	if(m_currentAction == "Patrol" || m_currentAction == "Wandering")
 	{
 		if (m_animationState == "WalkingDown")
 		{
 			if (m_frameCounter < 5)
 			{
 				TextureManager::Instance()->draw("IdleSkeleton1",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 10)
 			{
 				TextureManager::Instance()->draw("IdleSkeleton2",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 15)
 			{
 				TextureManager::Instance()->draw("IdleSkeleton3",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 
 			}
 		}
@@ -109,17 +109,17 @@ void Ship::draw()
 			if (m_frameCounter < 5)
 			{
 				TextureManager::Instance()->draw("FSdamage1",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 10)
 			{
 				TextureManager::Instance()->draw("FSdamage2",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 15)
 			{
 				TextureManager::Instance()->draw("FSdamage3",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 
 			}
 		}
@@ -128,17 +128,17 @@ void Ship::draw()
 			if (m_frameCounter < 5)
 			{
 				TextureManager::Instance()->draw("RightWalkingSkeleton1",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 10)
 			{
 				TextureManager::Instance()->draw("RightWalkingSkeleton2",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 15)
 			{
 				TextureManager::Instance()->draw("RightWalkingSkeleton3",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 
 			}
 		}
@@ -147,17 +147,17 @@ void Ship::draw()
 			if (m_frameCounter < 5)
 			{
 				TextureManager::Instance()->draw("RWSdamage1",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 10)
 			{
 				TextureManager::Instance()->draw("RWSdamage2",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 15)
 			{
 				TextureManager::Instance()->draw("RWSdamage3",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 
 			}
 		}
@@ -166,17 +166,17 @@ void Ship::draw()
 			if (m_frameCounter < 5)
 			{
 				TextureManager::Instance()->draw("LeftWalkingSkeleton1",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 10)
 			{
 				TextureManager::Instance()->draw("LeftWalkingSkeleton2",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 15)
 			{
 				TextureManager::Instance()->draw("LeftWalkingSkeleton3",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 
 			}
 		}
@@ -185,17 +185,17 @@ void Ship::draw()
 			if (m_frameCounter < 5)
 			{
 				TextureManager::Instance()->draw("LWSdamage1",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 10)
 			{
 				TextureManager::Instance()->draw("LWSdamage2",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 15)
 			{
 				TextureManager::Instance()->draw("LWSdamage3",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 
 			}
 		}
@@ -204,17 +204,17 @@ void Ship::draw()
 			if (m_frameCounter < 5)
 			{
 				TextureManager::Instance()->draw("BackwardSkeleton1",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 10)
 			{
 				TextureManager::Instance()->draw("BackwardSkeleton2",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 15)
 			{
 				TextureManager::Instance()->draw("BackwardSkeleton3",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 
 			}
 		}
@@ -223,17 +223,17 @@ void Ship::draw()
 			if (m_frameCounter < 5)
 			{
 				TextureManager::Instance()->draw("BSdamage1",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 10)
 			{
 				TextureManager::Instance()->draw("BSdamage2",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 15)
 			{
 				TextureManager::Instance()->draw("BSdamage3",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 
 			}
 		}
@@ -242,24 +242,24 @@ void Ship::draw()
 			if (m_frameCounter < 5)
 			{
 				TextureManager::Instance()->draw("DyingSkeleton1",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 10)
 			{
 				TextureManager::Instance()->draw("DyingSkeleton2",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 			}
 			else if (m_frameCounter < 15)
 			{
 				TextureManager::Instance()->draw("DyingSkeleton3",
-					x, y, getCurrentHeading(), 255, true);
+					x, y, 0.0, 255, true);
 
 			}
 		}
 	}
 	else
 	{
-		TextureManager::Instance()->draw("Skeleton", x, y, getCurrentHeading(), 255, true);
+		TextureManager::Instance()->draw("Skeleton", x, y, 0.0, 255, true);
 	}
 
 	//Util::DrawLine(getTransform()->position, getTransform()->position + getCurrentDirection() * 5.0f, glm::vec4(1, 0, 1, 1));
@@ -286,7 +286,7 @@ void Ship::update()
 	if (m_audioFrameCounter > 60)
 		m_audioFrameCounter = 0;
 
-	if (m_audioFrameCounter == 0 && m_currentAction == "Patrol")
+	if (m_audioFrameCounter == 0 && (m_currentAction == "Patrol" || m_currentAction == "Wandering")
 	{
 		SoundManager::Instance().playSound("skeleton_walk", 0, -1);
 	}
