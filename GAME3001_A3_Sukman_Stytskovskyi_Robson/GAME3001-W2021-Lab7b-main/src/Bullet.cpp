@@ -21,6 +21,8 @@ Bullet::Bullet(glm::vec2 position, glm::vec2 direction)
 	setMaxSpeed(55.0f);
 	setAccelerationRate(55.0f);
 	setTurnRate(10.0f);
+
+	setOrientation(m_destination - getTransform()->position);// muy importanto, amigos!
 }
 
 Bullet::~Bullet()
@@ -35,29 +37,7 @@ void Bullet::draw()
 void Bullet::update()
 {
 	auto deltaTime = TheGame::Instance()->getDeltaTime();
-
-	// direction with magnitude
-	m_targetDirection = m_destination - getTransform()->position;
-
-	// normalized direction
-	m_targetDirection = Util::normalize(m_targetDirection);
-
-	auto target_rotation = Util::signedAngle(getOrientation(), m_targetDirection);
-
-	auto turn_sensitivity = 0.0f;
-
-	if (abs(target_rotation) > turn_sensitivity)
-	{
-		if (target_rotation > 0.0f)
-		{
-			setRotation(getRotation() + getTurnRate());
-		}
-		else if (target_rotation < 0.0f)
-		{
-			setRotation(getRotation() - getTurnRate());
-		}
-	}
-
+	
 	getRigidBody()->acceleration = getOrientation() * getAccelerationRate();
 
 	// using the formula pf = pi + vi*t + 0.5ai*t^2
