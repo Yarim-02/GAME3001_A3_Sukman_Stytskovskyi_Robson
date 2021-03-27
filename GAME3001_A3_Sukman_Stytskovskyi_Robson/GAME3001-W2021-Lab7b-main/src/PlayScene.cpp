@@ -206,36 +206,6 @@ void PlayScene::start()
 	m_pTarget->getTransform()->position = m_getTile(16, 8)->getTransform()->position + offset;
 	addChild(m_pTarget);
 
-	// build patrol path list
-	//for (int i = 8; i <= 12; i++)
-	//{
-	//	m_pPatrolPath.push_back(m_getTile(4, i)); //4,8 - 4,12
-	//}
-	//for (int i = 5; i <= 13; i++)
-	//{
-	//	m_pPatrolPath.push_back(m_getTile(i, 12)); //5, 12 - 13,12
-	//}
-	//m_pPatrolPath.push_back(m_getTile(13, 11)); // 13, 11
-	//for (int i = 13; i <= 17; i++)
-	//{
-	//	m_pPatrolPath.push_back(m_getTile(i, 10)); // 13, 10 - 17, 10
-	//}
-	//for (int i = 9; i >= 1; i--)
-	//{
-	//	m_pPatrolPath.push_back(m_getTile(17, i)); // 17, 9 - 17, 1
-	//}
-	//for (int i = 16; i >= 1; i--)
-	//{
-	//	m_pPatrolPath.push_back(m_getTile(i, 1)); // 16, 1 - 1, 1
-	//}
-	//for (int i = 2; i <= 8; i++)
-	//{
-	//	m_pPatrolPath.push_back(m_getTile(1, i)); // 1, 2 - 1, 8
-	//}
-	//for (int i = 2; i < 4; i++)
-	//{
-	//	m_pPatrolPath.push_back(m_getTile(i, 8)); // 2, 8 - 3, 8
-	//}
 
 	// build patrol path list
 	m_pPatrolPath.push_back(m_getTile(1, 1));
@@ -243,30 +213,7 @@ void PlayScene::start()
 	m_pPatrolPath.push_back(m_getTile(18, 13));
 	m_pPatrolPath.push_back(m_getTile(1, 13));
 	
-	//for (int i = 1; i <= 18; i++)
-	//{
-	//	m_pPatrolPath.push_back(m_getTile(i, 1)); //1, 1 to 18. 1
-	//}
-	//for (int i = 2; i <= 13; i++)
-	//{
-	//	m_pPatrolPath.push_back(m_getTile(18, i)); //18, 2 to 18, 13
-	//}
-	//for (int i = 17; i >= 1; i--)
-	//{
-	//	m_pPatrolPath.push_back(m_getTile(i, 13));//17,13 to 1, 13
-	//}
-	//for (int i = 13; i >= 2; i--)
-	//{
-	//	m_pPatrolPath.push_back(m_getTile(1, i));//1, 13 to 1, 2
-	//}
-
-	//for (Tile* element : m_pPatrolPath)
-	//{
-	//	//std::cout << element->getGridPosition().x << element->getGridPosition().y << std::endl;
-	//	m_pShip->getTransform()->position = element->getTransform()->position;
-	//}
-	
-	
+		
 	// create a dummy DecisionTree
 	decisionTree = new DecisionTree();
 	decisionTree->setAgent(m_pShip);

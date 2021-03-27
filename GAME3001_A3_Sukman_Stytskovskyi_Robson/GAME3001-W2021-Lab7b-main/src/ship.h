@@ -49,6 +49,7 @@ private:
 
 	std::string m_currentAction;
 	int m_frameCounter = 0;
+	int m_audioFrameCounter = 0;
 	std::string m_animationState;
 
 	HealthBar m_healthBar;

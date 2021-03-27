@@ -2,6 +2,7 @@
 #include "glm/gtx/string_cast.hpp"
 #include "PlayScene.h"
 #include "TextureManager.h"
+#include "SoundManager.h"
 #include "Util.h"
 
 Ship::Ship() : m_maxSpeed(10.0f)
@@ -36,6 +37,9 @@ Ship::Ship() : m_maxSpeed(10.0f)
 	TextureManager::Instance()->load("../Assets/textures/DyingSkeleton2.png", "DyingSkeleton2");
 	TextureManager::Instance()->load("../Assets/textures/DyingSkeleton3.png", "DyingSkeleton3");
 
+	SoundManager::Instance().allocateChannels(6);
+	SoundManager::Instance().load("../Assets/audio/skeleton_walk.ogg", "skeleton_walk", SOUND_SFX);
+	SoundManager::Instance().setSoundVolume(60);
 
 	auto size = TextureManager::Instance()->getTextureSize("Skeleton");
 	setWidth(size.x);
@@ -277,7 +281,15 @@ void Ship::update()
 	m_checkBounds();*/
 	if (m_frameCounter > 13)
 		m_frameCounter = 0;
+	if (m_audioFrameCounter > 60)
+		m_audioFrameCounter = 0;
 
+	if (m_audioFrameCounter == 0 && m_currentAction == "Patrol")
+	{
+		SoundManager::Instance().playSound("skeleton_walk", 0, -1);
+	}
+
+	m_audioFrameCounter++;
 	m_frameCounter++;
 	m_position = getTransform()->position;
 
@@ -286,6 +298,7 @@ void Ship::update()
 	m_healthBarDestRect->w = m_healthBar.getHealthPoints() ;
 	m_healthBarDestRect->h = 4;
 	m_healthBar.setDest(m_healthBarDestRect);
+
 }
 
 void Ship::clean()
