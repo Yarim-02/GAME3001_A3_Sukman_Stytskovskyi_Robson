@@ -62,32 +62,72 @@ void PlayScene::draw()
 
 void PlayScene::update()
 {
+	if (m_frameCounter % 5 == 0)
+	{
+		m_lastEnemyPosition = m_pShip->getTransform()->position;
+	}
+	
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	updateDisplayList();
 
 	m_CheckShipLOS(m_pTarget);
 	m_CheckShipDR(m_pTarget);
 
+	if (m_pShip->getCurrentAction() == "Patrol")
+	{
+		m_pShip->setCurrentDirection(Util::normalize(glm::vec2((m_pPatrolPath[m_patrolPathPosition + 1]->
+			getTransform()->position.x + offset.x - m_pShip->getTransform()->position.x), (m_pPatrolPath[m_patrolPathPosition
+				+ 1]->getTransform()->position.y + offset.y - m_pShip->getTransform()->position.y))));
 
-	//if (currentEnemyAction == "Performing Patrol Action")
-	//{
-		/*m_pShip->setMaxSpeed(1.5f);
 		m_pShip->moveForward();
-		m_pShip->move();*/
+		m_pShip->move();
+
+
+		if (Util::distance(m_pShip->getTransform()->position, m_pPatrolPath[m_patrolPathPosition + 1]->getTransform()->position + offset) < 5.0f)
+		{
+			m_patrolPathPosition++;
+			std::cout << m_patrolPathPosition << std::endl;
+			std::cout << m_pShip->getCurrentDirection().x << ", " << m_pShip->getCurrentDirection().y;
+		}
+		if (m_patrolPathPosition == 3)
+		{
+			m_patrolPathPosition = -1;
+		}
+
+		if ((m_pShip->getTransform()->position.x > m_lastEnemyPosition.x) && !(m_pShip->getTransform()->position.y
+		> m_lastEnemyPosition.y + 2) && !(m_pShip->getTransform()->position.y
+			< m_lastEnemyPosition.y - 2))
+		{
+			m_pShip->setAnimationState("WalkingRight");
+		}
+		if ((m_pShip->getTransform()->position.y > m_lastEnemyPosition.y) && !(m_pShip->getTransform()->position.x
+		> m_lastEnemyPosition.x + 2) && !(m_pShip->getTransform()->position.x
+		< m_lastEnemyPosition.x - 2))
+		{
+			m_pShip->setAnimationState("WalkingDown");
+		}
+		if ((m_pShip->getTransform()->position.x < m_lastEnemyPosition.x) && !(m_pShip->getTransform()->position.y
+		> m_lastEnemyPosition.y + 2) && !(m_pShip->getTransform()->position.y
+			< m_lastEnemyPosition.y - 2))
+		{
+			m_pShip->setAnimationState("WalkingLeft");
+		}
+		if ((m_pShip->getTransform()->position.y < m_lastEnemyPosition.y) && (m_pShip->getAnimationState() != "WalkingRight"))
+		{
+			m_pShip->setAnimationState("WalkingUp");
+		}
+	}
 	
 
-	if (m_frameCounter % 20 == 0)
-	{
-		patrolSize--;
-		m_pShip->getTransform()->position = m_pPatrolPath[patrolSize]->getTransform()->position + offset;
-	}
-	if (patrolSize == 0)
-	{
-		patrolSize = m_pPatrolPath.size();
-	}
-	if (m_frameCounter > 1000)
-		m_frameCounter = 0;
+	std::cout << "------------------------" << std::endl;
+	std::cout << decisionTree->MakeDecision() << std::endl;
+	std::cout << "------------------------\n" << std::endl;
+
 	m_frameCounter++;
+	if(m_frameCounter > 1000)
+	{
+		m_frameCounter = 0;
+	}
 }
 
 void PlayScene::clean()
@@ -114,12 +154,12 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->changeSceneState(END_SCENE);
 	}
 
-	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_F))
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_F))
 	{
 
 	}
-	
-	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
+
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
 	{
 	}
 
@@ -128,7 +168,7 @@ void PlayScene::handleEvents()
 	{
 		m_pShip->flipDbg();
 	}
-	
+
 }
 
 void PlayScene::start()
@@ -141,8 +181,10 @@ void PlayScene::start()
 
 	// add the ship to the scene as a start point
 	m_pShip = new Ship();
-	m_pShip->getTransform()->position = m_getTile(4, 8)->getTransform()->position + offset;
+	m_pShip->getTransform()->position = m_getTile(1, 1)->getTransform()->position + offset;
 	addChild(m_pShip, 2);
+	m_pShip->setAnimationState("WalkingDown");
+	m_pShip->setMaxSpeed(2.0f);
 	
 	// add the Obstacle to the scene as a start point
 	m_pObstacle1 = new Obstacle("Rock.png", "Rock");
@@ -165,55 +207,70 @@ void PlayScene::start()
 	addChild(m_pTarget);
 
 	// build patrol path list
-	for (int i = 8; i <= 12; i++)
-	{
-		m_pPatrolPath.push_back(m_getTile(4, i));
-	}
-	for (int i = 5; i <= 13; i++)
-	{
-		m_pPatrolPath.push_back(m_getTile(i, 12));
-	}
-	m_pPatrolPath.push_back(m_getTile(13, 11));
-	for (int i = 13; i <= 17; i++)
-	{
-		m_pPatrolPath.push_back(m_getTile(i, 10));
-	}
-	for (int i = 9; i >= 1; i--)
-	{
-		m_pPatrolPath.push_back(m_getTile(17, i));
-	}
-	for (int i = 16; i >= 1; i--)
-	{
-		m_pPatrolPath.push_back(m_getTile(i, 1));
-	}
-	for (int i = 1; i <= 8; i++)
-	{
-		m_pPatrolPath.push_back(m_getTile(1, i));
-	}
-	for (int i = 1; i < 4; i++)
-	{
-		m_pPatrolPath.push_back(m_getTile(i, 8));
-	}
+	//for (int i = 8; i <= 12; i++)
+	//{
+	//	m_pPatrolPath.push_back(m_getTile(4, i)); //4,8 - 4,12
+	//}
+	//for (int i = 5; i <= 13; i++)
+	//{
+	//	m_pPatrolPath.push_back(m_getTile(i, 12)); //5, 12 - 13,12
+	//}
+	//m_pPatrolPath.push_back(m_getTile(13, 11)); // 13, 11
+	//for (int i = 13; i <= 17; i++)
+	//{
+	//	m_pPatrolPath.push_back(m_getTile(i, 10)); // 13, 10 - 17, 10
+	//}
+	//for (int i = 9; i >= 1; i--)
+	//{
+	//	m_pPatrolPath.push_back(m_getTile(17, i)); // 17, 9 - 17, 1
+	//}
+	//for (int i = 16; i >= 1; i--)
+	//{
+	//	m_pPatrolPath.push_back(m_getTile(i, 1)); // 16, 1 - 1, 1
+	//}
+	//for (int i = 2; i <= 8; i++)
+	//{
+	//	m_pPatrolPath.push_back(m_getTile(1, i)); // 1, 2 - 1, 8
+	//}
+	//for (int i = 2; i < 4; i++)
+	//{
+	//	m_pPatrolPath.push_back(m_getTile(i, 8)); // 2, 8 - 3, 8
+	//}
 
-	for (Tile* element : m_pPatrolPath)
-	{
-		//std::cout << element->getGridPosition().x << element->getGridPosition().y << std::endl;
-		m_pShip->getTransform()->position = element->getTransform()->position;
-	}
+	// build patrol path list
+	m_pPatrolPath.push_back(m_getTile(1, 1));
+	m_pPatrolPath.push_back(m_getTile(18, 1));
+	m_pPatrolPath.push_back(m_getTile(18, 13));
+	m_pPatrolPath.push_back(m_getTile(1, 13));
+	
+	//for (int i = 1; i <= 18; i++)
+	//{
+	//	m_pPatrolPath.push_back(m_getTile(i, 1)); //1, 1 to 18. 1
+	//}
+	//for (int i = 2; i <= 13; i++)
+	//{
+	//	m_pPatrolPath.push_back(m_getTile(18, i)); //18, 2 to 18, 13
+	//}
+	//for (int i = 17; i >= 1; i--)
+	//{
+	//	m_pPatrolPath.push_back(m_getTile(i, 13));//17,13 to 1, 13
+	//}
+	//for (int i = 13; i >= 2; i--)
+	//{
+	//	m_pPatrolPath.push_back(m_getTile(1, i));//1, 13 to 1, 2
+	//}
+
+	//for (Tile* element : m_pPatrolPath)
+	//{
+	//	//std::cout << element->getGridPosition().x << element->getGridPosition().y << std::endl;
+	//	m_pShip->getTransform()->position = element->getTransform()->position;
+	//}
 	
 	
 	// create a dummy DecisionTree
 	decisionTree = new DecisionTree();
 	decisionTree->setAgent(m_pShip);
-	decisionTree->Display();
-
-	std::cout << "------------------------" << std::endl;
-	std::cout << decisionTree->MakeDecision() << std::endl;
-	std::cout << "------------------------\n" << std::endl;
-	
-
-	patrolSize = m_pPatrolPath.size();
-	
+	decisionTree->Display();	
 
 }
 

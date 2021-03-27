@@ -4,11 +4,13 @@
 
 #include "TextureManager.h"
 #include <glm/vec4.hpp>
+#include "HealthBar.h"
 
 #include "Agent.h"
 
 class Ship final : public Agent
 {
+	
 public:
 	Ship();
 	~Ship();
@@ -27,10 +29,14 @@ public:
 
 	// getters
 	float getMaxSpeed() const;
+	std::string getAnimationState();
+	std::string getCurrentAction();
 	
 	// setters
 	void setMaxSpeed(float newSpeed);
 	void flipDbg();
+	void setAnimationState(std::string animationState);
+	void setCurrentAction(std::string currentAction);
 
 private:
 	void m_checkBounds();
@@ -43,7 +49,15 @@ private:
 
 	std::string m_currentAction;
 	int m_frameCounter = 0;
+	std::string m_animationState;
+
+	HealthBar m_healthBar;
+	glm::vec2 m_position;
+	SDL_Rect* m_healthBarDestRect;
+	
 };
+
+
 
 
 #endif /* defined (__SHIP__) */

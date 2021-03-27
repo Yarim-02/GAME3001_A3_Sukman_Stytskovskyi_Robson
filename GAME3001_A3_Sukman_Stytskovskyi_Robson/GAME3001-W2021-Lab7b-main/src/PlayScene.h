@@ -55,8 +55,8 @@ private:
 	void m_buildGrid();
 
 	int m_frameCounter = 0;
-	int patrolSize;
-	
+	int m_patrolPathPosition = 0;
+	glm::vec2 m_lastEnemyPosition;
 };
 
 
