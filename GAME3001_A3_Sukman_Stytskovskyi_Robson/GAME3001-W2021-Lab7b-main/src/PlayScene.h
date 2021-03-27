@@ -44,6 +44,10 @@ private:
 	void m_CheckShipDR(DisplayObject* object);
 
 	DecisionTree* decisionTree;
+
+	Label* m_pGameStatus;
+	int m_enemiesAlive,
+		m_enemiesDead;
 };
 
 

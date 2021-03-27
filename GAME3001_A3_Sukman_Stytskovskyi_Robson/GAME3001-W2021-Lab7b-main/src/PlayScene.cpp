@@ -81,6 +81,19 @@ void PlayScene::handleEvents()
 
 void PlayScene::start()
 {
+	const SDL_Color orange = { 213,110,43, 205 };
+
+	std::string enemiesA = "Enemies left: ";
+	std::string enemiesD = "Enemies eliminated: ";
+
+	m_pGameStatus = new Label(enemiesA + std::to_string(m_enemiesAlive), "Teko", 30, orange, glm::vec2(158.f, 50.f));
+	m_pGameStatus->setParent(this);
+	addChild(m_pGameStatus, 3);
+
+	m_pGameStatus = new Label(enemiesD + std::to_string(m_enemiesDead), "Teko", 30, orange, glm::vec2(120.f, 25.f));
+	m_pGameStatus->setParent(this);
+	addChild(m_pGameStatus, 3);
+
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
 
