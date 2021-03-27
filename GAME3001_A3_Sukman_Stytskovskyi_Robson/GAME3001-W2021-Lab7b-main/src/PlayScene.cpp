@@ -50,6 +50,9 @@ void PlayScene::draw()
 			}
 		}
 	}
+
+	Util::DrawLine(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, glm::vec4(1, 0, 1, 1));
+
 	if(EventManager::Instance().isIMGUIActive())
 	{
 		GUI_Function();	
@@ -117,7 +120,6 @@ void PlayScene::update()
 			m_pShip->setAnimationState("WalkingUp");
 		}
 	}
-	
 
 	std::cout << "------------------------" << std::endl;
 	std::cout << decisionTree->MakeDecision() << std::endl;
@@ -128,6 +130,17 @@ void PlayScene::update()
 	{
 		m_frameCounter = 0;
 	}
+
+	for each (auto &Obstacle in m_pObstacle)
+	{
+		if (CollisionManager::lineRectCheck(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, Obstacle->getTransform()->position, Obstacle->getWidth(), Obstacle->getHeight()))
+		{
+			m_pShip->getRigidBody()->isColliding == true;
+			std::cout << "Enemy collision with obstacle\n";
+			m_pShip->setCurrentAction("Stopped");
+		}
+	}
+
 }
 
 void PlayScene::clean()
@@ -186,21 +199,25 @@ void PlayScene::start()
 	m_pShip->setAnimationState("WalkingDown");
 	m_pShip->setMaxSpeed(2.0f);
 	
-	// add the Obstacle to the scene as a start point
-	m_pObstacle1 = new Obstacle("Rock.png", "Rock");
-	m_pObstacle1->getTransform()->position = m_getTile(9,2)->getTransform()->position;
-	addChild(m_pObstacle1);
+	for (int i = 0; i < 5; i++)
+	{
+		m_pObstacle.push_back( new Obstacle("Rock.png", "Rock") );
+	}
+	m_pObstacle[0]->getTransform()->position = m_getTile(9,2)->getTransform()->position;
+	addChild(m_pObstacle[0]);
 
-	// add the Obstacle to the scene as a start point
-	m_pObstacle2 = new Obstacle("Rock.png", "Rock");
-	m_pObstacle2->getTransform()->position = m_getTile(9, 7)->getTransform()->position;
-	addChild(m_pObstacle2);
+	m_pObstacle[1]->getTransform()->position = m_getTile(9, 7)->getTransform()->position;
+	addChild(m_pObstacle[1]);
 
-	// add the Obstacle to the scene as a start point
-	m_pObstacle3 = new Obstacle("Rock.png", "Rock");
-	m_pObstacle3->getTransform()->position = m_getTile(14, 11)->getTransform()->position;
-	addChild(m_pObstacle3);
+	m_pObstacle[2]->getTransform()->position = m_getTile(14, 11)->getTransform()->position;
+	addChild(m_pObstacle[2]);
+
+	m_pObstacle[3]->getTransform()->position = m_getTile(12, 11)->getTransform()->position;
+	addChild(m_pObstacle[3]);
 	
+	m_pObstacle[4]->getTransform()->position = m_getTile(15, 1)->getTransform()->position;
+	addChild(m_pObstacle[4]);
+
 	// added the target to the scene a goal
 	m_pTarget = new Target();
 	m_pTarget->getTransform()->position = m_getTile(16, 8)->getTransform()->position + offset;

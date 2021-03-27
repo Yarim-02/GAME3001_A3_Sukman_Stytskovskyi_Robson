@@ -261,6 +261,8 @@ void Ship::draw()
 	{
 		TextureManager::Instance()->draw("Skeleton", x, y, getCurrentHeading(), 255, true);
 	}
+
+	//Util::DrawLine(getTransform()->position, getTransform()->position + getCurrentDirection() * 5.0f, glm::vec4(1, 0, 1, 1));
 	
 	if (m_dbgMode)
 	{
