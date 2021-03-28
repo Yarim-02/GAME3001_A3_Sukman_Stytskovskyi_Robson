@@ -52,6 +52,8 @@ private:
 	int m_enemiesAlive,
 		m_enemiesDead;
 
+	bool m_dbgMode;
+
 	//Tile Stuff
 	std::vector<Tile*> m_pGrid;
 	std::vector<Tile*> m_pPatrolPath;

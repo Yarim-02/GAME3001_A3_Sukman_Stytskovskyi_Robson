@@ -261,17 +261,6 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->changeSceneState(END_SCENE);
 	}
 
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_pShip->getTakingDamage() == false)
-	{
-		damageActor(m_pShip);
-		m_pShip->flipTakingDamage();
-		//std::cout << "Enemy damaged, new health value: " << m_pShip->getHealthBar().getHealthPoints() << "\n";
-	}
-	if (EventManager::Instance().isKeyUp(SDL_SCANCODE_K) && m_pShip->getTakingDamage() == true)
-	{
-		m_pShip->flipTakingDamage();
-	}
-	
 	if(EventManager::Instance().getMouseButton(0))
 	{
 		m_pBullet = new Bullet(m_pPlayer->getTransform()->position, glm::vec2(mouseX, mouseY));
@@ -281,9 +270,27 @@ void PlayScene::handleEvents()
 	// Toggles Debug Mode
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_H))
 	{
+		m_dbgMode = !m_dbgMode;
+
 		m_pShip->flipDbg();
 	}
-	
+
+
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_pShip->getTakingDamage() == false && m_dbgMode)
+	{
+		damageActor(m_pShip);
+		m_pShip->flipTakingDamage();
+		//std::cout << "Enemy damaged, new health value: " << m_pShip->getHealthBar().getHealthPoints() << "\n";
+	}
+
+
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_P) && m_dbgMode)
+	{
+		if(m_pShip->getCurrentAction() == "Patrol")
+			m_pShip->setCurrentAction("Idle");
+		else if(m_pShip->getCurrentAction() == "Idle")
+			m_pShip->setCurrentAction("Patrol");
+	}
 }
 
 void PlayScene::start()
