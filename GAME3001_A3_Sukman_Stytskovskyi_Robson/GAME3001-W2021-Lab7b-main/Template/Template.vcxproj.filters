@@ -189,6 +189,9 @@
     <ClCompile Include="..\src\Bullet.cpp">
       <Filter>Game Objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Gunner.cpp">
+      <Filter>Decision\Agents</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -385,6 +388,9 @@
     </ClInclude>
     <ClInclude Include="..\src\HealthBar.h">
       <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Gunner.h">
+      <Filter>Decision\Agents</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

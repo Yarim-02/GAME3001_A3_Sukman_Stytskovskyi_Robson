@@ -12,6 +12,7 @@
 #include "Target.h"
 #include "Tile.h"
 #include "Bullet.h"
+#include "Gunner.h"
 
 class PlayScene : public Scene
 {
@@ -37,6 +38,7 @@ private:
 
 	Target* m_pTarget;
 	Ship* m_pShip;
+	Gunner* m_pPlayer;
 	Bullet* m_pBullet;
 	std::vector<Obstacle*> m_pObstacle;
 	Obstacle* m_pObstacle2;
@@ -66,6 +68,7 @@ private:
 	int m_frameCounter = 0;
 	bool m_randomSwitch = 0;
 	int m_patrolPathPosition = 0;
+	int mouseX, mouseY;
 
 	glm::vec2 m_lastEnemyPosition;
 };

@@ -89,8 +89,12 @@ void PlayScene::update()
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	updateDisplayList();
 
-	m_CheckShipLOS(m_pTarget);
-	m_CheckShipDR(m_pTarget);
+	SDL_GetMouseState(&mouseX, &mouseY);
+
+	m_pPlayer->setDestination(glm::vec2(mouseX, mouseY));
+
+	m_CheckShipLOS(m_pPlayer);
+	m_CheckShipDR(m_pPlayer);
 
 	if (m_pShip->getCurrentAction() == "Patrol")
 	{
@@ -222,6 +226,31 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->quit();
 	}
 
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_W))
+	{
+		m_pPlayer->getTransform()->position.y -= m_pPlayer->getMaxSpeed();
+		m_pPlayer->setAnimating(true);
+	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
+	{
+		m_pPlayer->getTransform()->position.x += m_pPlayer->getMaxSpeed();
+		m_pPlayer->setAnimating(true);
+	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
+	{
+		m_pPlayer->getTransform()->position.y += m_pPlayer->getMaxSpeed();
+		m_pPlayer->setAnimating(true);
+	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_A))
+	{
+		m_pPlayer->getTransform()->position.x -= m_pPlayer->getMaxSpeed();
+		m_pPlayer->setAnimating(true);
+	}
+	if (!EventManager::Instance().isKeyDown(SDL_SCANCODE_W) && !EventManager::Instance().isKeyDown(SDL_SCANCODE_S) && !EventManager::Instance().isKeyDown(SDL_SCANCODE_A) && !EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
+	{
+		m_pPlayer->setAnimating(false);
+	}
+
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_1))
 	{
 		TheGame::Instance()->changeSceneState(START_SCENE);
@@ -245,8 +274,8 @@ void PlayScene::handleEvents()
 	
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
 	{
-		m_pBullet = new Bullet(m_pShip->getTransform()->position, m_pTarget->getTransform()->position);
-		addChild(m_pBullet, 3);
+		//m_pBullet = new Bullet(m_pShip->getTransform()->position, m_pTarget->getTransform()->position);
+		//addChild(m_pBullet, 3);
 	}
 
 	// Toggles Debug Mode
@@ -280,6 +309,10 @@ void PlayScene::start()
 	m_buildGrid();
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
+
+	m_pPlayer = new Gunner;
+	m_pPlayer->getTransform()->position = glm::vec2(200.0f, 300.0f);
+	addChild(m_pPlayer);
 
 	// add the ship to the scene as a start point
 	m_pShip = new Ship();
