@@ -272,10 +272,10 @@ void PlayScene::handleEvents()
 		m_pShip->flipTakingDamage();
 	}
 	
-	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
+	if(EventManager::Instance().getMouseButton(0))
 	{
-		//m_pBullet = new Bullet(m_pShip->getTransform()->position, m_pTarget->getTransform()->position);
-		//addChild(m_pBullet, 3);
+		m_pBullet = new Bullet(m_pPlayer->getTransform()->position, glm::vec2(mouseX, mouseY));
+		addChild(m_pBullet, 3);
 	}
 
 	// Toggles Debug Mode
