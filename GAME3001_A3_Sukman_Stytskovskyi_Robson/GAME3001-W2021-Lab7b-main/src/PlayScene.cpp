@@ -263,15 +263,16 @@ void PlayScene::start()
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	//Build node grid for overlaying map
 	const SDL_Color orange = { 213,110,43, 205 };
+	const SDL_Color white = { 255,255,255, 205 };
 
 	std::string enemiesA = "Enemies left: ";
 	std::string enemiesD = "Enemies eliminated: ";
 
-	m_pGameStatus = new Label(enemiesA + std::to_string(m_enemiesAlive), "Teko", 30, orange, glm::vec2(158.f, 50.f));
+	m_pGameStatus = new Label(enemiesA + std::to_string(m_enemiesAlive), "Teko", 30, white, glm::vec2(178.f, 75.f));
 	m_pGameStatus->setParent(this);
 	addChild(m_pGameStatus, 0);
 
-	m_pGameStatus = new Label(enemiesD + std::to_string(m_enemiesDead), "Teko", 30, orange, glm::vec2(120.f, 25.f));
+	m_pGameStatus = new Label(enemiesD + std::to_string(m_enemiesDead), "Teko", 30, white, glm::vec2(140.f, 50.f));
 	m_pGameStatus->setParent(this);
 	addChild(m_pGameStatus, 0);
 	
