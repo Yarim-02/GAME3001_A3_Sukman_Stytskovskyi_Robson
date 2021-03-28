@@ -83,7 +83,7 @@ void Ship::draw()
 	const auto y = getTransform()->position.y;
 
 
-	if(m_currentAction == "Patrol" || m_currentAction == "Wandering")
+	if(m_currentAction == "Patrol" || m_currentAction == "Wandering" || m_currentAction == "Taking Damage")
 	{
 		if (m_animationState == "WalkingDown")
 		{
@@ -101,10 +101,9 @@ void Ship::draw()
 			{
 				TextureManager::Instance()->draw("IdleSkeleton3",
 					x, y, 0.0, 255, true);
-
 			}
 		}
-		if (m_animationState == "FSdamage")
+		if (m_animationState == "FWSdamage")
 		{
 			if (m_frameCounter < 5)
 			{
@@ -218,7 +217,7 @@ void Ship::draw()
 
 			}
 		}
-		if (m_animationState == "BSdamage")
+		if (m_animationState == "BWSdamage")
 		{
 			if (m_frameCounter < 5)
 			{
@@ -237,32 +236,47 @@ void Ship::draw()
 
 			}
 		}
-		if (m_animationState == "Dying")
+	}
+	else if (m_currentAction == "Dying")
+	{
+		if (m_frameCounter < 5)
 		{
-			if (m_frameCounter < 5)
-			{
-				TextureManager::Instance()->draw("DyingSkeleton1",
-					x, y, 0.0, 255, true);
-			}
-			else if (m_frameCounter < 10)
-			{
-				TextureManager::Instance()->draw("DyingSkeleton2",
-					x, y, 0.0, 255, true);
-			}
-			else if (m_frameCounter < 15)
-			{
-				TextureManager::Instance()->draw("DyingSkeleton3",
-					x, y, 0.0, 255, true);
-
-			}
+			TextureManager::Instance()->draw("DyingSkeleton1",
+				x, y, 0.0, 255, true);
 		}
+		else if (m_frameCounter < 10)
+		{
+			TextureManager::Instance()->draw("DyingSkeleton2",
+				x, y, 0.0, 255, true);
+		}
+		else if (m_frameCounter < 15)
+		{
+			TextureManager::Instance()->draw("DyingSkeleton3",
+				x, y, 0.0, 255, true);
+		}
+	}
+	else if (m_currentAction == "Dead")
+	{
 	}
 	else
 	{
-		TextureManager::Instance()->draw("Skeleton", x, y, 0.0, 255, true);
+		if (m_frameCounter < 5)
+		{
+			TextureManager::Instance()->draw("IdleSkeleton1",
+				x, y, 0.0, 255, true);
+		}
+		else if (m_frameCounter < 10)
+		{
+			TextureManager::Instance()->draw("IdleSkeleton2",
+				x, y, 0.0, 255, true);
+		}
+		else if (m_frameCounter < 15)
+		{
+			TextureManager::Instance()->draw("IdleSkeleton3",
+				x, y, 0.0, 255, true);
+		}
 	}
 
-	//Util::DrawLine(getTransform()->position, getTransform()->position + getCurrentDirection() * 5.0f, glm::vec4(1, 0, 1, 1));
 	
 	if (m_dbgMode)
 	{
@@ -283,22 +297,22 @@ void Ship::update()
 	m_checkBounds();*/
 	if (m_frameCounter > 13)
 		m_frameCounter = 0;
-	if (m_audioFrameCounter > 60)
-		m_audioFrameCounter = 0;
+	if (m_frameCounter2 > 600)
+		m_frameCounter2 = 0;
 
-	if (m_audioFrameCounter == 0 && (m_currentAction == "Patrol" || m_currentAction == "Wandering")
+	if (m_frameCounter2 % 60 == 0 && (m_currentAction == "Patrol" || m_currentAction == "Wandering"))
 	{
 		SoundManager::Instance().playSound("skeleton_walk", 0, -1);
 	}
 
-	m_audioFrameCounter++;
+	m_frameCounter2++;
 	m_frameCounter++;
 	m_position = getTransform()->position;
 
 	m_healthBarDestRect->x = getTransform()->position.x + (size.x / 2) - 67.5f;
 	m_healthBarDestRect->y = getTransform()->position.y - (size.y / 1.5 );
-	m_healthBarDestRect->w = m_healthBar.getHealthPoints() ;
 	m_healthBarDestRect->h = 4;
+	m_healthBarDestRect->w = m_healthBar.getHealthPoints();
 	m_healthBar.setDest(m_healthBarDestRect);
 
 }
@@ -356,6 +370,16 @@ std::string Ship::getCurrentAction()
 	return m_currentAction;
 }
 
+bool Ship::getTakingDamage()
+{
+	return m_takingDamage;
+}
+
+HealthBar& Ship::getHealthBar()
+{
+	return m_healthBar;
+}
+
 void Ship::setMaxSpeed(float newSpeed)
 {
 	m_maxSpeed = newSpeed;
@@ -366,9 +390,17 @@ void Ship::flipDbg()
 	m_dbgMode = !m_dbgMode;
 }
 
+void Ship::flipTakingDamage()
+{
+	m_takingDamage = !m_takingDamage;
+}
+
 void Ship::setAnimationState(std::string animationState)
 {
-	m_animationState = animationState;
+	if (getCurrentAction() != "Taking Damage" && getCurrentAction() != "Dying")
+	{
+		m_animationState = animationState;
+	}
 }
 
 void Ship::setCurrentAction(std::string currentAction)

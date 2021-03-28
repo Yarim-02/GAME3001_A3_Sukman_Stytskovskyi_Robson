@@ -53,7 +53,7 @@ void PlayScene::draw()
 		}
 	}
 
-	Util::DrawLine(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, glm::vec4(1, 0, 1, 1));
+	//Util::DrawLine(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, glm::vec4(1, 0, 1, 1));
 
 	if(EventManager::Instance().isIMGUIActive())
 	{
@@ -70,11 +70,12 @@ void PlayScene::update()
 	srand(time(NULL));
 	m_randomSwitch = 0 + rand() % 2;
 
-	std::cout << "Random switch = " << m_randomSwitch << "\n";
-
 	if (m_frameCounter % 5 == 0)
 	{
 		m_lastEnemyPosition = m_pShip->getTransform()->position;
+
+		/*int newHealth = (m_pShip->getHealthBar().getHealthPoints()) - 10;
+		m_pShip->getHealthBar().setHealthPoints(newHealth - 10);*/
 	}
 	
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
@@ -101,31 +102,34 @@ void PlayScene::update()
 			m_patrolPathPosition = -1;
 		}
 	}
-	if (m_pShip->getCurrentAction() == "Patrol" || m_pShip->getCurrentAction() == "Wandering")
+	if (m_pShip->getCurrentAction() == "Patrol" || m_pShip->getCurrentAction() == "Wandering" || m_pShip->getCurrentAction() == "Taking Damage")
 	{
 		m_pShip->moveForward();
 		m_pShip->move();
-		if ((m_pShip->getTransform()->position.x > m_lastEnemyPosition.x) && !(m_pShip->getTransform()->position.y
+		if (m_pShip->getCurrentAction() != "Taking Damage")
+		{
+			if ((m_pShip->getTransform()->position.x > m_lastEnemyPosition.x) && !(m_pShip->getTransform()->position.y
 		> m_lastEnemyPosition.y + 2) && !(m_pShip->getTransform()->position.y
 			< m_lastEnemyPosition.y - 2))
-		{
-			m_pShip->setAnimationState("WalkingRight");
-		}
-		if ((m_pShip->getTransform()->position.y > m_lastEnemyPosition.y) && !(m_pShip->getTransform()->position.x
-		> m_lastEnemyPosition.x + 2) && !(m_pShip->getTransform()->position.x
+			{
+				m_pShip->setAnimationState("WalkingRight");
+			}
+			if ((m_pShip->getTransform()->position.y > m_lastEnemyPosition.y) && !(m_pShip->getTransform()->position.x
+	> m_lastEnemyPosition.x + 2) && !(m_pShip->getTransform()->position.x
 		< m_lastEnemyPosition.x - 2))
-		{
-			m_pShip->setAnimationState("WalkingDown");
-		}
-		if ((m_pShip->getTransform()->position.x < m_lastEnemyPosition.x) && !(m_pShip->getTransform()->position.y
-		> m_lastEnemyPosition.y + 2) && !(m_pShip->getTransform()->position.y
-			< m_lastEnemyPosition.y - 2))
-		{
-			m_pShip->setAnimationState("WalkingLeft");
-		}
-		if ((m_pShip->getTransform()->position.y < m_lastEnemyPosition.y))
-		{
-			m_pShip->setAnimationState("WalkingUp");
+			{
+				m_pShip->setAnimationState("WalkingDown");
+			}
+			if ((m_pShip->getTransform()->position.x < m_lastEnemyPosition.x) && !(m_pShip->getTransform()->position.y
+			> m_lastEnemyPosition.y + 2) && !(m_pShip->getTransform()->position.y
+				< m_lastEnemyPosition.y - 2))
+			{
+				m_pShip->setAnimationState("WalkingLeft");
+			}
+			if ((m_pShip->getTransform()->position.y < m_lastEnemyPosition.y))
+			{
+				m_pShip->setAnimationState("WalkingUp");
+			}
 		}
 	}
 
@@ -146,25 +150,28 @@ void PlayScene::update()
 			m_pShip->getRigidBody()->isColliding == true;
 			std::cout << "Enemy collision with obstacle\n";
 			m_pShip->setCurrentAction("Stopped");
-			if (m_randomSwitch == 0)
+			//if (m_randomSwitch == 0)
 				m_pShip->turnRight();
-			else if (m_randomSwitch == 1)
-				m_pShip->turnLeft();
+			//else if (m_randomSwitch == 1)
+				//m_pShip->turnLeft();
 		}
 	}
-	for each (auto & Tile in m_pGrid)
-	{
-		if (Tile->getTileStatus() == IMPASSABLE)
+	if (m_pShip->getCurrentAction() == "Wander") // no need to check collission with impassable border tiles
+	{											// while on patrol path as enemy will turn on it's own
+		for each (auto & Tile in m_pGrid)
 		{
-			if (CollisionManager::lineRectCheck(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, Tile->getTransform()->position, Tile->getWidth(), Tile->getHeight()))
+			if (Tile->getTileStatus() == IMPASSABLE)
 			{
-				m_pShip->getRigidBody()->isColliding == true;
-				std::cout << "Enemy collision with obstacle\n";
-				m_pShip->setCurrentAction("Stopped");
-				if (m_randomSwitch == 0)
+				if (CollisionManager::lineRectCheck(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, Tile->getTransform()->position, Tile->getWidth(), Tile->getHeight()))
+				{
+					m_pShip->getRigidBody()->isColliding == true;
+					std::cout << "Enemy collision with obstacle\n";
+					m_pShip->setCurrentAction("Stopped");
+					//if (m_randomSwitch == 0)
 					m_pShip->turnRight();
-				else if (m_randomSwitch == 1)
-					m_pShip->turnLeft();
+					//else if (m_randomSwitch == 1)
+						//m_pShip->turnLeft();
+				}
 			}
 		}
 	}
@@ -173,6 +180,21 @@ void PlayScene::update()
 		m_pShip->moveForward();
 		m_pShip->move();
 		m_pShip->setCurrentAction("Wandering");
+	}
+
+	if (m_pShip->getHealthBar().getHealthPoints() == 0 && m_pShip->getCurrentAction() != "Dead")
+	{
+		m_pShip->setCurrentAction("Dying");
+	}
+
+	if (m_pShip->getCurrentAction() == "Dying" && m_frameCounter % 40 == 0)
+	{
+		m_pShip->setCurrentAction("Dead");
+	}
+
+	if (m_pShip->getCurrentAction() == "Taking Damage" && m_frameCounter % 20 == 0)
+	{
+		m_pShip->setCurrentAction("Patrol");
 	}
 }
 
@@ -200,9 +222,15 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->changeSceneState(END_SCENE);
 	}
 
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_F))
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_pShip->getTakingDamage() == false)
 	{
-
+		damageActor(m_pShip);
+		m_pShip->flipTakingDamage();
+		//std::cout << "Enemy damaged, new health value: " << m_pShip->getHealthBar().getHealthPoints() << "\n";
+	}
+	if (EventManager::Instance().isKeyUp(SDL_SCANCODE_K) && m_pShip->getTakingDamage() == true)
+	{
+		m_pShip->flipTakingDamage();
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
@@ -248,7 +276,7 @@ void PlayScene::start()
 	m_pObstacle[3]->getTransform()->position = m_getTile(12, 11)->getTransform()->position;
 	addChild(m_pObstacle[3]);
 	
-	m_pObstacle[4]->getTransform()->position = m_getTile(15, 1)->getTransform()->position;
+	m_pObstacle[4]->getTransform()->position = m_getTile(15, 6)->getTransform()->position;
 	addChild(m_pObstacle[4]);
 
 	// added the target to the scene a goal
@@ -505,4 +533,27 @@ void PlayScene::m_buildGrid()
 	}
 
 	std::cout << m_pGrid.size() << std::endl;
+}
+
+void PlayScene::damageActor(Ship* actor)
+{
+	int newHealth = actor->getHealthBar().getHealthPoints() - 10;
+	actor->getHealthBar().setHealthPoints(newHealth);
+	if (actor->getAnimationState() == "WalkingDown")
+	{
+		actor->setAnimationState("FWSdamage");
+	}
+	else if (actor->getAnimationState() == "WalkingRight")
+	{
+		actor->setAnimationState("RWSdamage");
+	}
+	else if (actor->getAnimationState() == "WalkingLeft")
+	{
+		actor->setAnimationState("LWSdamage");
+	}
+	else if (actor->getAnimationState() == "WalkingUp")
+	{
+		actor->setAnimationState("BWSdamage");
+	}
+	actor->setCurrentAction("Taking Damage");
 }

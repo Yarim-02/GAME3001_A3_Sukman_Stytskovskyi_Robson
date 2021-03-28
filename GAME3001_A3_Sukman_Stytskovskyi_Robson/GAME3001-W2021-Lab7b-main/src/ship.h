@@ -31,10 +31,13 @@ public:
 	float getMaxSpeed() const;
 	std::string getAnimationState();
 	std::string getCurrentAction();
+	bool getTakingDamage();
+	HealthBar& getHealthBar();
 	
 	// setters
 	void setMaxSpeed(float newSpeed);
 	void flipDbg();
+	void flipTakingDamage();
 	void setAnimationState(std::string animationState);
 	void setCurrentAction(std::string currentAction);
 
@@ -46,15 +49,17 @@ private:
 	float m_turnRate;
 
 	bool m_dbgMode;
+	bool m_takingDamage = false;
 
 	std::string m_currentAction;
 	int m_frameCounter = 0;
-	int m_audioFrameCounter = 0;
+	int m_frameCounter2 = 0;
 	std::string m_animationState;
 
 	HealthBar m_healthBar;
 	glm::vec2 m_position;
 	SDL_Rect* m_healthBarDestRect;
+
 	
 };
 

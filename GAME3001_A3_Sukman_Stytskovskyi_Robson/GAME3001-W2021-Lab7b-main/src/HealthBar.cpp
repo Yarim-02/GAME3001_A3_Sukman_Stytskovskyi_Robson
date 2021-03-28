@@ -5,7 +5,7 @@
 
 HealthBar::HealthBar()
 {
-	
+	m_healthPoints = 100;
 }
 
 HealthBar::~HealthBar()
@@ -28,6 +28,11 @@ void HealthBar::clean()
 {
 }
 
+void HealthBar::setDest(SDL_Rect* dest)
+{
+	m_dest = dest;
+}
+
 int HealthBar::getHealthPoints()
 {
 	return m_healthPoints;
@@ -38,8 +43,5 @@ void HealthBar::setHealthPoints(int hp)
 	m_healthPoints = hp;
 }
 
-void HealthBar::setDest(SDL_Rect* dest)
-{
-	m_dest = dest;
-}
+
 

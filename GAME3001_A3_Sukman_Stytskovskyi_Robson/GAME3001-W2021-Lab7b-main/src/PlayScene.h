@@ -54,6 +54,8 @@ private:
 	std::vector<Tile*> m_pPatrolPath;
 	void m_buildGrid();
 
+	void damageActor(Ship* actor);
+
 	int m_frameCounter = 0;
 	int m_patrolPathPosition = 0;
 	glm::vec2 m_lastEnemyPosition;
