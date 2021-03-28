@@ -183,7 +183,12 @@
     <ClCompile Include="..\src\Bullet.h">
       <Filter>Game Objects</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Bullet.cpp" />
+    <ClCompile Include="..\src\HealthBar.cpp">
+      <Filter>Game Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Bullet.cpp">
+      <Filter>Game Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -377,6 +382,9 @@
     </ClInclude>
     <ClInclude Include="..\src\TreeNodeType.h">
       <Filter>Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\HealthBar.h">
+      <Filter>Game Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

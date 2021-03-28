@@ -12,10 +12,10 @@ class Tile : public NavigationObject
 public:
 	// Constructor
 	Tile();
-	
+
 	// Destructor
 	~Tile();
-	
+
 	// Life-Cycle Functions
 	void draw() override;
 	void update() override;
@@ -32,14 +32,14 @@ public:
 
 	void addLabels();
 	void setLabelsEnabled(bool state);
-	
+
 private:
 	float m_cost;
 	TileStatus m_status;
 
 	Label* m_costLabel;
 	Label* m_statusLabel;
-	
+
 	Tile* m_neighbours[NUM_OF_NEIGHBOUR_TILES];
 };
 

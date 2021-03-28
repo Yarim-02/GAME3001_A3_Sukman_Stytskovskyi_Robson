@@ -38,4 +38,4 @@ private:
 	float m_turnRate;
 	float m_accelerationRate;
 };
-#endif __BULLET__
+#endif // __BULLET__

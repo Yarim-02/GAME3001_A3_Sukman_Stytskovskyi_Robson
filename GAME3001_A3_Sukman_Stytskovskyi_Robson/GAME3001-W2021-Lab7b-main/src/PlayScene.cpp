@@ -7,6 +7,8 @@
 #include "imgui_sdl.h"
 #include "Renderer.h"
 #include "Util.h"
+#include "stdlib.h"
+#include "time.h"
 
 PlayScene::PlayScene()
 {
@@ -18,6 +20,45 @@ PlayScene::~PlayScene()
 
 void PlayScene::draw()
 {
+	
+	
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
+
+	for (int row = 0; row < Config::ROW_NUM; ++row)
+	{
+		for (int col = 0; col < Config::COL_NUM; ++col)
+		{
+			TextureManager::Instance()->load("../Assets/textures/grass.png", "grass");
+			TextureManager::Instance()->load("../Assets/textures/tree.png", "tree");
+			TextureManager::Instance()->load("../Assets/textures/log.png", "log");
+			TextureManager::Instance()->draw("grass", m_getTile(col, row)->getTransform()->position.x + offset.x, m_getTile(col, row)->getTransform()->position.y + offset.y, 0, 255, true);
+			if (m_getTile(col, row)->getNeighbourTile(TOP_TILE) == nullptr)
+			{
+				TextureManager::Instance()->draw("tree", m_getTile(col, row)->getTransform()->position.x + offset.x, m_getTile(col, row)->getTransform()->position.y + offset.y, 0, 255, true);
+				m_getTile(col, row)->setTileStatus(IMPASSABLE);
+			}
+			if (m_getTile(col, row)->getNeighbourTile(RIGHT_TILE) == nullptr)
+			{
+				TextureManager::Instance()->draw("tree", m_getTile(col, row)->getTransform()->position.x + offset.x, m_getTile(col, row)->getTransform()->position.y + offset.y, 0, 255, true);
+				m_getTile(col, row)->setTileStatus(IMPASSABLE);
+			}
+			if (m_getTile(col, row)->getNeighbourTile(LEFT_TILE) == nullptr)
+			{
+				TextureManager::Instance()->draw("tree", m_getTile(col, row)->getTransform()->position.x + offset.x, m_getTile(col, row)->getTransform()->position.y + offset.y, 0, 255, true);
+				m_getTile(col, row)->setTileStatus(IMPASSABLE);
+			}
+			if (m_getTile(col, row)->getNeighbourTile(BOTTOM_TILE) == nullptr)
+			{
+				TextureManager::Instance()->draw("log", m_getTile(col, row)->getTransform()->position.x + offset.x, m_getTile(col, row)->getTransform()->position.y + offset.y, 0, 255, true);
+				m_getTile(col, row)->setTileStatus(IMPASSABLE);
+			}
+		}
+	}
+
+
+	//Util::DrawLine(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, glm::vec4(1, 0, 1, 1));
+
+
 	if(EventManager::Instance().isIMGUIActive())
 	{
 		GUI_Function();	
@@ -25,15 +66,146 @@ void PlayScene::draw()
 
 	drawDisplayList();
 
+	
+
 	SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 255, 255, 255, 255);
+
 }
 
 void PlayScene::update()
 {
+	
+	srand(time(NULL));
+	m_randomSwitch = 0 + rand() % 2;
+
+	if (m_frameCounter % 5 == 0)
+	{
+		m_lastEnemyPosition = m_pShip->getTransform()->position;
+
+		/*int newHealth = (m_pShip->getHealthBar().getHealthPoints()) - 10;
+		m_pShip->getHealthBar().setHealthPoints(newHealth - 10);*/
+	}
+
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	updateDisplayList();
 
 	m_CheckShipLOS(m_pTarget);
 	m_CheckShipDR(m_pTarget);
+
+	if (m_pShip->getCurrentAction() == "Patrol")
+	{
+		m_pShip->setCurrentDirection(Util::normalize(glm::vec2((m_pPatrolPath[m_patrolPathPosition + 1]->
+			getTransform()->position.x + offset.x - m_pShip->getTransform()->position.x), (m_pPatrolPath[m_patrolPathPosition
+				+ 1]->getTransform()->position.y + offset.y - m_pShip->getTransform()->position.y))));
+
+
+		if (Util::distance(m_pShip->getTransform()->position, m_pPatrolPath[m_patrolPathPosition + 1]->getTransform()->position + offset) < 5.0f)
+		{
+			m_patrolPathPosition++;
+			std::cout << m_patrolPathPosition << std::endl;
+			std::cout << m_pShip->getCurrentDirection().x << ", " << m_pShip->getCurrentDirection().y;
+		}
+		if (m_patrolPathPosition == 3)
+		{
+			m_patrolPathPosition = -1;
+		}
+	}
+	if (m_pShip->getCurrentAction() == "Patrol" || m_pShip->getCurrentAction() == "Wandering" || m_pShip->getCurrentAction() == "Taking Damage")
+	{
+		m_pShip->moveForward();
+		m_pShip->move();
+		if (m_pShip->getCurrentAction() != "Taking Damage")
+		{
+			if ((m_pShip->getTransform()->position.x > m_lastEnemyPosition.x) && !(m_pShip->getTransform()->position.y
+		> m_lastEnemyPosition.y + 2) && !(m_pShip->getTransform()->position.y
+			< m_lastEnemyPosition.y - 2))
+			{
+				m_pShip->setAnimationState("WalkingRight");
+			}
+			if ((m_pShip->getTransform()->position.y > m_lastEnemyPosition.y) && !(m_pShip->getTransform()->position.x
+	> m_lastEnemyPosition.x + 2) && !(m_pShip->getTransform()->position.x
+		< m_lastEnemyPosition.x - 2))
+			{
+				m_pShip->setAnimationState("WalkingDown");
+			}
+			if ((m_pShip->getTransform()->position.x < m_lastEnemyPosition.x) && !(m_pShip->getTransform()->position.y
+			> m_lastEnemyPosition.y + 2) && !(m_pShip->getTransform()->position.y
+				< m_lastEnemyPosition.y - 2))
+			{
+				m_pShip->setAnimationState("WalkingLeft");
+			}
+			if ((m_pShip->getTransform()->position.y < m_lastEnemyPosition.y))
+			{
+				m_pShip->setAnimationState("WalkingUp");
+			}
+		}
+	}
+
+	std::cout << "------------------------" << std::endl;
+	std::cout << decisionTree->MakeDecision() << std::endl;
+	std::cout << "------------------------\n" << std::endl;
+
+	m_frameCounter++;
+	if (m_frameCounter > 1000)
+	{
+		m_frameCounter = 0;
+	}
+
+	for each (auto & Obstacle in m_pObstacle)
+	{
+		if (CollisionManager::lineRectCheck(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, Obstacle->getTransform()->position, Obstacle->getWidth(), Obstacle->getHeight()))
+		{
+			m_pShip->getRigidBody()->isColliding == true;
+			std::cout << "Enemy collision with obstacle\n";
+			m_pShip->setCurrentAction("Stopped");
+			//if (m_randomSwitch == 0)
+			m_pShip->turnRight();
+			//else if (m_randomSwitch == 1)
+				//m_pShip->turnLeft();
+		}
+	}
+	if (m_pShip->getCurrentAction() == "Wander") // no need to check collission with impassable border tiles
+	{											// while on patrol path as enemy will turn on it's own
+		for each (auto & Tile in m_pGrid)
+		{
+			if (Tile->getTileStatus() == IMPASSABLE)
+			{
+				if (CollisionManager::lineRectCheck(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, Tile->getTransform()->position, Tile->getWidth(), Tile->getHeight()))
+				{
+					m_pShip->getRigidBody()->isColliding == true;
+					std::cout << "Enemy collision with obstacle\n";
+					m_pShip->setCurrentAction("Stopped");
+					//if (m_randomSwitch == 0)
+					m_pShip->turnRight();
+					//else if (m_randomSwitch == 1)
+						//m_pShip->turnLeft();
+				}
+			}
+		}
+	}
+	if (m_pShip->getCurrentAction() == "Stopped")
+	{
+		m_pShip->moveForward();
+		m_pShip->move();
+		m_pShip->setCurrentAction("Wandering");
+	}
+
+	if (m_pShip->getHealthBar().getHealthPoints() == 0 && m_pShip->getCurrentAction() != "Dead")
+	{
+		m_pShip->setCurrentAction("Dying");
+	}
+
+	if (m_pShip->getCurrentAction() == "Dying" && m_frameCounter % 40 == 0)
+	{
+		m_pShip->setCurrentAction("Dead");
+	}
+
+	if (m_pShip->getCurrentAction() == "Taking Damage" && m_frameCounter % 20 == 0)
+	{
+		m_pShip->setCurrentAction("Patrol");
+	}
+
+	
 }
 
 void PlayScene::clean()
@@ -60,9 +232,15 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->changeSceneState(END_SCENE);
 	}
 
-	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_F))
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_pShip->getTakingDamage() == false)
 	{
-
+		damageActor(m_pShip);
+		m_pShip->flipTakingDamage();
+		//std::cout << "Enemy damaged, new health value: " << m_pShip->getHealthBar().getHealthPoints() << "\n";
+	}
+	if (EventManager::Instance().isKeyUp(SDL_SCANCODE_K) && m_pShip->getTakingDamage() == true)
+	{
+		m_pShip->flipTakingDamage();
 	}
 	
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
@@ -81,6 +259,9 @@ void PlayScene::handleEvents()
 
 void PlayScene::start()
 {
+	
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
+	//Build node grid for overlaying map
 	const SDL_Color orange = { 213,110,43, 205 };
 
 	std::string enemiesA = "Enemies left: ";
@@ -88,39 +269,55 @@ void PlayScene::start()
 
 	m_pGameStatus = new Label(enemiesA + std::to_string(m_enemiesAlive), "Teko", 30, orange, glm::vec2(158.f, 50.f));
 	m_pGameStatus->setParent(this);
-	addChild(m_pGameStatus, 3);
+	addChild(m_pGameStatus, 0);
 
 	m_pGameStatus = new Label(enemiesD + std::to_string(m_enemiesDead), "Teko", 30, orange, glm::vec2(120.f, 25.f));
 	m_pGameStatus->setParent(this);
-	addChild(m_pGameStatus, 3);
+	addChild(m_pGameStatus, 0);
+	
 
+	m_buildGrid();
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
 
 	// add the ship to the scene as a start point
 	m_pShip = new Ship();
-	m_pShip->getTransform()->position = glm::vec2(200.0f, 300.0f);
+	m_pShip->getTransform()->position = m_getTile(1, 1)->getTransform()->position + offset;
 	addChild(m_pShip, 2);
+	m_pShip->setAnimationState("WalkingDown");
+	m_pShip->setMaxSpeed(2.0f);
 
-	// add the Obstacle to the scene as a start point
-	m_pObstacle1 = new Obstacle();
-	m_pObstacle1->getTransform()->position = glm::vec2(400.0f, 300.0f);
-	addChild(m_pObstacle1);
+	for (int i = 0; i < 5; i++)
+	{
+		m_pObstacle.push_back(new Obstacle("Rock.png", "Rock"));
+	}
+	m_pObstacle[0]->getTransform()->position = m_getTile(9, 2)->getTransform()->position;
+	addChild(m_pObstacle[0]);
 
-	// add the Obstacle to the scene as a start point
-	m_pObstacle2 = new Obstacle();
-	m_pObstacle2->getTransform()->position = glm::vec2(400.0f, 100.0f);
-	addChild(m_pObstacle2);
+	m_pObstacle[1]->getTransform()->position = m_getTile(9, 7)->getTransform()->position;
+	addChild(m_pObstacle[1]);
 
-	// add the Obstacle to the scene as a start point
-	m_pObstacle3 = new Obstacle();
-	m_pObstacle3->getTransform()->position = glm::vec2(600.0f, 500.0f);
-	addChild(m_pObstacle3);
+	m_pObstacle[2]->getTransform()->position = m_getTile(14, 11)->getTransform()->position;
+	addChild(m_pObstacle[2]);
+
+	m_pObstacle[3]->getTransform()->position = m_getTile(12, 11)->getTransform()->position;
+	addChild(m_pObstacle[3]);
+
+	m_pObstacle[4]->getTransform()->position = m_getTile(15, 6)->getTransform()->position;
+	addChild(m_pObstacle[4]);
+
+	
 	
 	// added the target to the scene a goal
 	m_pTarget = new Target();
-	m_pTarget->getTransform()->position = glm::vec2(600.0f, 300.0f);
+	m_pTarget->getTransform()->position = m_getTile(16, 8)->getTransform()->position + offset;
 	addChild(m_pTarget);
+
+	// build patrol path list
+	m_pPatrolPath.push_back(m_getTile(1, 1));
+	m_pPatrolPath.push_back(m_getTile(18, 1));
+	m_pPatrolPath.push_back(m_getTile(18, 13));
+	m_pPatrolPath.push_back(m_getTile(1, 13));
 
 	// create a dummy DecisionTree
 	decisionTree = new DecisionTree();
@@ -173,6 +370,15 @@ void PlayScene::GUI_Function()
 		m_pTarget->getTransform()->position.y = targetPosition[1];
 	}
 	
+	ImGui::Separator();
+
+	static bool isGridEnabled = false;
+	if (ImGui::Checkbox("Grid Enabled", &isGridEnabled))
+	{
+		// toggle grid on/off
+		m_setGridEnabled(isGridEnabled);
+	}
+
 	ImGui::Separator();
 	
 	if (ImGui::Button("Start"))
@@ -253,4 +459,133 @@ void PlayScene::m_CheckShipDR(DisplayObject* target_object)
 		m_pShip->setInDR(hasDR);
 	}
 	else m_pShip->setInDR(false);
+}
+
+
+void PlayScene::m_setGridEnabled(bool state)
+{
+	for (auto tile : m_pGrid)
+	{
+		tile->setEnabled(state);
+		tile->setLabelsEnabled(state);
+	}
+
+	if (state == false)
+	{
+		SDL_RenderClear(Renderer::Instance()->getRenderer());
+	}
+
+	m_isGridEnabled = state;
+}
+
+bool PlayScene::m_getGridEnabled() const
+{
+	return m_isGridEnabled;
+}
+
+Tile* PlayScene::m_getTile(const int col, const int row)
+{
+	return m_pGrid[(row * Config::COL_NUM) + col];
+}
+
+Tile* PlayScene::m_getTile(const glm::vec2 grid_position)
+{
+	const auto col = grid_position.x;
+	const auto row = grid_position.y;
+	return m_pGrid[(row * Config::COL_NUM) + col];
+}
+
+
+void PlayScene::m_buildGrid()
+{
+	auto tileSize = Config::TILE_SIZE;
+
+	// add tiles to the grid
+	for (int row = 0; row < Config::ROW_NUM; ++row)
+	{
+		for (int col = 0; col < Config::COL_NUM; ++col)
+		{
+			Tile* tile = new Tile(); // create empty tile
+			tile->getTransform()->position = glm::vec2(col * tileSize, row * tileSize);
+			tile->setGridPosition(col, row);
+			addChild(tile);
+			tile->addLabels();
+			tile->setEnabled(false);
+			m_pGrid.push_back(tile);
+		}
+	}
+
+	// create references for each tile to its neighbours
+	for (int row = 0; row < Config::ROW_NUM; ++row)
+	{
+		for (int col = 0; col < Config::COL_NUM; ++col)
+		{
+			Tile* tile = m_getTile(col, row);
+
+			// Topmost row
+			if (row == 0)
+			{
+				tile->setNeighbourTile(TOP_TILE, nullptr);
+			}
+			else
+			{
+				tile->setNeighbourTile(TOP_TILE, m_getTile(col, row - 1));
+			}
+
+			// rightmost column
+			if (col == Config::COL_NUM - 1)
+			{
+				tile->setNeighbourTile(RIGHT_TILE, nullptr);
+			}
+			else
+			{
+				tile->setNeighbourTile(RIGHT_TILE, m_getTile(col + 1, row));
+			}
+
+			// bottommost row
+			if (row == Config::ROW_NUM - 1)
+			{
+				tile->setNeighbourTile(BOTTOM_TILE, nullptr);
+			}
+			else
+			{
+				tile->setNeighbourTile(BOTTOM_TILE, m_getTile(col, row + 1));
+			}
+
+			// leftmost  column
+			if (col == 0)
+			{
+				tile->setNeighbourTile(LEFT_TILE, nullptr);
+			}
+			else
+			{
+				tile->setNeighbourTile(LEFT_TILE, m_getTile(col - 1, row));
+			}
+		}
+	}
+
+	std::cout << m_pGrid.size() << std::endl;
+}
+
+void PlayScene::damageActor(Ship* actor)
+{
+	int newHealth = actor->getHealthBar().getHealthPoints() - 10;
+	actor->getHealthBar().setHealthPoints(newHealth);
+	if (actor->getAnimationState() == "WalkingDown")
+	{
+		actor->setAnimationState("FWSdamage");
+	}
+	else if (actor->getAnimationState() == "WalkingRight")
+	{
+		actor->setAnimationState("RWSdamage");
+	}
+	else if (actor->getAnimationState() == "WalkingLeft")
+	{
+		actor->setAnimationState("LWSdamage");
+	}
+	else if (actor->getAnimationState() == "WalkingUp")
+	{
+		actor->setAnimationState("BWSdamage");
+	}
+	actor->setCurrentAction("Taking Damage");
 }

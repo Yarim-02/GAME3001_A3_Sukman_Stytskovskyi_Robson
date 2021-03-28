@@ -26,8 +26,7 @@ Bullet::Bullet(glm::vec2 position, glm::vec2 direction)
 }
 
 Bullet::~Bullet()
-{
-}
+= default;
 
 void Bullet::draw()
 {
@@ -57,6 +56,16 @@ void Bullet::setDestination(const glm::vec2 destination)
 void Bullet::setMaxSpeed(const float speed)
 {
 	m_maxSpeed = speed;
+}
+
+glm::vec2 Bullet::getOrientation() const
+{
+	return m_orientation;
+}
+
+void Bullet::setOrientation(const glm::vec2 orientation)
+{
+	m_orientation = orientation;
 }
 
 float Bullet::getTurnRate() const
@@ -98,15 +107,7 @@ float Bullet::getRotation() const
 	return m_rotationAngle;
 }
 
-glm::vec2 Bullet::getOrientation() const
-{
-	return m_orientation;
-}
 
-void Bullet::setOrientation(const glm::vec2 orientation)
-{
-	m_orientation = orientation;
-}
 
 void Bullet::clean()
 {

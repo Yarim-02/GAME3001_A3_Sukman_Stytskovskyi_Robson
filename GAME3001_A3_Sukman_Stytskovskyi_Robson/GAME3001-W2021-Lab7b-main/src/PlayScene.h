@@ -10,6 +10,7 @@
 #include "ship.h"
 #include "SpaceShip.h"
 #include "Target.h"
+#include "Tile.h"
 #include "Bullet.h"
 
 class PlayScene : public Scene
@@ -25,7 +26,7 @@ public:
 	virtual void handleEvents() override;
 	virtual void start() override;
 
-	
+
 
 private:
 	// IMGUI Function
@@ -37,7 +38,7 @@ private:
 	Target* m_pTarget;
 	Ship* m_pShip;
 	Bullet* m_pBullet;
-	Obstacle* m_pObstacle1;
+	std::vector<Obstacle*> m_pObstacle;
 	Obstacle* m_pObstacle2;
 	Obstacle* m_pObstacle3;
 	void m_CheckShipLOS(DisplayObject* object);
@@ -48,6 +49,25 @@ private:
 	Label* m_pGameStatus;
 	int m_enemiesAlive,
 		m_enemiesDead;
+
+	//Tile Stuff
+	std::vector<Tile*> m_pGrid;
+	std::vector<Tile*> m_pPatrolPath;
+
+	void m_setGridEnabled(bool state);
+	bool m_getGridEnabled() const;
+	Tile* m_getTile(int col, int row);
+	Tile* m_getTile(glm::vec2 grid_position);
+
+	void m_buildGrid();
+
+	void damageActor(Ship* actor);
+
+	int m_frameCounter = 0;
+	bool m_randomSwitch = 0;
+	int m_patrolPathPosition = 0;
+
+	glm::vec2 m_lastEnemyPosition;
 };
 
 
