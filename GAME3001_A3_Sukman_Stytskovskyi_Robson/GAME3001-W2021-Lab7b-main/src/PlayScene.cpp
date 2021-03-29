@@ -385,11 +385,6 @@ void PlayScene::handleEvents()
 
 		m_pShip->flipDbg();
 
-		if (m_getGridEnabled() == false)
-			m_setGridEnabled(true);
-		else
-			m_setGridEnabled(false);
-
 				
 		for (int i = 0; i < m_pObstacle.size(); i++)
 			m_pObstacle[i]->flipDbg();
