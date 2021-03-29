@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "GameObject.h"
+#include "Gunner.h"
 #include "ship.h"
 #include <GLM/gtx/norm.hpp>
 #include "SoundManager.h"
@@ -17,6 +18,8 @@ public:
 	static bool squaredRadiusCheck(GameObject* object1, GameObject* object2);
 
 	static bool AABBCheck(GameObject* object1, GameObject* object2);
+
+	static bool ObstacleColCheck(Gunner* object1, GameObject* object2);
 
 	static bool lineLineCheck(glm::vec2 line1_start, glm::vec2 line1_end, glm::vec2 line2_start, glm::vec2 line2_end);
 
