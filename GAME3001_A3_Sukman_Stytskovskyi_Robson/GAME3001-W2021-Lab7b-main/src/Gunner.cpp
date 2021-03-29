@@ -73,6 +73,7 @@ void Gunner::draw()
 		Util::DrawCircle(getTransform()->position, getDetectionRadius(), getDRColour());
 	}
 	
+	//m_healthBar.draw();
 }
 
 
@@ -95,7 +96,7 @@ void Gunner::update()
 	m_healthBarDestRect->w = m_healthBar.getHealthPoints();
 	m_healthBar.setDest(m_healthBarDestRect);
 
-	m_healthBar.draw();
+	//m_healthBar.draw();
 }
 
 void Gunner::clean()

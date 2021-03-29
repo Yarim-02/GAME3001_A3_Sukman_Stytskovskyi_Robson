@@ -118,7 +118,7 @@ void PlayScene::update()
 	//Bullet and Enemy collision
 	for (int i = 0; i < m_pBullet.size(); i++)
 	{
-		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pShip))
+		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pShip) && !skeletonDead)
 		{
 			damageActor(m_pShip);
 			m_pShip->flipTakingDamage();
@@ -128,7 +128,7 @@ void PlayScene::update()
 	//Melee and Enemy collision
 	for (int i = 0; i < m_pMelee.size(); i++)
 	{
-		if (CollisionManager::circleAABBCheck(m_pMelee[i], m_pShip))
+		if (CollisionManager::circleAABBCheck(m_pMelee[i], m_pShip) && !skeletonDead)
 		{
 			damageActor(m_pShip);
 			m_pShip->flipTakingDamage();
@@ -138,7 +138,9 @@ void PlayScene::update()
 	//Enemy death
 		if (m_pShip->getHealthBar().getHealthPoints() <= 0)
 		{
-			m_pShip->setEnabled(false);
+			m_pShip->setCurrentAction("Dying");
+
+			//m_pShip->setEnabled(false);
 
 			m_enemiesAlive = 0;
 			m_enemiesDead = 1;
@@ -162,6 +164,8 @@ void PlayScene::update()
 
 			for (int i = 0; i < m_pGameStatus.size(); i++)
 				addChild(m_pGameStatus[i]);
+
+			skeletonDead = true;
 		}
 
 	if (m_frameCounter % 5 == 0)
@@ -394,7 +398,7 @@ void PlayScene::handleEvents()
 	}
 
 
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_dbgMode && m_PressCounter >= 6)
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_dbgMode && m_PressCounter >= 6 && !skeletonDead)
 	{
 		damageActor(m_pShip);
 		m_pShip->flipTakingDamage();

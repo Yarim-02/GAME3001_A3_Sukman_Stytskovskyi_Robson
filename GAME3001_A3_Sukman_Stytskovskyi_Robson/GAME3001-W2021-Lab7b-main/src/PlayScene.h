@@ -58,7 +58,8 @@ private:
 	 m_BulletCounter,
 	 m_PressCounter;
 
-	bool m_dbgMode;
+	bool m_dbgMode,
+		skeletonDead;
 
 	//Tile Stuff
 	std::vector<Tile*> m_pGrid;
