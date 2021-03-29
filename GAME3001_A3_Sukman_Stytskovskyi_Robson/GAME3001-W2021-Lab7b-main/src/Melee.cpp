@@ -5,9 +5,9 @@
 
 Melee::Melee(glm::vec2 position, glm::vec2 direction)
 {
-	TextureManager::Instance()->load("../Assets/textures/bullet.png", "bullet");
+	TextureManager::Instance()->load("../Assets/textures/Knife.png", "knife");
 
-	auto size = TextureManager::Instance()->getTextureSize("bullet");
+	auto size = TextureManager::Instance()->getTextureSize("knife");
 	setWidth(size.x);
 	setHeight(size.y);
 
@@ -30,7 +30,7 @@ Melee::~Melee()
 
 void Melee::draw()
 {
-	TextureManager::Instance()->draw("bullet", getTransform()->position.x, getTransform()->position.y);
+	TextureManager::Instance()->draw("knife", getTransform()->position.x, getTransform()->position.y);
 }
 
 void Melee::update()
