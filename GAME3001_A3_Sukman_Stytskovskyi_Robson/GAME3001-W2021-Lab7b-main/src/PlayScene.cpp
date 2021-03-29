@@ -110,6 +110,11 @@ void PlayScene::update()
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	updateDisplayList();
 
+	for (int i = 0; i < 5; i++)
+	{
+		CollisionManager::ObstacleColCheck(m_pPlayer, m_pObstacle[i]);
+	}
+
 	SDL_GetMouseState(&mouseX, &mouseY);
 
 	m_pPlayer->setDestination(glm::vec2(mouseX, mouseY));
@@ -291,6 +296,7 @@ void PlayScene::handleEvents()
 
 		m_BulletCounter = 0;
 		m_PressCounter = 0;
+		SoundManager::Instance().playSound("shoot_sound", 0, 1);
 	}
 	
 	if(EventManager::Instance().getMouseButton(2) && m_PressCounter >= 6 && m_MeleeCounter >= 12)
@@ -361,6 +367,9 @@ void PlayScene::start()
 	m_pGameStatus = new Label(enemiesD + std::to_string(m_enemiesDead), "Teko", 30, white, glm::vec2(140.f, 50.f));
 	m_pGameStatus->setParent(this);
 	addChild(m_pGameStatus, 0);
+
+	SoundManager::Instance().load("../Assets/audio/Music.mp3", "bkgMusic", SOUND_MUSIC);
+	SoundManager::Instance().load("../Assets/audio/Gunshot.wav", "shoot_sound", SOUND_SFX);
 	
 
 	m_buildGrid();
@@ -418,6 +427,7 @@ void PlayScene::start()
 	std::cout << "------------------------" << std::endl;
 	std::cout << decisionTree->MakeDecision() << std::endl;
 	std::cout << "------------------------\n" << std::endl;
+	SoundManager::Instance().playMusic("bkgMusic", -1, 0);
 
 }
 
