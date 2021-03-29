@@ -4,7 +4,7 @@
 
 #include "TextureManager.h"
 #include <glm/vec4.hpp>
-
+#include "HealthBar.h"
 #include "Agent.h"
 
 class Gunner final : public Agent
@@ -29,6 +29,7 @@ public:
 	float getMaxSpeed() const;
 	glm::vec2 getOrientation() const;
 	float getRotation();
+	HealthBar& getHealthBar();
 
 	// setters
 	void setMaxSpeed(float newSpeed);
@@ -56,6 +57,9 @@ private:
 	int m_frameCounter;
 
 	void m_Turn();
+
+	HealthBar m_healthBar;
+	SDL_Rect* m_healthBarDestRect;
 };
 
 

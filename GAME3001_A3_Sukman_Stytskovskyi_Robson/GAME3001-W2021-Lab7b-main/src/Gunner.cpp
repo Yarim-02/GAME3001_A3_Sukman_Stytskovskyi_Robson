@@ -32,6 +32,13 @@ Gunner::Gunner() : m_maxSpeed(10.0f)
 	setDRColour((glm::vec4(1, 0, 0, 1)));
 
 	m_dbgMode = false;
+
+	m_healthBarDestRect = new SDL_Rect;
+	m_healthBarDestRect->x = getTransform()->position.x + (size.x / 2) - 67.5f;
+	m_healthBarDestRect->y = getTransform()->position.y - (size.y / 1.5);
+	m_healthBarDestRect->h = 4;
+	m_healthBarDestRect->w = m_healthBar.getHealthPoints();
+	m_healthBar.setDest(m_healthBarDestRect);
 }
 
 
@@ -40,6 +47,7 @@ Gunner::~Gunner()
 
 void Gunner::draw()
 {
+	
 	// alias for x and y
 	const auto x = getTransform()->position.x;
 	const auto y = getTransform()->position.y;
@@ -64,11 +72,13 @@ void Gunner::draw()
 		// draw Detection Radius
 		Util::DrawCircle(getTransform()->position, getDetectionRadius(), getDRColour());
 	}
+	
 }
 
 
 void Gunner::update()
 {
+	auto size = TextureManager::Instance()->getTextureSize("player_walking1");
 	/*move();
 	m_checkBounds();*/
 
@@ -79,7 +89,13 @@ void Gunner::update()
 	if (m_frameCounter >= 1000)
 		m_frameCounter = 0;
 
+	m_healthBarDestRect->x = getTransform()->position.x + (size.x / 2) - 67.5f;
+	m_healthBarDestRect->y = getTransform()->position.y - (size.y / 1.5);
+	m_healthBarDestRect->h = 4;
+	m_healthBarDestRect->w = m_healthBar.getHealthPoints();
+	m_healthBar.setDest(m_healthBarDestRect);
 
+	m_healthBar.draw();
 }
 
 void Gunner::clean()
@@ -135,6 +151,11 @@ void Gunner::setAnimating(bool state)
 glm::vec2 Gunner::getOrientation() const
 {
 	return m_orientation;
+}
+
+HealthBar& Gunner::getHealthBar()
+{
+	return m_healthBar;
 }
 
 void Gunner::setRotation(float angle)
