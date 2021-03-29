@@ -374,6 +374,8 @@ void PlayScene::handleEvents()
 
 		m_MeleeCounter = 0;
 		m_PressCounter = 0;
+
+		SoundManager::Instance().playSound("knife_sound", 0, 1);
 	}
 
 	// Toggles Debug Mode
@@ -437,6 +439,7 @@ void PlayScene::start()
 
 	SoundManager::Instance().load("../Assets/audio/Music.mp3", "bkgMusic", SOUND_MUSIC);
 	SoundManager::Instance().load("../Assets/audio/Gunshot.wav", "shoot_sound", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/Knife.wav", "knife_sound", SOUND_SFX);
 	SoundManager::Instance().setMusicVolume(30);
 	SoundManager::Instance().playMusic("bkgMusic", -1, 0);
 
