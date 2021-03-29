@@ -36,7 +36,6 @@ void Label::update()
 
 void Label::clean()
 {
-
 }
 
 void Label::setText(const std::string& new_text)

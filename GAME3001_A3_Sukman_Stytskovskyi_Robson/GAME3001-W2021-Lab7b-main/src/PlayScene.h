@@ -50,7 +50,7 @@ private:
 
 	DecisionTree* decisionTree;
 
-	Label* m_pGameStatus;
+	std::vector<Label*> m_pGameStatus;
 	int m_enemiesAlive,
 		m_enemiesDead;
 
