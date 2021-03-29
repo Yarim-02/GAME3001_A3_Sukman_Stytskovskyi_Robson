@@ -384,11 +384,11 @@ void PlayScene::handleEvents()
 
 		m_PressCounter = 0;
 
-		//m_setGridEnabled(!m_getGridEnabled());
+		m_setGridEnabled(!m_getGridEnabled());
 	}
 
 
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_pShip->getTakingDamage() == false && m_dbgMode && m_PressCounter >= 6)
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_dbgMode && m_PressCounter >= 6)
 	{
 		damageActor(m_pShip);
 		m_pShip->flipTakingDamage();
