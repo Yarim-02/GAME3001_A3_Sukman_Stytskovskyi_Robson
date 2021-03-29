@@ -378,7 +378,13 @@ void PlayScene::handleEvents()
 		m_dbgMode = !m_dbgMode;
 
 		m_pShip->flipDbg();
-		
+
+		if (m_getGridEnabled() == false)
+			m_setGridEnabled(true);
+		else
+			m_setGridEnabled(false);
+
+				
 		for (int i = 0; i < m_pObstacle.size(); i++)
 			m_pObstacle[i]->flipDbg();
 
@@ -414,6 +420,8 @@ void PlayScene::start()
 	const SDL_Color orange = { 213,110,43, 205 };
 	const SDL_Color white = { 255,255,255, 205 };
 
+	SoundManager::Instance().load("../Assets/audio/uhh.ogg", "skeleton_damaged", SOUND_SFX);
+	
 	std::string enemiesA = "Enemies left: ";
 	std::string enemiesD = "Enemies eliminated: ";
 
@@ -425,7 +433,7 @@ void PlayScene::start()
 
 	SoundManager::Instance().load("../Assets/audio/Music.mp3", "bkgMusic", SOUND_MUSIC);
 	SoundManager::Instance().load("../Assets/audio/Gunshot.wav", "shoot_sound", SOUND_SFX);
-
+	SoundManager::Instance().setMusicVolume(30);
 	SoundManager::Instance().playMusic("bkgMusic", -1, 0);
 
 	m_PressCounter = 0;
@@ -472,9 +480,9 @@ void PlayScene::start()
 	
 	
 	// added the target to the scene a goal
-	m_pTarget = new Target();
+	/*m_pTarget = new Target();
 	m_pTarget->getTransform()->position = m_getTile(16, 8)->getTransform()->position + offset;
-	addChild(m_pTarget);
+	addChild(m_pTarget);*/
 
 	// build patrol path list
 	m_pPatrolPath.push_back(m_getTile(1, 1));
@@ -738,4 +746,6 @@ void PlayScene::damageActor(Ship* actor)
 		actor->setAnimationState("BWSdamage");
 	}
 	actor->setCurrentAction("Taking Damage");
+	
+	SoundManager::Instance().playSound("skeleton_damaged", 0, -1);
 }

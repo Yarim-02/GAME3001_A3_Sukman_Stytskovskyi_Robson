@@ -1,2 +1,2 @@
-PlatformToolSet=v142:VCToolArchitecture=Native32Bit:VCToolsVersion=14.28.29910:TargetPlatformVersion=10.0.18362.0:
-Debug|Win32|H:\George Brown College\VS Projects\SEM 2\GAME 3001 - W2021 - NikolaiStytskovksyi\GAME3001_A3_Sukman_Stytskovskyi_Robson\GAME3001_A3_Sukman_Stytskovskyi_Robson\GAME3001-W2021-Lab7b-main\|
+#TargetFrameworkVersion=v4.0:PlatformToolSet=v142:EnableManagedIncrementalBuild=false:VCToolArchitecture=Native32Bit:WindowsTargetPlatformVersion=10.0
+Debug|Win32|C:\Users\User\Desktop\Artificial Intelligence\GAME3001_A3_Sukman_Stytskovskyi_Robson\GAME3001_A3_Sukman_Stytskovskyi_Robson\GAME3001-W2021-Lab7b-main\|
