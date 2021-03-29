@@ -12,6 +12,7 @@
 #include "Target.h"
 #include "Tile.h"
 #include "Bullet.h"
+#include "Melee.h"
 #include "Gunner.h"
 
 class PlayScene : public Scene
@@ -39,7 +40,8 @@ private:
 	Target* m_pTarget;
 	Ship* m_pShip;
 	Gunner* m_pPlayer;
-	Bullet* m_pBullet;
+	std::vector<Bullet*> m_pBullet;
+	std::vector <Melee*> m_pMelee;
 	std::vector<Obstacle*> m_pObstacle;
 	Obstacle* m_pObstacle2;
 	Obstacle* m_pObstacle3;
@@ -51,6 +53,10 @@ private:
 	Label* m_pGameStatus;
 	int m_enemiesAlive,
 		m_enemiesDead;
+
+	int m_MeleeCounter,
+	 m_BulletCounter,
+	 m_PressCounter;
 
 	bool m_dbgMode;
 

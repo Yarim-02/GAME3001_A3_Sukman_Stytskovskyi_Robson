@@ -36,21 +36,25 @@ void PlayScene::draw()
 			{
 				TextureManager::Instance()->draw("tree", m_getTile(col, row)->getTransform()->position.x + offset.x, m_getTile(col, row)->getTransform()->position.y + offset.y, 0, 255, true);
 				m_getTile(col, row)->setTileStatus(IMPASSABLE);
+				m_getTile(col, row)->setType(OBSTACLE_TILE);
 			}
 			if (m_getTile(col, row)->getNeighbourTile(RIGHT_TILE) == nullptr)
 			{
 				TextureManager::Instance()->draw("tree", m_getTile(col, row)->getTransform()->position.x + offset.x, m_getTile(col, row)->getTransform()->position.y + offset.y, 0, 255, true);
 				m_getTile(col, row)->setTileStatus(IMPASSABLE);
+				m_getTile(col, row)->setType(OBSTACLE_TILE);
 			}
 			if (m_getTile(col, row)->getNeighbourTile(LEFT_TILE) == nullptr)
 			{
 				TextureManager::Instance()->draw("tree", m_getTile(col, row)->getTransform()->position.x + offset.x, m_getTile(col, row)->getTransform()->position.y + offset.y, 0, 255, true);
 				m_getTile(col, row)->setTileStatus(IMPASSABLE);
+				m_getTile(col, row)->setType(OBSTACLE_TILE);
 			}
 			if (m_getTile(col, row)->getNeighbourTile(BOTTOM_TILE) == nullptr)
 			{
 				TextureManager::Instance()->draw("log", m_getTile(col, row)->getTransform()->position.x + offset.x, m_getTile(col, row)->getTransform()->position.y + offset.y, 0, 255, true);
 				m_getTile(col, row)->setTileStatus(IMPASSABLE);
+				m_getTile(col, row)->setType(OBSTACLE_TILE);
 			}
 		}
 	}
@@ -77,6 +81,23 @@ void PlayScene::update()
 	
 	srand(time(NULL));
 	m_randomSwitch = 0 + rand() % 2;
+
+	//for normal KeyPresses
+	if (m_PressCounter != 6)
+			m_PressCounter++;
+
+	//for melee attacks
+	m_MeleeCounter++;
+	if (m_MeleeCounter >= 12 && !m_pMelee.empty())
+	{
+		for (int i = 0; i < m_pMelee.size(); i++)
+		{
+			removeChild(m_pMelee[i]);
+			m_pMelee[i] = nullptr;
+			m_pMelee.erase(m_pMelee.begin() + i);
+			m_pMelee.shrink_to_fit();
+		}
+	}
 
 	if (m_frameCounter % 5 == 0)
 	{
@@ -261,41 +282,70 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->changeSceneState(END_SCENE);
 	}
 
-	if(EventManager::Instance().getMouseButton(0))
+	if(EventManager::Instance().getMouseButton(0) && m_PressCounter >= 6)
 	{
-		m_pBullet = new Bullet(m_pPlayer->getTransform()->position, glm::vec2(mouseX, mouseY));
-		addChild(m_pBullet, 3);
+		m_pBullet.push_back(new Bullet(m_pPlayer->getTransform()->position, glm::vec2(mouseX, mouseY)));
+
+		for (int i = 0; i < m_pBullet.size(); i++)
+			addChild(m_pBullet[i]);
+
+		m_BulletCounter = 0;
+		m_PressCounter = 0;
+	}
+	
+	if(EventManager::Instance().getMouseButton(2) && m_PressCounter >= 6 && m_MeleeCounter >= 12)
+	{
+		m_pMelee.push_back(new Melee(m_pPlayer->getTransform()->position + m_pPlayer->getOrientation() + 
+			glm::vec2(m_pPlayer->getWidth() * 0.5f, m_pPlayer->getHeight() * 0.5f), glm::vec2(mouseX, mouseY)));
+
+		for (int i = 0; i < m_pMelee.size(); i++)
+			addChild(m_pMelee[i]);
+
+		m_MeleeCounter = 0;
+		m_PressCounter = 0;
 	}
 
 	// Toggles Debug Mode
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_H))
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_H) && m_PressCounter >= 6)
 	{
 		m_dbgMode = !m_dbgMode;
 
 		m_pShip->flipDbg();
+		
+		for (int i = 0; i < m_pObstacle.size(); i++)
+			m_pObstacle[i]->flipDbg();
+
+		m_PressCounter = 0;
+
+		//m_setGridEnabled(!m_getGridEnabled());
 	}
 
 
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_pShip->getTakingDamage() == false && m_dbgMode)
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_pShip->getTakingDamage() == false && m_dbgMode && m_PressCounter >= 6)
 	{
 		damageActor(m_pShip);
 		m_pShip->flipTakingDamage();
 		//std::cout << "Enemy damaged, new health value: " << m_pShip->getHealthBar().getHealthPoints() << "\n";
+
+		m_PressCounter = 0;
 	}
 
 
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_P) && m_dbgMode)
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_P) && m_dbgMode && m_PressCounter >= 6)
 	{
 		if(m_pShip->getCurrentAction() == "Patrol")
 			m_pShip->setCurrentAction("Idle");
 		else if(m_pShip->getCurrentAction() == "Idle")
 			m_pShip->setCurrentAction("Patrol");
+
+		m_PressCounter = 0;
 	}
 }
 
 void PlayScene::start()
 {
-	
+	m_PressCounter = 0;
+
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	//Build node grid for overlaying map
 	const SDL_Color orange = { 213,110,43, 205 };
@@ -460,7 +510,7 @@ void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
 
 			if (ShipToObjectDistance <= ShipToTargetDistance)
 			{
-				if ((object->getType() != m_pShip->getType()) && (object->getType() != target_object->getType()))
+				if (object->getType() == OBSTACLE_TILE || object->getType() == OBSTACLE) //(object->getType() != TILE) && (object->getType() != m_pShip->getType()) && (object->getType() != target_object->getType()))
 				{
 					contactList.push_back(object);
 				}

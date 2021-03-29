@@ -1,6 +1,7 @@
 #include "Obstacle.h"
 
 
+#include "Util.h"
 #include "SoundManager.h"
 #include "TextureManager.h"
 
@@ -18,6 +19,8 @@ Obstacle::Obstacle(std::string fileNameAndType, std::string fileName)
 	setType(OBSTACLE);
 	getRigidBody()->isColliding = false;
 
+	m_dbgMode = false;
+
 	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
 }
 
@@ -28,6 +31,9 @@ void Obstacle::draw()
 {
 	TextureManager::Instance()->draw(m_fileName,
 		getTransform()->position.x, getTransform()->position.y, 0, 255, false);
+
+	if (m_dbgMode)
+		Util::DrawRect(getTransform()->position, getWidth(), getHeight(), glm::vec4(255, 0, 0, 255));
 }
 
 void Obstacle::update()
@@ -36,4 +42,9 @@ void Obstacle::update()
 
 void Obstacle::clean()
 {
+}
+
+void Obstacle::flipDbg()
+{
+	m_dbgMode = !m_dbgMode;
 }

@@ -1,9 +1,9 @@
-#include "Bullet.h"
+#include "Melee.h"
 #include "Game.h"
 #include "Util.h"
 #include "TextureManager.h"
 
-Bullet::Bullet(glm::vec2 position, glm::vec2 direction)
+Melee::Melee(glm::vec2 position, glm::vec2 direction)
 {
 	TextureManager::Instance()->load("../Assets/textures/bullet.png", "bullet");
 
@@ -18,22 +18,22 @@ Bullet::Bullet(glm::vec2 position, glm::vec2 direction)
 
 	setOrientation(direction);
 	setRotation(Util::signedAngle(getOrientation(), m_targetDirection));
-	setMaxSpeed(15.0f);
-	setAccelerationRate(15.0f);
+	setMaxSpeed(5.0f);
+	setAccelerationRate(5.0f);
 	setTurnRate(10.0f);
 
 	setOrientation(m_destination - getTransform()->position);// muy importanto, amigos!
 }
 
-Bullet::~Bullet()
+Melee::~Melee()
 = default;
 
-void Bullet::draw()
+void Melee::draw()
 {
 	TextureManager::Instance()->draw("bullet", getTransform()->position.x, getTransform()->position.y);
 }
 
-void Bullet::update()
+void Melee::update()
 {
 	auto deltaTime = TheGame::Instance()->getDeltaTime();
 	
@@ -48,37 +48,37 @@ void Bullet::update()
 	getTransform()->position += getRigidBody()->velocity;
 }
 
-void Bullet::setDestination(const glm::vec2 destination)
+void Melee::setDestination(const glm::vec2 destination)
 {
 	m_destination = destination;
 }
 
-void Bullet::setMaxSpeed(const float speed)
+void Melee::setMaxSpeed(const float speed)
 {
 	m_maxSpeed = speed;
 }
 
-glm::vec2 Bullet::getOrientation() const
+glm::vec2 Melee::getOrientation() const
 {
 	return m_orientation;
 }
 
-void Bullet::setOrientation(const glm::vec2 orientation)
+void Melee::setOrientation(const glm::vec2 orientation)
 {
 	m_orientation = orientation;
 }
 
-float Bullet::getTurnRate() const
+float Melee::getTurnRate() const
 {
 	return m_turnRate;
 }
 
-void Bullet::setTurnRate(const float rate)
+void Melee::setTurnRate(const float rate)
 {
 	m_turnRate = rate;
 }
 
-void Bullet::setRotation(const float angle)
+void Melee::setRotation(const float angle)
 {
 	m_rotationAngle = angle;
 
@@ -92,23 +92,23 @@ void Bullet::setRotation(const float angle)
 	setOrientation(glm::vec2(x, y));
 }
 
-float Bullet::getAccelerationRate() const
+float Melee::getAccelerationRate() const
 {
 	return m_accelerationRate;
 }
 
-void Bullet::setAccelerationRate(const float rate)
+void Melee::setAccelerationRate(const float rate)
 {
 	m_accelerationRate = rate;
 }
 
-float Bullet::getRotation() const
+float Melee::getRotation() const
 {
 	return m_rotationAngle;
 }
 
 
 
-void Bullet::clean()
+void Melee::clean()
 {
 }

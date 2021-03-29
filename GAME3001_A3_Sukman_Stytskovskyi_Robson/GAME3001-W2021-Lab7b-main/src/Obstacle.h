@@ -16,8 +16,11 @@ public:
 	void draw() override;
 	void update() override;
 	void clean() override;
+
+	void flipDbg();
 private:
 	std::string m_fileName;
+	bool m_dbgMode;
 
 };
 

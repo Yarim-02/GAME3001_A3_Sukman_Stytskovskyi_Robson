@@ -11,6 +11,8 @@ Tile::Tile() :m_cost(0.0f)
 {
 	setWidth(Config::TILE_SIZE);
 	setHeight(Config::TILE_SIZE);
+
+	setType(TILE);
 }
 
 Tile::~Tile()

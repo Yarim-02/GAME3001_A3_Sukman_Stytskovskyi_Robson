@@ -47,14 +47,14 @@ void Gunner::draw()
 	// draw the ship
 	if (!m_isAnimating)
 	{
-		TextureManager::Instance()->draw("player_walking1", x, y, m_rotationAngle, 255, true);
+		TextureManager::Instance()->draw("player_walking1", x, y, m_rotationAngle, 255, false);
 	}
 	else
 	{
 		if (m_frameCounter % 20 >= 0 && m_frameCounter % 20 <= 10)
-			TextureManager::Instance()->draw("player_walking1", x, y, m_rotationAngle, 255, true);
+			TextureManager::Instance()->draw("player_walking1", x, y, m_rotationAngle, 255, false);
 		else
-			TextureManager::Instance()->draw("player_walking2", x, y, m_rotationAngle, 255, true);
+			TextureManager::Instance()->draw("player_walking2", x, y, m_rotationAngle, 255, false);
 	}
 
 	if (m_dbgMode)
