@@ -18,8 +18,8 @@ Melee::Melee(glm::vec2 position, glm::vec2 direction)
 
 	setOrientation(direction);
 	setRotation(Util::signedAngle(getOrientation(), m_targetDirection));
-	setMaxSpeed(5.0f);
-	setAccelerationRate(5.0f);
+	setMaxSpeed(8.0f);
+	setAccelerationRate(8.0f);
 	setTurnRate(10.0f);
 
 	setOrientation(m_destination - getTransform()->position);// muy importanto, amigos!

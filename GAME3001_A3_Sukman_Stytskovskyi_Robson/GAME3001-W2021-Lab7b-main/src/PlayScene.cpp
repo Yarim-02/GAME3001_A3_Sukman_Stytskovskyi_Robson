@@ -19,9 +19,21 @@ PlayScene::~PlayScene()
 = default;
 
 void PlayScene::draw()
-{
-	
-	
+{	
+	const SDL_Color orange = { 213,110,43, 205 };
+	const SDL_Color white = { 255,255,255, 205 };
+
+	std::string enemiesA = "Enemies left: ";
+	std::string enemiesD = "Enemies eliminated: ";
+
+	m_pGameStatus = new Label(enemiesA + std::to_string(m_enemiesAlive), "Teko", 30, white, glm::vec2(178.f, 75.f));
+	m_pGameStatus->setParent(this);
+	addChild(m_pGameStatus, 0);
+
+	m_pGameStatus = new Label(enemiesD + std::to_string(m_enemiesDead), "Teko", 30, white, glm::vec2(140.f, 50.f));
+	m_pGameStatus->setParent(this);
+	addChild(m_pGameStatus, 0);
+
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 
 	for (int row = 0; row < Config::ROW_NUM; ++row)
@@ -78,7 +90,6 @@ void PlayScene::draw()
 
 void PlayScene::update()
 {
-	
 	srand(time(NULL));
 	m_randomSwitch = 0 + rand() % 2;
 
@@ -98,6 +109,50 @@ void PlayScene::update()
 			m_pMelee.shrink_to_fit();
 		}
 	}
+
+	//for bullet delition
+	m_BulletCounter++;
+	if (m_BulletCounter >= 36 && !m_pBullet.empty())
+	{
+		for (int i = 0; i < m_pBullet.size(); i++)
+		{
+			removeChild(m_pBullet[i]);
+			m_pBullet[i] = nullptr;
+			m_pBullet.erase(m_pBullet.begin() + i);
+			m_pBullet.shrink_to_fit();
+		}
+	}
+	
+	//Bullet and Enemy collision
+	for (int i = 0; i < m_pBullet.size(); i++)
+	{
+		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pShip))
+		{
+			damageActor(m_pShip);
+			m_pShip->flipTakingDamage();
+		}
+	}
+	
+	//Melee and Enemy collision
+	for (int i = 0; i < m_pMelee.size(); i++)
+	{
+		if (CollisionManager::circleAABBCheck(m_pMelee[i], m_pShip))
+		{
+			damageActor(m_pShip);
+			m_pShip->flipTakingDamage();
+		}
+	}
+
+	//Enemy death
+		if (m_pShip->getHealthBar().getHealthPoints() <= 0)
+		{
+			m_pShip->setEnabled(false);
+
+			m_enemiesAlive = 0;
+			m_enemiesDead = 1;
+
+			SDL_RenderFlush(Renderer::Instance()->getRenderer());
+		}
 
 	if (m_frameCounter % 5 == 0)
 	{
@@ -328,6 +383,8 @@ void PlayScene::handleEvents()
 		//std::cout << "Enemy damaged, new health value: " << m_pShip->getHealthBar().getHealthPoints() << "\n";
 
 		m_PressCounter = 0;
+
+		m_pGameStatus->clean();
 	}
 
 
@@ -348,21 +405,9 @@ void PlayScene::start()
 
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	//Build node grid for overlaying map
-	const SDL_Color orange = { 213,110,43, 205 };
-	const SDL_Color white = { 255,255,255, 205 };
 
-	std::string enemiesA = "Enemies left: ";
-	std::string enemiesD = "Enemies eliminated: ";
-
-	m_pGameStatus = new Label(enemiesA + std::to_string(m_enemiesAlive), "Teko", 30, white, glm::vec2(178.f, 75.f));
-	m_pGameStatus->setParent(this);
-	addChild(m_pGameStatus, 0);
-
-	m_pGameStatus = new Label(enemiesD + std::to_string(m_enemiesDead), "Teko", 30, white, glm::vec2(140.f, 50.f));
-	m_pGameStatus->setParent(this);
-	addChild(m_pGameStatus, 0);
+	m_enemiesAlive = 1;
 	
-
 	m_buildGrid();
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
@@ -531,19 +576,6 @@ void PlayScene::m_CheckShipDR(DisplayObject* target_object)
 	if (ShipToTargetDistance - 20 <= m_pShip->getDetectionRadius())
 	{
 		std::vector<DisplayObject*> contactList;
-		for (auto object : getDisplayList())
-		{
-			// check if object is farther than than the target
-			auto ShipToObjectDistance = Util::distance(m_pShip->getTransform()->position, object->getTransform()->position);
-
-			if (ShipToObjectDistance <= ShipToTargetDistance)
-			{
-				if ((object->getType() != m_pShip->getType()) && (object->getType() != target_object->getType()))
-				{
-					contactList.push_back(object);
-				}
-			}
-		}
 		contactList.push_back(target_object); // add the target to the end of the list
 		auto hasDR = CollisionManager::DRCheck(m_pShip->getDetectionRadius(), contactList, target_object);
 
