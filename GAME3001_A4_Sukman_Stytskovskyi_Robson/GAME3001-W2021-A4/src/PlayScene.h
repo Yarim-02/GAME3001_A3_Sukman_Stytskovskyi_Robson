@@ -7,7 +7,7 @@
 #include "DecisionTree.h"
 #include "Label.h"
 #include "Obstacle.h"
-#include "ship.h"
+#include "Skeleton.h"
 #include "SpaceShip.h"
 #include "Target.h"
 #include "Tile.h"
@@ -38,7 +38,7 @@ private:
 	bool m_isGridEnabled;
 
 	Target* m_pTarget;
-	Ship* m_pShip;
+	Skeleton* m_pSkeleton;
 	Gunner* m_pPlayer;
 	std::vector<Bullet*> m_pBullet;
 	std::vector <Melee*> m_pMelee;
@@ -72,7 +72,7 @@ private:
 
 	void m_buildGrid();
 
-	void damageActor(Ship* actor);
+	void damageActor(Skeleton* actor);
 
 	int m_frameCounter = 0;
 	bool m_randomSwitch = 0;

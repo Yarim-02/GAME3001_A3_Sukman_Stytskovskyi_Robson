@@ -11,7 +11,7 @@ Gunner::Gunner() : m_maxSpeed(10.0f)
 
 	auto size = TextureManager::Instance()->getTextureSize("player_walking1");
 	setWidth(size.x);
-	setHeight(size.y);
+	setHeight(40);
 
 	getTransform()->position = glm::vec2(400.0f, 300.0f);
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
@@ -47,6 +47,7 @@ Gunner::~Gunner()
 
 void Gunner::draw()
 {
+	glm::vec2 center = { getTransform()->position.x + getWidth()/2, getTransform()->position.y + getHeight()/2 };
 	
 	// alias for x and y
 	const auto x = getTransform()->position.x;
@@ -68,12 +69,14 @@ void Gunner::draw()
 	if (m_dbgMode)
 	{
 		// draw LOS
-		Util::DrawLine(getTransform()->position, m_destination, getLOSColour());
+		Util::DrawLine(center, m_destination, getLOSColour());
 		// draw Detection Radius
-		Util::DrawCircle(getTransform()->position, getDetectionRadius(), getDRColour());
+		Util::DrawCircle(center, getDetectionRadius(), getDRColour());
+		// draw bounding box
+		Util::DrawRect(getTransform()->position, getWidth(), getHeight(), glm::vec4(255, 0, 0, 255));
 	}
 	
-	m_healthBar.draw();
+	m_healthBar.draw();	
 }
 
 
@@ -145,6 +148,16 @@ void Gunner::setDestination(const glm::vec2 destination)
 void Gunner::setAnimating(bool state)
 {
 	m_isAnimating = state;
+}
+
+void Gunner::setGoingRight(bool b)
+{
+	m_bGoingRight = b;
+}
+
+bool Gunner::getGoingRight()
+{
+	return m_bGoingRight;
 }
 
 glm::vec2 Gunner::getOrientation() const

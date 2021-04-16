@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __SHIP__
-#define __SHIP__
+#ifndef __Skeleton__
+#define __Skeleton__
 
 #include "TextureManager.h"
 #include <glm/vec4.hpp>
@@ -8,12 +8,12 @@
 
 #include "Agent.h"
 
-class Ship final : public Agent
+class Skeleton final : public Agent
 {
 
 public:
-	Ship();
-	~Ship();
+	Skeleton();
+	~Skeleton();
 
 	// Inherited via GameObject
 	void draw() override;
@@ -66,5 +66,5 @@ private:
 
 
 
-#endif /* defined (__SHIP__) */
+#endif /* defined (__Skeleton__) */
 

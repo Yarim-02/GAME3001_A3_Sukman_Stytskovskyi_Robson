@@ -122,24 +122,33 @@ bool CollisionManager::ObstacleColCheck(Gunner* object1, GameObject* object2)
 				break;
 			case OBSTACLE:
 				std::cout << "Collision with Obstacle!" << std::endl;
-				if (object1->getTransform()->position.y + object1->getHeight() >= object2->getTransform()->position.y && object1->getTransform()->position.y + object1->getHeight() <= object2->getTransform()->position.y + (object2->getHeight() / 2))
-				{
-					std::cout << "top" << std::endl;
-					object1->getTransform()->position.y = object2->getTransform()->position.y - object1->getHeight();
-				}
-				else if (object1->getTransform()->position.y - object1->getHeight() <= object2->getTransform()->position.y + object2->getHeight())
+
+				//bottom
+				if (object1->getTransform()->position.y + object1->getHeight() >= object2->getTransform()->position.y + object2->getHeight())
 				{
 					object1->getTransform()->position.y = object2->getTransform()->position.y + object2->getHeight();
 				}
-				else if (object1->getTransform()->position.x + object1->getWidth() >= object2->getTransform()->position.x - 30)
+				else
 				{
-					std::cout << "hi\n\n\n\n\n\n\n\n\n" << std::endl;
-					object1->getTransform()->position.x = object2->getTransform()->position.x - object1->getWidth() - 100;
-				}
-				else if (object1->getTransform()->position.x <= object2->getTransform()->position.x + object2->getWidth() + 30)
-				{
-					std::cout << "bye" << std::endl;
-					object1->getTransform()->position.x = object2->getTransform()->position.x + object2->getWidth();
+					//top
+					if (object1->getTransform()->position.y <= object2->getTransform()->position.y && object1->getTransform()->position.y + object1->getHeight() <= object2->getTransform()->position.y + (object2->getHeight() / 2))
+					{
+						object1->getTransform()->position.y = object2->getTransform()->position.y - object1->getHeight();
+					}
+
+
+					//right
+					else if (object1->getTransform()->position.x <= object2->getTransform()->position.x + object2->getWidth() && !object1->getGoingRight())
+					{
+						object1->getTransform()->position.x = object2->getTransform()->position.x + object2->getWidth();
+					}
+					//left
+					else if (object1->getTransform()->position.x + object1->getWidth() >= object2->getTransform()->position.x && object1->getGoingRight())
+					{
+						std::cout << "hi\n\n\n\n\n\n\n\n\n" << std::endl;
+						object1->getTransform()->position.x = object2->getTransform()->position.x - object1->getWidth();
+					}
+
 				}
 				break;
 			default:
@@ -240,7 +249,7 @@ int CollisionManager::minSquaredDistanceLineLine(glm::vec2 line1_start, glm::vec
 	return norm;
 }
 
-bool CollisionManager::lineAABBCheck(Ship* object1, GameObject* object2)
+bool CollisionManager::lineAABBCheck(Skeleton* object1, GameObject* object2)
 {
 	const auto lineStart = object1->getTransform()->position;
 	const auto lineEnd = object1->getTransform()->position + object1->getCurrentDirection() * 100.0f;

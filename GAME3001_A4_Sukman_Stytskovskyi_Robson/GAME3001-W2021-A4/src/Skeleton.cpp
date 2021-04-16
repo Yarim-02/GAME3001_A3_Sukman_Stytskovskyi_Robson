@@ -1,11 +1,11 @@
-#include "ship.h"
+#include "Skeleton.h"
 #include "glm/gtx/string_cast.hpp"
 #include "PlayScene.h"
 #include "TextureManager.h"
 #include "SoundManager.h"
 #include "Util.h"
 
-Ship::Ship() : m_maxSpeed(10.0f)
+Skeleton::Skeleton() : m_maxSpeed(10.0f)
 {
 
 	TextureManager::Instance()->load("../Assets/textures/IdleSkeleton1.png", "Skeleton");
@@ -73,10 +73,10 @@ Ship::Ship() : m_maxSpeed(10.0f)
 }
 
 
-Ship::~Ship()
+Skeleton::~Skeleton()
 = default;
 
-void Ship::draw()
+void Skeleton::draw()
 {
 	// alias for x and y
 	const auto x = getTransform()->position.x;
@@ -290,7 +290,7 @@ void Ship::draw()
 }
 
 
-void Ship::update()
+void Skeleton::update()
 {
 	auto size = TextureManager::Instance()->getTextureSize("Skeleton");
 	/*move();
@@ -317,11 +317,11 @@ void Ship::update()
 
 }
 
-void Ship::clean()
+void Skeleton::clean()
 {
 }
 
-void Ship::turnRight()
+void Skeleton::turnRight()
 {
 	setCurrentHeading(getCurrentHeading() + m_turnRate);
 	if (getCurrentHeading() >= 360)
@@ -330,7 +330,7 @@ void Ship::turnRight()
 	}
 }
 
-void Ship::turnLeft()
+void Skeleton::turnLeft()
 {
 	setCurrentHeading(getCurrentHeading() - m_turnRate);
 	if (getCurrentHeading() < 0)
@@ -339,63 +339,63 @@ void Ship::turnLeft()
 	}
 }
 
-void Ship::moveForward()
+void Skeleton::moveForward()
 {
 	getRigidBody()->velocity = getCurrentDirection() * m_maxSpeed;
 }
 
-void Ship::moveBack()
+void Skeleton::moveBack()
 {
 	getRigidBody()->velocity = getCurrentDirection() * -m_maxSpeed;
 }
 
-void Ship::move()
+void Skeleton::move()
 {
 	getTransform()->position += getRigidBody()->velocity;
 	//getRigidBody()->velocity *= 0.9f;
 }
 
-float Ship::getMaxSpeed() const
+float Skeleton::getMaxSpeed() const
 {
 	return m_maxSpeed;
 }
 
-std::string Ship::getAnimationState()
+std::string Skeleton::getAnimationState()
 {
 	return m_animationState;
 }
 
-std::string Ship::getCurrentAction()
+std::string Skeleton::getCurrentAction()
 {
 	return m_currentAction;
 }
 
-bool Ship::getTakingDamage()
+bool Skeleton::getTakingDamage()
 {
 	return m_takingDamage;
 }
 
-HealthBar& Ship::getHealthBar()
+HealthBar& Skeleton::getHealthBar()
 {
 	return m_healthBar;
 }
 
-void Ship::setMaxSpeed(float newSpeed)
+void Skeleton::setMaxSpeed(float newSpeed)
 {
 	m_maxSpeed = newSpeed;
 }
 
-void Ship::flipDbg()
+void Skeleton::flipDbg()
 {
 	m_dbgMode = !m_dbgMode;
 }
 
-void Ship::flipTakingDamage()
+void Skeleton::flipTakingDamage()
 {
 	m_takingDamage = !m_takingDamage;
 }
 
-void Ship::setAnimationState(std::string animationState)
+void Skeleton::setAnimationState(std::string animationState)
 {
 	if (getCurrentAction() != "Taking Damage" && getCurrentAction() != "Dying")
 	{
@@ -403,12 +403,12 @@ void Ship::setAnimationState(std::string animationState)
 	}
 }
 
-void Ship::setCurrentAction(std::string currentAction)
+void Skeleton::setCurrentAction(std::string currentAction)
 {
 	m_currentAction = currentAction;
 }
 
-void Ship::m_checkBounds()
+void Skeleton::m_checkBounds()
 {
 
 	if (getTransform()->position.x > Config::SCREEN_WIDTH)
@@ -433,7 +433,7 @@ void Ship::m_checkBounds()
 
 }
 
-void Ship::m_reset()
+void Skeleton::m_reset()
 {
 	getRigidBody()->isColliding = false;
 	const int halfWidth = getWidth() * 0.5f;

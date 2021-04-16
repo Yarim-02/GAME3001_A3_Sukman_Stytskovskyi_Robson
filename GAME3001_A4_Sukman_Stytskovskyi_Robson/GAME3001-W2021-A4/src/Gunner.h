@@ -39,6 +39,9 @@ public:
 	void setDestination(glm::vec2 destination);
 	void setAnimating(bool state);
 
+	void setGoingRight(bool b);
+	bool getGoingRight();
+
 private:
 	void m_checkBounds();
 	void m_reset();
@@ -53,6 +56,8 @@ private:
 
 	bool m_dbgMode;
 	bool m_isAnimating;
+
+	bool m_bGoingRight;
 
 	int m_frameCounter;
 

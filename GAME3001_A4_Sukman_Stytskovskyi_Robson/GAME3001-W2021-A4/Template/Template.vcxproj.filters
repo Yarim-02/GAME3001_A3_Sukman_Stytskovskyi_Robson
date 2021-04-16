@@ -150,7 +150,7 @@
     <ClCompile Include="..\src\Target.cpp">
       <Filter>Game Objects</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ship.cpp">
+    <ClCompile Include="..\src\Skeleton.cpp">
       <Filter>Decision\Agents</Filter>
     </ClCompile>
     <ClCompile Include="..\src\AttackAction.cpp">
@@ -347,7 +347,7 @@
     <ClInclude Include="..\src\Target.h">
       <Filter>Game Objects</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ship.h">
+    <ClInclude Include="..\src\Skeleton.h">
       <Filter>Decision\Agents</Filter>
     </ClInclude>
     <ClInclude Include="..\src\PatrolAction.h">

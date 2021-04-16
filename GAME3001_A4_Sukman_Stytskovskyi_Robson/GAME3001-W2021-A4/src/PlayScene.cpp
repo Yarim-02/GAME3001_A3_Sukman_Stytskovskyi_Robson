@@ -118,27 +118,27 @@ void PlayScene::update()
 	//Bullet and Enemy collision
 	for (int i = 0; i < m_pBullet.size(); i++)
 	{
-		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pShip) && !skeletonDead)
+		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pSkeleton) && !skeletonDead)
 		{
-			damageActor(m_pShip);
-			m_pShip->flipTakingDamage();
+			damageActor(m_pSkeleton);
+			m_pSkeleton->flipTakingDamage();
 		}
 	}
 	
 	//Melee and Enemy collision
 	for (int i = 0; i < m_pMelee.size(); i++)
 	{
-		if (CollisionManager::circleAABBCheck(m_pMelee[i], m_pShip) && !skeletonDead)
+		if (CollisionManager::circleAABBCheck(m_pMelee[i], m_pSkeleton) && !skeletonDead)
 		{
-			damageActor(m_pShip);
-			m_pShip->flipTakingDamage();
+			damageActor(m_pSkeleton);
+			m_pSkeleton->flipTakingDamage();
 		}
 	}
 
 	//Enemy death
-		if (m_pShip->getHealthBar().getHealthPoints() <= 0)
+		if (m_pSkeleton->getHealthBar().getHealthPoints() <= 0)
 		{
-			m_pShip->setCurrentAction("Dying");
+			m_pSkeleton->setCurrentAction("Dying");
 
 			//m_pShip->setEnabled(false);
 
@@ -170,7 +170,7 @@ void PlayScene::update()
 
 	if (m_frameCounter % 5 == 0)
 	{
-		m_lastEnemyPosition = m_pShip->getTransform()->position;
+		m_lastEnemyPosition = m_pSkeleton->getTransform()->position;
 
 		/*int newHealth = (m_pShip->getHealthBar().getHealthPoints()) - 10;
 		m_pShip->getHealthBar().setHealthPoints(newHealth - 10);*/
@@ -186,51 +186,51 @@ void PlayScene::update()
 	m_CheckShipLOS(m_pPlayer);
 	m_CheckShipDR(m_pPlayer);
 
-	if (m_pShip->getCurrentAction() == "Patrol")
+	if (m_pSkeleton->getCurrentAction() == "Patrol")
 	{
-		m_pShip->setCurrentDirection(Util::normalize(glm::vec2((m_pPatrolPath[m_patrolPathPosition + 1]->
-			getTransform()->position.x + offset.x - m_pShip->getTransform()->position.x), (m_pPatrolPath[m_patrolPathPosition
-				+ 1]->getTransform()->position.y + offset.y - m_pShip->getTransform()->position.y))));
+		m_pSkeleton->setCurrentDirection(Util::normalize(glm::vec2((m_pPatrolPath[m_patrolPathPosition + 1]->
+			getTransform()->position.x + offset.x - m_pSkeleton->getTransform()->position.x), (m_pPatrolPath[m_patrolPathPosition
+				+ 1]->getTransform()->position.y + offset.y - m_pSkeleton->getTransform()->position.y))));
 
 
-		if (Util::distance(m_pShip->getTransform()->position, m_pPatrolPath[m_patrolPathPosition + 1]->getTransform()->position + offset) < 5.0f)
+		if (Util::distance(m_pSkeleton->getTransform()->position, m_pPatrolPath[m_patrolPathPosition + 1]->getTransform()->position + offset) < 5.0f)
 		{
 			m_patrolPathPosition++;
 			std::cout << m_patrolPathPosition << std::endl;
-			std::cout << m_pShip->getCurrentDirection().x << ", " << m_pShip->getCurrentDirection().y;
+			std::cout << m_pSkeleton->getCurrentDirection().x << ", " << m_pSkeleton->getCurrentDirection().y;
 		}
 		if (m_patrolPathPosition == 3)
 		{
 			m_patrolPathPosition = -1;
 		}
 	}
-	if (m_pShip->getCurrentAction() == "Patrol" || m_pShip->getCurrentAction() == "Wandering" || m_pShip->getCurrentAction() == "Taking Damage")
+	if (m_pSkeleton->getCurrentAction() == "Patrol" || m_pSkeleton->getCurrentAction() == "Wandering" || m_pSkeleton->getCurrentAction() == "Taking Damage")
 	{
-		m_pShip->moveForward();
-		m_pShip->move();
-		if (m_pShip->getCurrentAction() != "Taking Damage")
+		m_pSkeleton->moveForward();
+		m_pSkeleton->move();
+		if (m_pSkeleton->getCurrentAction() != "Taking Damage")
 		{
-			if ((m_pShip->getTransform()->position.x > m_lastEnemyPosition.x) && !(m_pShip->getTransform()->position.y
-		> m_lastEnemyPosition.y + 2) && !(m_pShip->getTransform()->position.y
+			if ((m_pSkeleton->getTransform()->position.x > m_lastEnemyPosition.x) && !(m_pSkeleton->getTransform()->position.y
+		> m_lastEnemyPosition.y + 2) && !(m_pSkeleton->getTransform()->position.y
 			< m_lastEnemyPosition.y - 2))
 			{
-				m_pShip->setAnimationState("WalkingRight");
+				m_pSkeleton->setAnimationState("WalkingRight");
 			}
-			if ((m_pShip->getTransform()->position.y > m_lastEnemyPosition.y) && !(m_pShip->getTransform()->position.x
-	> m_lastEnemyPosition.x + 2) && !(m_pShip->getTransform()->position.x
+			if ((m_pSkeleton->getTransform()->position.y > m_lastEnemyPosition.y) && !(m_pSkeleton->getTransform()->position.x
+	> m_lastEnemyPosition.x + 2) && !(m_pSkeleton->getTransform()->position.x
 		< m_lastEnemyPosition.x - 2))
 			{
-				m_pShip->setAnimationState("WalkingDown");
+				m_pSkeleton->setAnimationState("WalkingDown");
 			}
-			if ((m_pShip->getTransform()->position.x < m_lastEnemyPosition.x) && !(m_pShip->getTransform()->position.y
-			> m_lastEnemyPosition.y + 2) && !(m_pShip->getTransform()->position.y
+			if ((m_pSkeleton->getTransform()->position.x < m_lastEnemyPosition.x) && !(m_pSkeleton->getTransform()->position.y
+			> m_lastEnemyPosition.y + 2) && !(m_pSkeleton->getTransform()->position.y
 				< m_lastEnemyPosition.y - 2))
 			{
-				m_pShip->setAnimationState("WalkingLeft");
+				m_pSkeleton->setAnimationState("WalkingLeft");
 			}
-			if ((m_pShip->getTransform()->position.y < m_lastEnemyPosition.y))
+			if ((m_pSkeleton->getTransform()->position.y < m_lastEnemyPosition.y))
 			{
-				m_pShip->setAnimationState("WalkingUp");
+				m_pSkeleton->setAnimationState("WalkingUp");
 			}
 		}
 	}
@@ -247,56 +247,56 @@ void PlayScene::update()
 
 	for each (auto & Obstacle in m_pObstacle)
 	{
-		if (CollisionManager::lineRectCheck(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, Obstacle->getTransform()->position, Obstacle->getWidth(), Obstacle->getHeight()))
+		if (CollisionManager::lineRectCheck(m_pSkeleton->getTransform()->position, m_pSkeleton->getTransform()->position + m_pSkeleton->getCurrentDirection() * 25.0f, Obstacle->getTransform()->position, Obstacle->getWidth(), Obstacle->getHeight()))
 		{
-			m_pShip->getRigidBody()->isColliding == true;
+			m_pSkeleton->getRigidBody()->isColliding == true;
 			std::cout << "Enemy collision with obstacle\n";
-			m_pShip->setCurrentAction("Stopped");
+			m_pSkeleton->setCurrentAction("Stopped");
 			//if (m_randomSwitch == 0)
-			m_pShip->turnRight();
+			m_pSkeleton->turnRight();
 			//else if (m_randomSwitch == 1)
 				//m_pShip->turnLeft();
 		}
 	}
-	if (m_pShip->getCurrentAction() == "Wander") // no need to check collission with impassable border tiles
+	if (m_pSkeleton->getCurrentAction() == "Wander") // no need to check collission with impassable border tiles
 	{											// while on patrol path as enemy will turn on it's own
 		for each (auto & Tile in m_pGrid)
 		{
 			if (Tile->getTileStatus() == IMPASSABLE)
 			{
-				if (CollisionManager::lineRectCheck(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, Tile->getTransform()->position, Tile->getWidth(), Tile->getHeight()))
+				if (CollisionManager::lineRectCheck(m_pSkeleton->getTransform()->position, m_pSkeleton->getTransform()->position + m_pSkeleton->getCurrentDirection() * 25.0f, Tile->getTransform()->position, Tile->getWidth(), Tile->getHeight()))
 				{
-					m_pShip->getRigidBody()->isColliding == true;
+					m_pSkeleton->getRigidBody()->isColliding == true;
 					std::cout << "Enemy collision with obstacle\n";
-					m_pShip->setCurrentAction("Stopped");
+					m_pSkeleton->setCurrentAction("Stopped");
 					//if (m_randomSwitch == 0)
-					m_pShip->turnRight();
+					m_pSkeleton->turnRight();
 					//else if (m_randomSwitch == 1)
 						//m_pShip->turnLeft();
 				}
 			}
 		}
 	}
-	if (m_pShip->getCurrentAction() == "Stopped")
+	if (m_pSkeleton->getCurrentAction() == "Stopped")
 	{
-		m_pShip->moveForward();
-		m_pShip->move();
-		m_pShip->setCurrentAction("Wandering");
+		m_pSkeleton->moveForward();
+		m_pSkeleton->move();
+		m_pSkeleton->setCurrentAction("Wandering");
 	}
 
-	if (m_pShip->getHealthBar().getHealthPoints() == 0 && m_pShip->getCurrentAction() != "Dead")
+	if (m_pSkeleton->getHealthBar().getHealthPoints() == 0 && m_pSkeleton->getCurrentAction() != "Dead")
 	{
-		m_pShip->setCurrentAction("Dying");
+		m_pSkeleton->setCurrentAction("Dying");
 	}
 
-	if (m_pShip->getCurrentAction() == "Dying" && m_frameCounter % 40 == 0)
+	if (m_pSkeleton->getCurrentAction() == "Dying" && m_frameCounter % 40 == 0)
 	{
-		m_pShip->setCurrentAction("Dead");
+		m_pSkeleton->setCurrentAction("Dead");
 	}
 
-	if (m_pShip->getCurrentAction() == "Taking Damage" && m_frameCounter % 20 == 0)
+	if (m_pSkeleton->getCurrentAction() == "Taking Damage" && m_frameCounter % 20 == 0)
 	{
-		m_pShip->setCurrentAction("Patrol");
+		m_pSkeleton->setCurrentAction("Patrol");
 	}
 
 	
@@ -325,6 +325,7 @@ void PlayScene::handleEvents()
 	{
 		m_pPlayer->getTransform()->position.x += m_pPlayer->getMaxSpeed();
 		m_pPlayer->setAnimating(true);
+		m_pPlayer->setGoingRight(true);
 	}
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
 	{
@@ -335,6 +336,7 @@ void PlayScene::handleEvents()
 	{
 		m_pPlayer->getTransform()->position.x -= m_pPlayer->getMaxSpeed();
 		m_pPlayer->setAnimating(true);
+		m_pPlayer->setGoingRight(false);
 	}
 	if (!EventManager::Instance().isKeyDown(SDL_SCANCODE_W) && !EventManager::Instance().isKeyDown(SDL_SCANCODE_S) && !EventManager::Instance().isKeyDown(SDL_SCANCODE_A) && !EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
 	{
@@ -383,8 +385,8 @@ void PlayScene::handleEvents()
 	{
 		m_dbgMode = !m_dbgMode;
 
-		m_pShip->flipDbg();
-
+		m_pSkeleton->flipDbg();
+		m_pPlayer->flipDbg();
 				
 		for (int i = 0; i < m_pObstacle.size(); i++)
 			m_pObstacle[i]->flipDbg();
@@ -397,8 +399,8 @@ void PlayScene::handleEvents()
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_dbgMode && m_PressCounter >= 6 && !skeletonDead)
 	{
-		damageActor(m_pShip);
-		m_pShip->flipTakingDamage();
+		damageActor(m_pSkeleton);
+		m_pSkeleton->flipTakingDamage();
 		//std::cout << "Enemy damaged, new health value: " << m_pShip->getHealthBar().getHealthPoints() << "\n";
 
 		m_PressCounter = 0;
@@ -407,10 +409,10 @@ void PlayScene::handleEvents()
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_P) && m_dbgMode && m_PressCounter >= 6)
 	{
-		if(m_pShip->getCurrentAction() == "Patrol")
-			m_pShip->setCurrentAction("Idle");
-		else if(m_pShip->getCurrentAction() == "Idle")
-			m_pShip->setCurrentAction("Patrol");
+		if(m_pSkeleton->getCurrentAction() == "Patrol")
+			m_pSkeleton->setCurrentAction("Idle");
+		else if(m_pSkeleton->getCurrentAction() == "Idle")
+			m_pSkeleton->setCurrentAction("Patrol");
 
 		m_PressCounter = 0;
 	}
@@ -454,11 +456,11 @@ void PlayScene::start()
 	addChild(m_pPlayer);
 
 	// add the ship to the scene as a start point
-	m_pShip = new Ship();
-	m_pShip->getTransform()->position = m_getTile(1, 1)->getTransform()->position + offset;
-	addChild(m_pShip, 2);
-	m_pShip->setAnimationState("WalkingDown");
-	m_pShip->setMaxSpeed(2.0f);
+	m_pSkeleton = new Skeleton();
+	m_pSkeleton->getTransform()->position = m_getTile(1, 1)->getTransform()->position + offset;
+	addChild(m_pSkeleton, 2);
+	m_pSkeleton->setAnimationState("WalkingDown");
+	m_pSkeleton->setMaxSpeed(2.0f);
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -494,7 +496,7 @@ void PlayScene::start()
 
 	// create a dummy DecisionTree
 	decisionTree = new DecisionTree();
-	decisionTree->setAgent(m_pShip);
+	decisionTree->setAgent(m_pSkeleton);
 	decisionTree->Display();
 
 	std::cout << "------------------------" << std::endl;
@@ -518,18 +520,18 @@ void PlayScene::GUI_Function()
 
 	// allow ship rotation
 	static int angle;
-	if(ImGui::SliderInt("Ship Direction", &angle, -360, 360))
+	if(ImGui::SliderInt("Skeleton Direction", &angle, -360, 360))
 	{
-		m_pShip->setCurrentHeading(angle);
+		m_pSkeleton->setCurrentHeading(angle);
 	}
 	
 	ImGui::Separator();
 
-	static int shipPosition[] = { m_pShip->getTransform()->position.x, m_pShip->getTransform()->position.y };
-	if (ImGui::SliderInt2("Ship Position", shipPosition, 0, 800))
+	static int shipPosition[] = { m_pSkeleton->getTransform()->position.x, m_pSkeleton->getTransform()->position.y };
+	if (ImGui::SliderInt2("Skeleton Position", shipPosition, 0, 800))
 	{
-		m_pShip->getTransform()->position.x = shipPosition[0];
-		m_pShip->getTransform()->position.y = shipPosition[1];
+		m_pSkeleton->getTransform()->position.x = shipPosition[0];
+		m_pSkeleton->getTransform()->position.y = shipPosition[1];
 
 		std::cout << "------------------------" << std::endl;
 		std::cout << decisionTree->MakeDecision() << std::endl;
@@ -581,14 +583,14 @@ void PlayScene::GUI_Function()
 void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
 {
 	// if ship to target distance is less than or equal to LOS Distance
-	auto ShipToTargetDistance = Util::distance(m_pShip->getTransform()->position, target_object->getTransform()->position);
-	if (ShipToTargetDistance <= m_pShip->getLOSDistance())
+	auto ShipToTargetDistance = Util::distance(m_pSkeleton->getTransform()->position, target_object->getTransform()->position);
+	if (ShipToTargetDistance <= m_pSkeleton->getLOSDistance())
 	{
 		std::vector<DisplayObject*> contactList;
 		for (auto object : getDisplayList())
 		{
 			// check if object is farther than than the target
-			auto ShipToObjectDistance = Util::distance(m_pShip->getTransform()->position, object->getTransform()->position);
+			auto ShipToObjectDistance = Util::distance(m_pSkeleton->getTransform()->position, object->getTransform()->position);
 
 			if (ShipToObjectDistance <= ShipToTargetDistance)
 			{
@@ -599,26 +601,26 @@ void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
 			}
 		}
 		contactList.push_back(target_object); // add the target to the end of the list
-		auto hasLOS = CollisionManager::LOSCheck(m_pShip->getTransform()->position,
-			m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * m_pShip->getLOSDistance(), contactList, target_object);
+		auto hasLOS = CollisionManager::LOSCheck(m_pSkeleton->getTransform()->position,
+			m_pSkeleton->getTransform()->position + m_pSkeleton->getCurrentDirection() * m_pSkeleton->getLOSDistance(), contactList, target_object);
 
-		m_pShip->setHasLOS(hasLOS);
+		m_pSkeleton->setHasLOS(hasLOS);
 	}
 }
 
 void PlayScene::m_CheckShipDR(DisplayObject* target_object)
 {
 	//if target is within the Detection Radius
-	auto ShipToTargetDistance = Util::distance(m_pShip->getTransform()->position, target_object->getTransform()->position);
-	if (ShipToTargetDistance - 20 <= m_pShip->getDetectionRadius())
+	auto ShipToTargetDistance = Util::distance(m_pSkeleton->getTransform()->position, target_object->getTransform()->position);
+	if (ShipToTargetDistance - 20 <= m_pSkeleton->getDetectionRadius())
 	{
 		std::vector<DisplayObject*> contactList;
 		contactList.push_back(target_object); // add the target to the end of the list
-		auto hasDR = CollisionManager::DRCheck(m_pShip->getDetectionRadius(), contactList, target_object);
+		auto hasDR = CollisionManager::DRCheck(m_pSkeleton->getDetectionRadius(), contactList, target_object);
 
-		m_pShip->setInDR(hasDR);
+		m_pSkeleton->setInDR(hasDR);
 	}
-	else m_pShip->setInDR(false);
+	else m_pSkeleton->setInDR(false);
 }
 
 
@@ -727,7 +729,7 @@ void PlayScene::m_buildGrid()
 	std::cout << m_pGrid.size() << std::endl;
 }
 
-void PlayScene::damageActor(Ship* actor)
+void PlayScene::damageActor(Skeleton* actor)
 {
 	int newHealth = actor->getHealthBar().getHealthPoints() - 10;
 	actor->getHealthBar().setHealthPoints(newHealth);
