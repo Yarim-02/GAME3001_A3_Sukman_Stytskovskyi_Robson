@@ -16,7 +16,6 @@ Bullet::Bullet(glm::vec2 position, glm::vec2 direction)
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
 	getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
 
-	setOrientation(direction);
 	setRotation(Util::signedAngle(getOrientation(), m_targetDirection));
 	setMaxSpeed(15.0f);
 	setAccelerationRate(15.0f);

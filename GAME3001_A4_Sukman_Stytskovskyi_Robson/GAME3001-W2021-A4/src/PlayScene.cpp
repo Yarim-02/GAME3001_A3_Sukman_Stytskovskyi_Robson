@@ -239,6 +239,12 @@ void PlayScene::update()
 	std::cout << decisionTree->MakeDecision() << std::endl;
 	std::cout << "------------------------\n" << std::endl;
 
+	if (decisionTree->MakeDecision() == "Move To Player Action")
+	{
+		m_pSkeleton->setCurrentHeading(Util::angle(m_pSkeleton->getTransform()->position, m_pPlayer->getTransform()->position));
+		m_pSkeleton->moveForward();
+	}
+
 	m_frameCounter++;
 	if (m_frameCounter > 1000)
 	{
@@ -498,11 +504,6 @@ void PlayScene::start()
 	decisionTree = new DecisionTree();
 	decisionTree->setAgent(m_pSkeleton);
 	decisionTree->Display();
-
-	std::cout << "------------------------" << std::endl;
-	std::cout << decisionTree->MakeDecision() << std::endl;
-	std::cout << "------------------------\n" << std::endl;
-
 }
 
 void PlayScene::GUI_Function() 
@@ -533,17 +534,11 @@ void PlayScene::GUI_Function()
 		m_pSkeleton->getTransform()->position.x = shipPosition[0];
 		m_pSkeleton->getTransform()->position.y = shipPosition[1];
 
-		std::cout << "------------------------" << std::endl;
-		std::cout << decisionTree->MakeDecision() << std::endl;
-		std::cout << "------------------------\n" << std::endl;
+		//std::cout << "------------------------" << std::endl;
+		//std::cout << decisionTree->MakeDecision() << std::endl;
+		//std::cout << "------------------------\n" << std::endl;
 	}
 	
-	static int targetPosition[] = { m_pTarget->getTransform()->position.x, m_pTarget->getTransform()->position.y };
-	if(ImGui::SliderInt2("Target Position", targetPosition, 0, 800))
-	{
-		m_pTarget->getTransform()->position.x = targetPosition[0];
-		m_pTarget->getTransform()->position.y = targetPosition[1];
-	}
 	
 	ImGui::Separator();
 
