@@ -16,7 +16,7 @@ void HealthBar::draw()
 	SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 255, 0, 0, 255);
 	//SDL_RenderDrawRect(Renderer::Instance()->getRenderer(), m_dest);
 	SDL_RenderFillRect(Renderer::Instance()->getRenderer(), m_dest);
-	SDL_RenderPresent(Renderer::Instance()->getRenderer());
+	//SDL_RenderPresent(Renderer::Instance()->getRenderer());
 }
 
 void HealthBar::update()

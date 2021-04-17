@@ -74,7 +74,7 @@ void PlayScene::draw()
 
 void PlayScene::update()
 {
-	srand(time(NULL));
+	
 	m_randomSwitch = 0 + rand() % 2;
 
 	
@@ -415,6 +415,8 @@ void PlayScene::handleEvents()
 
 void PlayScene::start()
 {
+	srand(time(NULL));
+	
 	TextureManager::Instance()->load("../Assets/textures/grass.png", "grass");
 	TextureManager::Instance()->load("../Assets/textures/tree.png", "tree");
 	TextureManager::Instance()->load("../Assets/textures/log.png", "log");
@@ -598,9 +600,16 @@ bool PlayScene::m_CheckAgentLOS(Agent* agent, DisplayObject* object)
 
 			if (AgentToObstacleDistance <= AgentToObjectDistance)
 			{
-				if ((display_object->getType() != AGENT) && (display_object->getType() != PATH_NODE) && (display_object->getType() != object->getType()))
+				if ((display_object->getType() != AGENT) && (display_object->getType() != PATH_NODE) &&
+					(display_object->getType() != object->getType()) && display_object->getType() != NONE)
 				{
-					contactList.push_back(display_object);
+					if(display_object->getType() == TILE)
+					{
+						if (static_cast<Tile*>(display_object)->getTileStatus() != IMPASSABLE)
+							contactList.push_back(display_object);
+					}
+					else
+						contactList.push_back(display_object);
 				}
 			}
 		}
