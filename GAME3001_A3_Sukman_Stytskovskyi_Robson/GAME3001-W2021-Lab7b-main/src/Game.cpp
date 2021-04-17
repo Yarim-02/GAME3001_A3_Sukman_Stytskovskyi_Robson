@@ -192,7 +192,7 @@ void Game::render() const
 	SDL_RenderClear(Renderer::Instance()->getRenderer()); // clear the renderer to the draw colour
 
 	m_currentScene->draw();
-
+	
 	SDL_RenderPresent(Renderer::Instance()->getRenderer()); // draw to the screen
 }
 

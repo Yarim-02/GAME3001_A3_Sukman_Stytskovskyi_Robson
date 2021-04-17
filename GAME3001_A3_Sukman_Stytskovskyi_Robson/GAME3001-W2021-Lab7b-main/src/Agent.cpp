@@ -4,6 +4,7 @@
 
 Agent::Agent()
 {
+	setDetectionRadius(0.0f);
 }
 
 Agent::~Agent()
@@ -83,7 +84,7 @@ void Agent::setHasLOS(const bool state)
 void Agent::setInDR(const bool state)
 {
 	m_inDR = state;
-	m_DRColour = (m_inDR) ? glm::vec4(0, 1, 0, 1) : glm::vec4(1, 0, 0, 1);
+	m_DRColour = (m_inDR) ? glm::vec4(0, 1, 1, 1) : glm::vec4(1, 0, 1, 1);
 }
 
 void Agent::setCurrentHeading(const float heading)
@@ -99,7 +100,7 @@ void Agent::setLOSColour(const glm::vec4 colour)
 
 void Agent::setDRColour(glm::vec4 colour)
 {
-	m_LOSColour = colour;
+	m_DRColour = colour;
 }
 
 void Agent::m_changeDirection()

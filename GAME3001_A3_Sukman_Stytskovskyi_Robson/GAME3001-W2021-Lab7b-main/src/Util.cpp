@@ -15,6 +15,13 @@ Util::Util()
 Util::~Util()
 = default;
 
+glm::vec2 Util::getVector(glm::vec2 point1, glm::vec2 point2)
+{
+	const auto x = point2.x - point1.x;
+	const auto y = point2.y - point1.y;
+	return glm::vec2(x, y);
+}
+
 /**
 * Returns -1.0 if the value is less than 0 and 1.0 if the value is greater than 0
 */

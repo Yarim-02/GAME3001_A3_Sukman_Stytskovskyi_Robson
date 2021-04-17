@@ -14,6 +14,7 @@
 #include "Bullet.h"
 #include "Melee.h"
 #include "Gunner.h"
+#include "PathNode.h"
 
 class PlayScene : public Scene
 {
@@ -45,8 +46,12 @@ private:
 	std::vector<Obstacle*> m_pObstacle;
 	Obstacle* m_pObstacle2;
 	Obstacle* m_pObstacle3;
-	void m_CheckShipLOS(DisplayObject* object);
+	
+	bool m_CheckAgentLOS(Agent* agent, DisplayObject* object);
+	void m_CheckPathNodeLOS();
+	
 	void m_CheckShipDR(DisplayObject* object);
+
 
 	DecisionTree* decisionTree;
 
@@ -61,23 +66,27 @@ private:
 	bool m_dbgMode;
 
 	//Tile Stuff
-	std::vector<Tile*> m_pGrid;
+	std::vector<Tile*> m_pTileGrid;
 	std::vector<Tile*> m_pPatrolPath;
-
-	void m_setGridEnabled(bool state);
-	bool m_getGridEnabled() const;
+	void m_buildTileGrid();
 	Tile* m_getTile(int col, int row);
 	Tile* m_getTile(glm::vec2 grid_position);
-
+	
+	//Path Node
+	std::vector<PathNode*> m_pGrid;
+	bool m_gridVisible;
 	void m_buildGrid();
+	void m_toggleGrid(bool state);
+	
+	PathNode* m_findClosestPathNode(Agent* agent);
 
 	void damageActor(Ship* actor);
 
+	
 	int m_frameCounter = 0;
 	bool m_randomSwitch = 0;
 	int m_patrolPathPosition = 0;
 	int mouseX, mouseY;
-
 	glm::vec2 m_lastEnemyPosition;
 };
 

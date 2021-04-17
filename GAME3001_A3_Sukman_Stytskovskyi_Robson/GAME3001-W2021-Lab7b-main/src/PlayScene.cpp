@@ -26,9 +26,7 @@ void PlayScene::draw()
 	{
 		for (int col = 0; col < Config::COL_NUM; ++col)
 		{
-			TextureManager::Instance()->load("../Assets/textures/grass.png", "grass");
-			TextureManager::Instance()->load("../Assets/textures/tree.png", "tree");
-			TextureManager::Instance()->load("../Assets/textures/log.png", "log");
+			
 			TextureManager::Instance()->draw("grass", m_getTile(col, row)->getTransform()->position.x + offset.x, m_getTile(col, row)->getTransform()->position.y + offset.y, 0, 255, true);
 			if (m_getTile(col, row)->getNeighbourTile(TOP_TILE) == nullptr)
 			{
@@ -78,6 +76,8 @@ void PlayScene::update()
 {
 	srand(time(NULL));
 	m_randomSwitch = 0 + rand() % 2;
+
+	
 
 	//for normal KeyPresses
 	if (m_PressCounter != 6)
@@ -179,7 +179,6 @@ void PlayScene::update()
 
 	m_pPlayer->setDestination(glm::vec2(mouseX, mouseY));
 
-	m_CheckShipLOS(m_pPlayer);
 	m_CheckShipDR(m_pPlayer);
 
 	if (m_pShip->getCurrentAction() == "Patrol")
@@ -256,7 +255,7 @@ void PlayScene::update()
 	}
 	if (m_pShip->getCurrentAction() == "Wander") // no need to check collission with impassable border tiles
 	{											// while on patrol path as enemy will turn on it's own
-		for each (auto & Tile in m_pGrid)
+		for each (auto & Tile in m_pTileGrid)
 		{
 			if (Tile->getTileStatus() == IMPASSABLE)
 			{
@@ -295,7 +294,8 @@ void PlayScene::update()
 		m_pShip->setCurrentAction("Patrol");
 	}
 
-	
+	m_CheckPathNodeLOS();
+	m_CheckAgentLOS(m_pShip, m_pPlayer);
 }
 
 void PlayScene::clean()
@@ -379,10 +379,8 @@ void PlayScene::handleEvents()
 
 		m_pShip->flipDbg();
 
-		if (m_getGridEnabled() == false)
-			m_setGridEnabled(true);
-		else
-			m_setGridEnabled(false);
+		m_gridVisible = !m_gridVisible;
+		m_toggleGrid(m_gridVisible);
 
 				
 		for (int i = 0; i < m_pObstacle.size(); i++)
@@ -417,6 +415,9 @@ void PlayScene::handleEvents()
 
 void PlayScene::start()
 {
+	TextureManager::Instance()->load("../Assets/textures/grass.png", "grass");
+	TextureManager::Instance()->load("../Assets/textures/tree.png", "tree");
+	TextureManager::Instance()->load("../Assets/textures/log.png", "log");
 	const SDL_Color orange = { 213,110,43, 205 };
 	const SDL_Color white = { 255,255,255, 205 };
 
@@ -442,7 +443,10 @@ void PlayScene::start()
 	//Build node grid for overlaying map
 
 	m_enemiesAlive = 1;
+
+
 	
+	m_buildTileGrid();
 	m_buildGrid();
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
@@ -543,11 +547,11 @@ void PlayScene::GUI_Function()
 	
 	ImGui::Separator();
 
-	static bool isGridEnabled = false;
-	if (ImGui::Checkbox("Grid Enabled", &isGridEnabled))
+
+	if (ImGui::Checkbox("Grid Enabled", &m_gridVisible))
 	{
 		// toggle grid on/off
-		m_setGridEnabled(isGridEnabled);
+		m_toggleGrid(m_gridVisible);
 	}
 
 	ImGui::Separator();
@@ -576,31 +580,48 @@ void PlayScene::GUI_Function()
 	ImGui::StyleColorsDark();
 }
 
-void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
+bool PlayScene::m_CheckAgentLOS(Agent* agent, DisplayObject* object)
 {
-	// if ship to target distance is less than or equal to LOS Distance
-	auto ShipToTargetDistance = Util::distance(m_pShip->getTransform()->position, target_object->getTransform()->position);
-	if (ShipToTargetDistance <= m_pShip->getLOSDistance())
+	// initialize
+	bool hasLOS = false;
+	agent->setHasLOS(false);
+	
+	// if agent to object distance is less than or equal to LOS Distance
+	auto AgentToObjectDistance = Util::distance(agent->getTransform()->position, object->getTransform()->position);
+	if (AgentToObjectDistance <= agent->getLOSDistance())
 	{
 		std::vector<DisplayObject*> contactList;
-		for (auto object : getDisplayList())
+		for (auto display_object : getDisplayList())
 		{
-			// check if object is farther than than the target
-			auto ShipToObjectDistance = Util::distance(m_pShip->getTransform()->position, object->getTransform()->position);
+			// check if obstacle is farther than than the object
+			auto AgentToObstacleDistance = Util::distance(agent->getTransform()->position, display_object->getTransform()->position);
 
-			if (ShipToObjectDistance <= ShipToTargetDistance)
+			if (AgentToObstacleDistance <= AgentToObjectDistance)
 			{
-				if (object->getType() == OBSTACLE_TILE || object->getType() == OBSTACLE) //(object->getType() != TILE) && (object->getType() != m_pShip->getType()) && (object->getType() != target_object->getType()))
+				if ((display_object->getType() != AGENT) && (display_object->getType() != PATH_NODE) && (display_object->getType() != object->getType()))
 				{
-					contactList.push_back(object);
+					contactList.push_back(display_object);
 				}
 			}
 		}
-		contactList.push_back(target_object); // add the target to the end of the list
-		auto hasLOS = CollisionManager::LOSCheck(m_pShip->getTransform()->position,
-			m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * m_pShip->getLOSDistance(), contactList, target_object);
+		contactList.push_back(object); // add the target to the end of the list
+		const auto agentTarget = agent->getTransform()->position + agent->getCurrentDirection() * agent->getLOSDistance();
+		hasLOS = CollisionManager::LOSCheck(agent, agentTarget, contactList, object);
 
-		m_pShip->setHasLOS(hasLOS);
+		agent->setHasLOS(hasLOS);
+	}
+
+	return hasLOS;
+}
+
+void PlayScene::m_CheckPathNodeLOS()
+{
+	for (auto path_node : m_pGrid)
+	{
+		auto targetDirection = - path_node->getTransform()->position;
+		auto normalizedDirection = Util::normalize(targetDirection);
+		path_node->setCurrentDirection(normalizedDirection);
+		m_CheckAgentLOS(path_node, m_pPlayer);
 	}
 }
 
@@ -619,42 +640,19 @@ void PlayScene::m_CheckShipDR(DisplayObject* target_object)
 	else m_pShip->setInDR(false);
 }
 
-
-void PlayScene::m_setGridEnabled(bool state)
-{
-	for (auto tile : m_pGrid)
-	{
-		tile->setEnabled(state);
-		tile->setLabelsEnabled(state);
-	}
-
-	if (state == false)
-	{
-		SDL_RenderClear(Renderer::Instance()->getRenderer());
-	}
-
-	m_isGridEnabled = state;
-}
-
-bool PlayScene::m_getGridEnabled() const
-{
-	return m_isGridEnabled;
-}
-
 Tile* PlayScene::m_getTile(const int col, const int row)
 {
-	return m_pGrid[(row * Config::COL_NUM) + col];
+	return m_pTileGrid[(row * Config::COL_NUM) + col];
 }
 
 Tile* PlayScene::m_getTile(const glm::vec2 grid_position)
 {
 	const auto col = grid_position.x;
 	const auto row = grid_position.y;
-	return m_pGrid[(row * Config::COL_NUM) + col];
+	return m_pTileGrid[(row * Config::COL_NUM) + col];
 }
 
-
-void PlayScene::m_buildGrid()
+void PlayScene::m_buildTileGrid()
 {
 	auto tileSize = Config::TILE_SIZE;
 
@@ -666,10 +664,8 @@ void PlayScene::m_buildGrid()
 			Tile* tile = new Tile(); // create empty tile
 			tile->getTransform()->position = glm::vec2(col * tileSize, row * tileSize);
 			tile->setGridPosition(col, row);
-			addChild(tile);
-			tile->addLabels();
-			tile->setEnabled(false);
-			m_pGrid.push_back(tile);
+			//addChild(tile);
+			m_pTileGrid.push_back(tile);
 		}
 	}
 
@@ -722,7 +718,52 @@ void PlayScene::m_buildGrid()
 		}
 	}
 
-	std::cout << m_pGrid.size() << std::endl;
+	//std::cout << m_pTileGrid.size() << std::endl;
+}
+
+void PlayScene::m_buildGrid()
+{
+	auto tileSize = Config::TILE_SIZE;
+
+	// add path_nodes to the Grid
+	for (int row = 0; row < Config::ROW_NUM; ++row)
+	{
+		for (int col = 0; col < Config::COL_NUM; ++col)
+		{
+			PathNode* path_node = new PathNode();
+			path_node->getTransform()->position = glm::vec2(
+				(col * tileSize) + tileSize * 0.5f, (row * tileSize) + tileSize * 0.5f);
+			addChild(path_node);
+			m_pGrid.push_back(path_node);
+
+		}
+	}
+}
+
+void PlayScene::m_toggleGrid(bool state)
+{
+
+	for (auto path_node : m_pGrid)
+	{
+		path_node->setVisible(state);
+	}
+}
+
+PathNode* PlayScene::m_findClosestPathNode(Agent* agent)
+{
+	auto min = INFINITY;
+	PathNode* closestPathNode = nullptr;
+	for (auto path_node : m_pGrid)
+	{
+		const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
+		if (distance < min)
+		{
+			min = distance;
+			closestPathNode = path_node;
+		}
+	}
+
+	return closestPathNode;
 }
 
 void PlayScene::damageActor(Ship* actor)

@@ -50,17 +50,17 @@ Ship::Ship() : m_maxSpeed(10.0f)
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
 	getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
 	getRigidBody()->isColliding = false;
-	setType(SHIP);
+	setType(AGENT);
 
 	setCurrentHeading(0.0f);// current facing angle
 	setCurrentDirection(glm::vec2(1.0f, 0.0f)); // facing right
 	m_turnRate = 90.0f; // 90 degrees per frame
 
 	setLOSDistance(400.0f); // 5 ppf x 80 feet
-	setLOSColour(glm::vec4(1, 0, 0, 1));
+	setLOSColour(glm::vec4(1, 0, 1, 1));
 
 	setDetectionRadius(50.f);
-	setDRColour((glm::vec4(1, 0, 0, 1)));
+	setDRColour((glm::vec4(1, 0, 1, 1)));
 
 	m_dbgMode = false;
 	m_currentAction = "Patrol";

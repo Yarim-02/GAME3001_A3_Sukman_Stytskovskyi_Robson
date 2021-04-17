@@ -16,6 +16,8 @@ public:
 	static const float Deg2Rad;
 	static const float Rad2Deg;
 
+	static glm::vec2 getVector(glm::vec2 point1, glm::vec2 point2);
+	
 	static float sign(float value);
 	static float clamp(float value, float min, float max);
 
