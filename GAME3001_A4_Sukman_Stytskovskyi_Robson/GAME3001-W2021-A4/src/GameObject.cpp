@@ -57,3 +57,13 @@ bool GameObject::isEnabled() const
 {
 	return m_enabled;
 }
+
+void GameObject::setVisible(const bool state)
+{
+	m_visible = state;
+}
+
+bool GameObject::isVisible() const
+{
+	return m_visible;
+}

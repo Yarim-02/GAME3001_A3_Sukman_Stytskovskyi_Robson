@@ -99,7 +99,7 @@ void Agent::setLOSColour(const glm::vec4 colour)
 
 void Agent::setDRColour(glm::vec4 colour)
 {
-	m_LOSColour = colour;
+	m_DRColour = colour;
 }
 
 void Agent::m_changeDirection()

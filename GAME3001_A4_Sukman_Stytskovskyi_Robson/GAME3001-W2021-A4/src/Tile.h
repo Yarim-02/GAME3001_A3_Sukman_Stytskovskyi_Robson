@@ -30,15 +30,11 @@ public:
 	TileStatus getTileStatus() const;
 	void setTileStatus(TileStatus status);
 
-	void addLabels();
-	void setLabelsEnabled(bool state);
 
 private:
 	float m_cost;
 	TileStatus m_status;
 
-	Label* m_costLabel;
-	Label* m_statusLabel;
 
 	Tile* m_neighbours[NUM_OF_NEIGHBOUR_TILES];
 };
