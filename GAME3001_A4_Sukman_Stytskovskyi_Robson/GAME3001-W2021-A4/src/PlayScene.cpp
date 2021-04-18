@@ -160,12 +160,14 @@ void PlayScene::update()
 	//	}
 	//}
 	//
-	if (m_pSkeleton->getHadLOS())
-		m_pSkeleton->setCurrentAction("Move To Player Action");
-	else
+	//if (m_pSkeleton->getHadLOS())
+	//	m_pSkeleton->setCurrentAction("Move To Player Action");
+	//else
+	if (m_pSkeleton->getCurrentAction() != "Idle")
 		m_pSkeleton->setCurrentAction(decisionTree->MakeDecision());
 
-	
+		if (m_pSkeleton->getHealthBar().getHealthPoints() <= 25)
+			m_pSkeleton->setFleeing(true);
 
 	//Enemy death
 	if (m_pSkeleton->getHealthBar().getHealthPoints() <= 0)
@@ -231,7 +233,9 @@ void PlayScene::update()
 			m_patrolPathPosition = -1;
 		}
 	}
-	if (m_pSkeleton->getCurrentAction() == "Patrol Action" || m_pSkeleton->getCurrentAction() == "Wandering" || m_pSkeleton->getCurrentAction() == "Taking Damage" || m_pSkeleton->getCurrentAction() == "Move To Player Action")
+	if (m_pSkeleton->getCurrentAction() == "Patrol Action" || m_pSkeleton->getCurrentAction() == "Wandering" ||
+		m_pSkeleton->getCurrentAction() == "Taking Damage" || m_pSkeleton->getCurrentAction() == "Move To Player Action" ||
+		m_pSkeleton->getCurrentAction() == "Flee Action")
 	{
 		m_pSkeleton->moveForward();
 		m_pSkeleton->move();
@@ -265,8 +269,11 @@ void PlayScene::update()
 	}
 	if (m_pSkeleton->getCurrentAction() == "Move To Player Action")
 	{
-		//m_pSkeleton->setCurrentHeading(Util::signedAngle(m_pSkeleton->getTransform()->position, m_pPlayer->getTransform()->position));
 		m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeleton->getTransform()->position) );
+	}
+	if (m_pSkeleton->getCurrentAction() == "Flee Action")
+	{
+		m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeleton->getTransform()->position) * -1.f);
 	}
 
 	m_frameCounter++;
@@ -275,19 +282,19 @@ void PlayScene::update()
 		m_frameCounter = 0;
 	}
 
-	for each (auto & Obstacle in m_pObstacle)
-	{
-		if (CollisionManager::lineRectCheck(m_pSkeleton->getTransform()->position, m_pSkeleton->getTransform()->position + m_pSkeleton->getCurrentDirection() * 25.0f, Obstacle->getTransform()->position, Obstacle->getWidth(), Obstacle->getHeight()))
-		{
-			m_pSkeleton->getRigidBody()->isColliding == true;
-			std::cout << "Enemy collision with obstacle\n";
-			m_pSkeleton->setCurrentAction("Stopped");
-			//if (m_randomSwitch == 0)
-			m_pSkeleton->turnRight();
-			//else if (m_randomSwitch == 1)
-				//m_pShip->turnLeft();
-		}
-	}
+	//for each (auto & Obstacle in m_pObstacle)
+	//{
+	//	if (CollisionManager::lineRectCheck(m_pSkeleton->getTransform()->position, m_pSkeleton->getTransform()->position + m_pSkeleton->getCurrentDirection() * 25.0f, Obstacle->getTransform()->position, Obstacle->getWidth(), Obstacle->getHeight()))
+	//	{
+	//		m_pSkeleton->getRigidBody()->isColliding == true;
+	//		std::cout << "Enemy collision with obstacle\n";
+	//		m_pSkeleton->setCurrentAction("Stopped");
+	//		//if (m_randomSwitch == 0)
+	//		m_pSkeleton->turnRight();
+	//		//else if (m_randomSwitch == 1)
+	//			//m_pShip->turnLeft();
+	//	}
+	//}
 	if (m_pSkeleton->getCurrentAction() == "Wander") // no need to check collission with impassable border tiles
 	{											// while on patrol path as enemy will turn on it's own
 		for each (auto & Tile in m_pTileGrid)

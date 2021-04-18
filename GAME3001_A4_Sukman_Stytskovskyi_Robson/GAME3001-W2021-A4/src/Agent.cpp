@@ -114,7 +114,17 @@ void Agent::setGoingRight(bool b)
 	m_bGoingRight = b;
 }
 
+void Agent::setFleeing(bool b)
+{
+	m_isFleeing = b;
+}
+
 bool Agent::getGoingRight()
 {
 	return m_bGoingRight;
+}
+
+bool Agent::getFleeing()
+{
+	return m_isFleeing;
 }

@@ -4,6 +4,7 @@
 #include "Agent.h"
 #include "CloseCombatCondition.h"
 #include "LOSCondition.h"
+#include "FleeCondition.h"
 #include "RadiusCondition.h"
 #include "TreeNode.h"
 #include "TreeNodeType.h"
@@ -31,6 +32,7 @@ private:
 	Agent* m_agent;
 
 	LOSCondition* m_LOSNode;
+	FleeCondition* m_FleeNode;
 	RadiusCondition* m_RadiusNode;
 	CloseCombatCondition* m_CloseCombatNode;
 

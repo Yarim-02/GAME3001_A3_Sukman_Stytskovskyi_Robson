@@ -5,6 +5,7 @@
 
 #include "AttackAction.h"
 #include "MoveToLOSAction.h"
+#include "FleeAction.h"
 #include "MoveToPlayerAction.h"
 #include "PatrolAction.h"
 
@@ -54,6 +55,7 @@ void DecisionTree::Display()
 void DecisionTree::Update()
 {
 	m_LOSNode->setLOS(m_agent->hasLOS());
+	m_FleeNode->setFleeing(m_agent->getFleeing());
 }
 
 // in-order traversal
@@ -73,27 +75,34 @@ std::string DecisionTree::MakeDecision()
 
 void DecisionTree::m_buildTree()
 {
+	m_FleeNode = new FleeCondition();  // node 0
+	m_treeNodeList.push_back(m_FleeNode);
+
 	// add the root node
 	m_LOSNode = new LOSCondition();
-	m_treeNodeList.push_back(m_LOSNode); // node 0
+	AddNode(m_FleeNode, m_LOSNode, LEFT_TREE_NODE);
+	m_treeNodeList.push_back(m_LOSNode); // node 1
 
 	m_RadiusNode = new RadiusCondition();
 	AddNode(m_LOSNode, m_RadiusNode, LEFT_TREE_NODE);
-	m_treeNodeList.push_back(m_RadiusNode); // node 1
+	m_treeNodeList.push_back(m_RadiusNode); // node 2
 
 	m_CloseCombatNode = new CloseCombatCondition();
 	AddNode(m_LOSNode, m_CloseCombatNode, RIGHT_TREE_NODE);
-	m_treeNodeList.push_back(m_CloseCombatNode); // node 2
+	m_treeNodeList.push_back(m_CloseCombatNode); // node 3
 
 	TreeNode* patrolNode = AddNode(m_RadiusNode, new PatrolAction(), LEFT_TREE_NODE);
-	m_treeNodeList.push_back(patrolNode); // node 3
+	m_treeNodeList.push_back(patrolNode); // node 4
 
 	TreeNode* moveToLOSNode = AddNode(m_RadiusNode, new MoveToLOSAction(), RIGHT_TREE_NODE);
-	m_treeNodeList.push_back(moveToLOSNode); // node 4
+	m_treeNodeList.push_back(moveToLOSNode); // node 5
 
 	TreeNode* moveToPlayerNode = AddNode(m_CloseCombatNode, new MoveToPlayerAction(), LEFT_TREE_NODE);
-	m_treeNodeList.push_back(moveToPlayerNode); // node 5
+	m_treeNodeList.push_back(moveToPlayerNode); // node 6
 
 	TreeNode* attackNode = AddNode(m_CloseCombatNode, new AttackAction(), RIGHT_TREE_NODE);
-	m_treeNodeList.push_back(attackNode); // node 6
+	m_treeNodeList.push_back(attackNode); // node 7
+
+	TreeNode* fleeNode = AddNode(m_FleeNode, new FleeAction(), RIGHT_TREE_NODE);
+	m_treeNodeList.push_back(fleeNode);
 }

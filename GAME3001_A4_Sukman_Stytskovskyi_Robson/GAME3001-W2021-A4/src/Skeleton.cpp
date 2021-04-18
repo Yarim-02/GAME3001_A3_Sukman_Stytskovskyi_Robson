@@ -63,6 +63,8 @@ Skeleton::Skeleton() : m_maxSpeed(10.0f)
 	setDRColour((glm::vec4(1, 0, 0, 1)));
 
 	m_dbgMode = false;
+
+	setFleeing(false);
 	m_currentAction = "Patrol";
 
 	m_healthBarDestRect = new SDL_Rect;

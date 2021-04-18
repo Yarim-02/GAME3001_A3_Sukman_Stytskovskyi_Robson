@@ -198,6 +198,12 @@
     <ClCompile Include="..\src\PathNode.cpp">
       <Filter>Decision\Agents</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\FleeAction.cpp">
+      <Filter>Decision\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\FleeCondition.cpp">
+      <Filter>Decision\Conditions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -403,6 +409,12 @@
     </ClInclude>
     <ClInclude Include="..\src\PathNode.h">
       <Filter>Decision\Agents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\FleeAction.h">
+      <Filter>Decision\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\FleeCondition.h">
+      <Filter>Decision\Conditions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

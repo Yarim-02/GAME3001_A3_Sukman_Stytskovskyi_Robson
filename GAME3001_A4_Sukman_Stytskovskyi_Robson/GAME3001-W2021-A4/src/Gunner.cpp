@@ -83,8 +83,8 @@ void Gunner::draw()
 void Gunner::update()
 {
 	auto size = TextureManager::Instance()->getTextureSize("player_walking1");
-	/*move();
-	m_checkBounds();*/
+	//move();
+	m_checkBounds();
 
 	m_Turn();
 
