@@ -113,6 +113,7 @@ void PlayScene::update()
 	for (int i = 0; i < 5; i++)
 	{
 		CollisionManager::ObstacleColCheck(m_pPlayer, m_pObstacle[i]);
+		CollisionManager::ObstacleColCheck(m_pSkeleton, m_pObstacle[i]);
 	}
 
 	//Bullet and Enemy collision
@@ -143,22 +144,22 @@ void PlayScene::update()
 	std::cout << decisionTree->MakeDecision() << std::endl;
 	std::cout << "------------------------\n" << std::endl;
 
-	if (m_pSkeleton->hasLOS())
-	{
-		m_pSkeleton->setHadLOS(true);
-		m_LOSCounter = 9000;
-	}
-
-	if (m_pSkeleton->getHadLOS())
-	{
-		m_LOSCounter--;
-
-		if (m_LOSCounter <= 0)
-		{
-			m_pSkeleton->setHadLOS(false);
-		}
-	}
-
+	//if (m_pSkeleton->hasLOS())
+	//{
+	//	m_pSkeleton->setHadLOS(true);
+	//	m_LOSCounter = 90;
+	//}
+	//
+	//if (m_pSkeleton->getHadLOS())
+	//{
+	//	m_LOSCounter--;
+	//
+	//	if (m_LOSCounter <= 0)
+	//	{
+	//		m_pSkeleton->setHadLOS(false);
+	//	}
+	//}
+	//
 	if (m_pSkeleton->getHadLOS())
 		m_pSkeleton->setCurrentAction("Move To Player Action");
 	else
@@ -232,8 +233,8 @@ void PlayScene::update()
 	}
 	if (m_pSkeleton->getCurrentAction() == "Patrol Action" || m_pSkeleton->getCurrentAction() == "Wandering" || m_pSkeleton->getCurrentAction() == "Taking Damage" || m_pSkeleton->getCurrentAction() == "Move To Player Action")
 	{
-		//m_pSkeleton->moveForward();
-		//m_pSkeleton->move();
+		m_pSkeleton->moveForward();
+		m_pSkeleton->move();
 		if (m_pSkeleton->getCurrentAction() != "Taking Damage")
 		{
 			if ((m_pSkeleton->getTransform()->position.x > m_lastEnemyPosition.x) && !(m_pSkeleton->getTransform()->position.y
@@ -241,6 +242,7 @@ void PlayScene::update()
 			< m_lastEnemyPosition.y - 2))
 			{
 				m_pSkeleton->setAnimationState("WalkingRight");
+				
 			}
 			if ((m_pSkeleton->getTransform()->position.y > m_lastEnemyPosition.y) && !(m_pSkeleton->getTransform()->position.x
 					> m_lastEnemyPosition.x + 2) && !(m_pSkeleton->getTransform()->position.x
@@ -253,6 +255,7 @@ void PlayScene::update()
 				< m_lastEnemyPosition.y - 2))
 			{
 				m_pSkeleton->setAnimationState("WalkingLeft");
+				m_pSkeleton->setGoingRight(false);
 			}
 			if ((m_pSkeleton->getTransform()->position.y < m_lastEnemyPosition.y))
 			{
@@ -262,13 +265,13 @@ void PlayScene::update()
 	}
 	if (m_pSkeleton->getCurrentAction() == "Move To Player Action")
 	{
-		m_pSkeleton->setCurrentHeading(Util::repeat(Util::signedAngle(m_pSkeleton->getTransform()->position, m_pPlayer->getTransform()->position), 360.f));
-		//m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position));
+		//m_pSkeleton->setCurrentHeading(Util::signedAngle(m_pSkeleton->getTransform()->position, m_pPlayer->getTransform()->position));
+		m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeleton->getTransform()->position) );
 	}
 
 	m_frameCounter++;
 	if (m_frameCounter > 1000)
-	{
+	{  
 		m_frameCounter = 0;
 	}
 
@@ -439,10 +442,10 @@ void PlayScene::handleEvents()
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_P) && m_dbgMode && m_PressCounter >= 6)
 	{
-		if(m_pSkeleton->getCurrentAction() == "Patrol")
+		if(m_pSkeleton->getCurrentAction() == "Patrol Action")
 			m_pSkeleton->setCurrentAction("Idle");
 		else if(m_pSkeleton->getCurrentAction() == "Idle")
-			m_pSkeleton->setCurrentAction("Patrol");
+			m_pSkeleton->setCurrentAction("Patrol Action");
 
 		m_PressCounter = 0;
 	}

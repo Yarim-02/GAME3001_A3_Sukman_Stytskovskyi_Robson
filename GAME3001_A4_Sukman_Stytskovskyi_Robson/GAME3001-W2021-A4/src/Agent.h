@@ -26,6 +26,7 @@ public:
 	float getCurrentHeading() const;
 	glm::vec4 getLOSColour() const;
 	glm::vec4 getDRColour() const;
+	bool getGoingRight();
 
 	// setters
 	void setTargetPosition(glm::vec2 new_position);
@@ -37,6 +38,7 @@ public:
 	void setCurrentHeading(float heading);
 	void setLOSColour(glm::vec4 colour);
 	void setDRColour(glm::vec4 colour);
+	void setGoingRight(bool b);
 
 private:
 	void m_changeDirection();
@@ -49,6 +51,7 @@ private:
 	float m_DetectionRadius;
 	bool m_hasLOS;
 	bool m_inDR;
+	bool m_bGoingRight;
 	glm::vec4 m_LOSColour;
 	glm::vec4 m_DRColour;
 };

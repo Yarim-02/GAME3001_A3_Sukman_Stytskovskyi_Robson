@@ -97,7 +97,7 @@ bool CollisionManager::AABBCheck(GameObject* object1, GameObject* object2)
 	return false;
 }
 
-bool CollisionManager::ObstacleColCheck(Gunner* object1, GameObject* object2)
+bool CollisionManager::ObstacleColCheck(Agent* object1, GameObject* object2)
 {
 	// prepare relevant variables
 	const auto p1 = object1->getTransform()->position;

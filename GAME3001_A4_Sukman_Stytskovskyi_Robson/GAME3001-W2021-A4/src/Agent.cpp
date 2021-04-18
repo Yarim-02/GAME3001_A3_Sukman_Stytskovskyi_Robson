@@ -108,3 +108,13 @@ void Agent::m_changeDirection()
 	const auto y = sin(m_currentHeading * Util::Deg2Rad);
 	m_currentDirection = glm::vec2(x, y);
 }
+
+void Agent::setGoingRight(bool b)
+{
+	m_bGoingRight = b;
+}
+
+bool Agent::getGoingRight()
+{
+	return m_bGoingRight;
+}

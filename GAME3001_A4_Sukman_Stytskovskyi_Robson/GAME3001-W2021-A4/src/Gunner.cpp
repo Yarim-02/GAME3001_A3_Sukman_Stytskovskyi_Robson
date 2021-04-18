@@ -11,7 +11,7 @@ Gunner::Gunner() : m_maxSpeed(10.0f)
 
 	auto size = TextureManager::Instance()->getTextureSize("player_walking1");
 	setWidth(size.x);
-	setHeight(40);
+	setHeight(size.y);
 
 	getTransform()->position = glm::vec2(400.0f, 300.0f);
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
@@ -148,16 +148,6 @@ void Gunner::setDestination(const glm::vec2 destination)
 void Gunner::setAnimating(bool state)
 {
 	m_isAnimating = state;
-}
-
-void Gunner::setGoingRight(bool b)
-{
-	m_bGoingRight = b;
-}
-
-bool Gunner::getGoingRight()
-{
-	return m_bGoingRight;
 }
 
 glm::vec2 Gunner::getOrientation() const
