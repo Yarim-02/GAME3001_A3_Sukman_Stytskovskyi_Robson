@@ -78,6 +78,8 @@ private:
 	void m_toggleGrid(bool state);
 
 	PathNode* m_findClosestPathNode(Agent* agent);
+	PathNode* m_findClosestLOSPathNode(Agent* agent);
+	PathNode* m_findClosestCoverPathNode(Agent* agent);
 	
 	void damageActor(Skeleton* actor);
 

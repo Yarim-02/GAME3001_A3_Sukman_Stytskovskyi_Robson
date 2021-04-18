@@ -1,8 +1,7 @@
 #include "DecisionTree.h"
 #include <iostream>
 
-
-
+#include "MoveBehindCoverAction.h"
 #include "AttackAction.h"
 #include "MoveToLOSAction.h"
 #include "FleeAction.h"
@@ -56,6 +55,7 @@ void DecisionTree::Update()
 {
 	m_LOSNode->setLOS(m_agent->hasLOS());
 	m_FleeNode->setFleeing(m_agent->getFleeing());
+	m_RadiusNode->setIsWithinRadius(m_agent->inDR());
 }
 
 // in-order traversal

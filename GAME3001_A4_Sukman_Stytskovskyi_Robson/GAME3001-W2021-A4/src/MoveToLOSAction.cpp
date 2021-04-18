@@ -3,7 +3,7 @@
 
 MoveToLOSAction::MoveToLOSAction()
 {
-	name = "Move to LOS Action";
+	name = "Move To LOS Action";
 }
 
 MoveToLOSAction::~MoveToLOSAction()

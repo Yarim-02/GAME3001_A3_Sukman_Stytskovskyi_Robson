@@ -235,7 +235,7 @@ void PlayScene::update()
 	}
 	if (m_pSkeleton->getCurrentAction() == "Patrol Action" || m_pSkeleton->getCurrentAction() == "Wandering" ||
 		m_pSkeleton->getCurrentAction() == "Taking Damage" || m_pSkeleton->getCurrentAction() == "Move To Player Action" ||
-		m_pSkeleton->getCurrentAction() == "Flee Action")
+		m_pSkeleton->getCurrentAction() == "Flee Action" || m_pSkeleton->getCurrentAction() == "Move Behind Cover Action")
 	{
 		m_pSkeleton->moveForward();
 		m_pSkeleton->move();
@@ -275,6 +275,7 @@ void PlayScene::update()
 	{
 		m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeleton->getTransform()->position) * -1.f);
 	}
+
 
 	m_frameCounter++;
 	if (m_frameCounter > 1000)
@@ -336,8 +337,29 @@ void PlayScene::update()
 		m_pSkeleton->setCurrentAction("Patrol Action");
 	}
 
+	std::cout << m_pSkeleton->getCurrentAction()<< "\n";
+
 	m_CheckPathNodeLOS();
 	m_CheckAgentLOS(m_pSkeleton, m_pPlayer);
+
+	if (m_pSkeleton->getCurrentAction() == "Move Behind Cover Action")
+	{
+		m_pSkeleton->setCurrentDirection(Util::normalize(m_findClosestCoverPathNode(m_pSkeleton)->getTransform()->position
+			- m_pSkeleton->getTransform()->position));
+	}
+	if (m_pSkeleton->getCurrentAction() == "Move To LOS Action")
+	{
+		m_pSkeleton->setCurrentDirection(Util::normalize(m_findClosestLOSPathNode(m_pSkeleton)->getTransform()->
+			position - m_pSkeleton->getTransform()->position));
+		m_pSkeleton->moveForward();
+		m_pSkeleton->move();
+		if (Util::distance(m_pSkeleton->getTransform()->position, m_findClosestLOSPathNode(m_pSkeleton)->
+			getTransform()->position) < 5)
+		{
+			m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeleton->getTransform()->position));
+		}
+		//m_pSkeleton->m_Seek(m_findClosestLOSPathNode(m_pSkeleton));
+	}
 }
 
 void PlayScene::clean()
@@ -441,7 +463,7 @@ void PlayScene::handleEvents()
 	{
 		damageActor(m_pSkeleton);
 		m_pSkeleton->flipTakingDamage();
-		//std::cout << "Enemy damaged, new health value: " << m_pShip->getHealthBar().getHealthPoints() << "\n";
+		////std::cout << "Enemy damaged, new health value: " << m_pShip->getHealthBar().getHealthPoints() << "\n";
 
 		m_PressCounter = 0;
 	}
@@ -451,7 +473,7 @@ void PlayScene::handleEvents()
 	{
 		if(m_pSkeleton->getCurrentAction() == "Patrol Action")
 			m_pSkeleton->setCurrentAction("Idle");
-		else if(m_pSkeleton->getCurrentAction() == "Idle")
+		else if (m_pSkeleton->getCurrentAction() == "Idle")
 			m_pSkeleton->setCurrentAction("Patrol Action");
 
 		m_PressCounter = 0;
@@ -794,6 +816,64 @@ void PlayScene::m_toggleGrid(bool state)
 	{
 		path_node->setVisible(state);
 	}
+}
+
+PathNode* PlayScene::m_findClosestPathNode(Agent* agent)
+{
+	auto min = INFINITY;
+	PathNode* closestPathNode = nullptr;
+	for (auto path_node : m_pGrid)
+	{
+		const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
+		if (distance < min)
+		{
+			min = distance;
+			closestPathNode = path_node;
+		}
+	}
+
+	return closestPathNode;
+}
+
+PathNode* PlayScene::m_findClosestLOSPathNode(Agent* agent)
+{
+	auto min = INFINITY;
+	PathNode* closestPathNode = nullptr;
+	for (auto path_node : m_pGrid)
+	{
+		const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
+		if (distance < min)
+		{
+			if (path_node->hasLOS() == true)
+			{
+				closestPathNode = path_node;
+				min = distance;
+			}
+		}
+	}
+
+	return closestPathNode;
+}
+
+PathNode* PlayScene::m_findClosestCoverPathNode(Agent* agent)
+{
+	auto min = INFINITY;
+	PathNode* closestPathNode = nullptr;
+	for (auto path_node : m_pGrid)
+	{
+		const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
+		if (distance < min)
+		{
+			
+			if (path_node->hasLOS() == false)
+			{
+				closestPathNode = path_node;
+				min = distance;
+			}
+		}
+	}
+
+	return closestPathNode;
 }
 
 

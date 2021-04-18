@@ -1,4 +1,6 @@
 #include "Skeleton.h"
+
+#include "Game.h"
 #include "glm/gtx/string_cast.hpp"
 #include "PlayScene.h"
 #include "TextureManager.h"
@@ -59,7 +61,7 @@ Skeleton::Skeleton() : m_maxSpeed(10.0f)
 	setLOSDistance(400.0f); // 5 ppf x 80 feet
 	setLOSColour(glm::vec4(1, 0, 0, 1));
 
-	setDetectionRadius(50.f);
+	setDetectionRadius(150.f);
 	setDRColour((glm::vec4(1, 0, 0, 1)));
 
 	m_dbgMode = false;
@@ -452,5 +454,42 @@ void Skeleton::m_reset()
 	const auto xComponent = rand() % (640 - getWidth()) + halfWidth + 1;
 	const auto yComponent = -getHeight();
 	getTransform()->position = glm::vec2(xComponent, yComponent);
+}
+
+void Skeleton::m_Seek(Agent* target)
+{
+	auto deltaTime = TheGame::Instance()->getDeltaTime();
+
+	// direction with magnitude
+	auto m_targetDirection = target->getTransform()->position - this->getTransform()->position;
+
+	// normalized direction
+	m_targetDirection = Util::normalize(m_targetDirection);
+
+	auto target_rotation = Util::signedAngle(getCurrentDirection(), m_targetDirection);
+
+	auto turn_sensitivity = 5.0f;
+
+	if (abs(target_rotation) > turn_sensitivity)
+	{
+		if (target_rotation > 0.0f)
+		{
+			this->setCurrentHeading(getCurrentHeading() + 15.0f);
+		}
+		else if (target_rotation < 0.0f)
+		{
+			this->setCurrentHeading(getCurrentHeading() - 15.0f);
+		}
+	}
+
+	getRigidBody()->acceleration = getCurrentDirection() * 5.0f;
+
+	// using the formula pf = pi + vi*t + 0.5ai*t^2
+	getRigidBody()->velocity += getCurrentDirection() * (deltaTime)+
+		0.5f * getRigidBody()->acceleration * (deltaTime);
+
+	getRigidBody()->velocity = Util::clamp(getRigidBody()->velocity, m_maxSpeed);
+
+	getTransform()->position += getRigidBody()->velocity;
 }
 

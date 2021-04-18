@@ -42,6 +42,7 @@ public:
 	void setHadLOS(bool b);
 	void setAnimationState(std::string animationState);
 	void setCurrentAction(std::string currentAction);
+	void m_Seek(Agent* target);
 
 private:
 	void m_checkBounds();
