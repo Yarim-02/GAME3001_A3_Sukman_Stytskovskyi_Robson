@@ -83,7 +83,7 @@ void Skeleton::draw()
 	const auto y = getTransform()->position.y;
 
 
-	if (m_currentAction == "Patrol" || m_currentAction == "Wandering" || m_currentAction == "Taking Damage")
+	if (m_currentAction == "Patrol Action" || m_currentAction == "Wandering" || m_currentAction == "Taking Damage")
 	{
 		if (m_animationState == "WalkingDown")
 		{
@@ -370,6 +370,11 @@ std::string Skeleton::getCurrentAction()
 	return m_currentAction;
 }
 
+bool Skeleton::getHadLOS()
+{
+	return m_bHadLOS;
+}
+
 bool Skeleton::getTakingDamage()
 {
 	return m_takingDamage;
@@ -393,6 +398,11 @@ void Skeleton::flipDbg()
 void Skeleton::flipTakingDamage()
 {
 	m_takingDamage = !m_takingDamage;
+}
+
+void Skeleton::setHadLOS(bool b)
+{
+	m_bHadLOS = b;
 }
 
 void Skeleton::setAnimationState(std::string animationState)

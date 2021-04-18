@@ -31,6 +31,7 @@ public:
 	float getMaxSpeed() const;
 	std::string getAnimationState();
 	std::string getCurrentAction();
+	bool getHadLOS();
 	bool getTakingDamage();
 	HealthBar& getHealthBar();
 
@@ -38,6 +39,7 @@ public:
 	void setMaxSpeed(float newSpeed);
 	void flipDbg();
 	void flipTakingDamage();
+	void setHadLOS(bool b);
 	void setAnimationState(std::string animationState);
 	void setCurrentAction(std::string currentAction);
 
@@ -59,8 +61,8 @@ private:
 	HealthBar m_healthBar;
 	glm::vec2 m_position;
 	SDL_Rect* m_healthBarDestRect;
-
-
+	
+	bool m_bHadLOS;
 };
 
 

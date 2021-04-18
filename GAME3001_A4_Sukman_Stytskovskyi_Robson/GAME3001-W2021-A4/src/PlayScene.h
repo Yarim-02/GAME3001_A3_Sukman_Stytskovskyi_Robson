@@ -55,8 +55,9 @@ private:
 		m_enemiesDead;
 
 	int m_MeleeCounter,
-	 m_BulletCounter,
-	 m_PressCounter;
+		m_BulletCounter,
+		m_PressCounter,
+		m_LOSCounter;
 
 	bool m_dbgMode,
 		skeletonDead;

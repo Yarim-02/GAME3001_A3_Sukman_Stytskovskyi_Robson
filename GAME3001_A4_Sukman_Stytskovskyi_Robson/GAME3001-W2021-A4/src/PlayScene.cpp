@@ -79,6 +79,11 @@ void PlayScene::update()
 	srand(time(NULL));
 	m_randomSwitch = 0 + rand() % 2;
 
+	SDL_GetMouseState(&mouseX, &mouseY);
+
+	m_pPlayer->setDestination(glm::vec2(mouseX, mouseY));
+
+
 	//for normal KeyPresses
 	if (m_PressCounter != 6)
 			m_PressCounter++;
@@ -109,7 +114,6 @@ void PlayScene::update()
 		}
 	}
 	
-
 	for (int i = 0; i < 5; i++)
 	{
 		CollisionManager::ObstacleColCheck(m_pPlayer, m_pObstacle[i]);
@@ -124,7 +128,7 @@ void PlayScene::update()
 			m_pSkeleton->flipTakingDamage();
 		}
 	}
-	
+
 	//Melee and Enemy collision
 	for (int i = 0; i < m_pMelee.size(); i++)
 	{
@@ -134,6 +138,37 @@ void PlayScene::update()
 			m_pSkeleton->flipTakingDamage();
 		}
 	}
+
+	//**************
+	//** AI STUFF **
+	//**************
+
+	std::cout << "------------------------" << std::endl;
+	std::cout << decisionTree->MakeDecision() << std::endl;
+	std::cout << "------------------------\n" << std::endl;
+
+	if (m_pSkeleton->hasLOS())
+	{
+		m_pSkeleton->setHadLOS(true);
+		m_LOSCounter = 9000;
+	}
+
+	if (m_pSkeleton->getHadLOS())
+	{
+		m_LOSCounter--;
+
+		if (m_LOSCounter <= 0)
+		{
+			m_pSkeleton->setHadLOS(false);
+		}
+	}
+
+	if (m_pSkeleton->getHadLOS())
+		m_pSkeleton->setCurrentAction("Move To Player Action");
+	else
+		m_pSkeleton->setCurrentAction(decisionTree->MakeDecision());
+
+	
 
 	//Enemy death
 		if (m_pSkeleton->getHealthBar().getHealthPoints() <= 0)
@@ -179,14 +214,10 @@ void PlayScene::update()
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	updateDisplayList();
 
-	SDL_GetMouseState(&mouseX, &mouseY);
-
-	m_pPlayer->setDestination(glm::vec2(mouseX, mouseY));
-
 	m_CheckShipLOS(m_pPlayer);
 	m_CheckShipDR(m_pPlayer);
 
-	if (m_pSkeleton->getCurrentAction() == "Patrol")
+	if (m_pSkeleton->getCurrentAction() == "Patrol Action")
 	{
 		m_pSkeleton->setCurrentDirection(Util::normalize(glm::vec2((m_pPatrolPath[m_patrolPathPosition + 1]->
 			getTransform()->position.x + offset.x - m_pSkeleton->getTransform()->position.x), (m_pPatrolPath[m_patrolPathPosition
@@ -204,10 +235,10 @@ void PlayScene::update()
 			m_patrolPathPosition = -1;
 		}
 	}
-	if (m_pSkeleton->getCurrentAction() == "Patrol" || m_pSkeleton->getCurrentAction() == "Wandering" || m_pSkeleton->getCurrentAction() == "Taking Damage")
+	if (m_pSkeleton->getCurrentAction() == "Patrol Action" || m_pSkeleton->getCurrentAction() == "Wandering" || m_pSkeleton->getCurrentAction() == "Taking Damage" || m_pSkeleton->getCurrentAction() == "Move To Player Action")
 	{
-		m_pSkeleton->moveForward();
-		m_pSkeleton->move();
+		//m_pSkeleton->moveForward();
+		//m_pSkeleton->move();
 		if (m_pSkeleton->getCurrentAction() != "Taking Damage")
 		{
 			if ((m_pSkeleton->getTransform()->position.x > m_lastEnemyPosition.x) && !(m_pSkeleton->getTransform()->position.y
@@ -217,8 +248,8 @@ void PlayScene::update()
 				m_pSkeleton->setAnimationState("WalkingRight");
 			}
 			if ((m_pSkeleton->getTransform()->position.y > m_lastEnemyPosition.y) && !(m_pSkeleton->getTransform()->position.x
-	> m_lastEnemyPosition.x + 2) && !(m_pSkeleton->getTransform()->position.x
-		< m_lastEnemyPosition.x - 2))
+					> m_lastEnemyPosition.x + 2) && !(m_pSkeleton->getTransform()->position.x
+						< m_lastEnemyPosition.x - 2))
 			{
 				m_pSkeleton->setAnimationState("WalkingDown");
 			}
@@ -234,15 +265,10 @@ void PlayScene::update()
 			}
 		}
 	}
-
-	std::cout << "------------------------" << std::endl;
-	std::cout << decisionTree->MakeDecision() << std::endl;
-	std::cout << "------------------------\n" << std::endl;
-
-	if (decisionTree->MakeDecision() == "Move To Player Action")
+	if (m_pSkeleton->getCurrentAction() == "Move To Player Action")
 	{
-		m_pSkeleton->setCurrentHeading(Util::angle(m_pSkeleton->getTransform()->position, m_pPlayer->getTransform()->position));
-		m_pSkeleton->moveForward();
+		m_pSkeleton->setCurrentHeading(Util::repeat(Util::signedAngle(m_pSkeleton->getTransform()->position, m_pPlayer->getTransform()->position), 360.f));
+		//m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position));
 	}
 
 	m_frameCounter++;
@@ -302,7 +328,7 @@ void PlayScene::update()
 
 	if (m_pSkeleton->getCurrentAction() == "Taking Damage" && m_frameCounter % 20 == 0)
 	{
-		m_pSkeleton->setCurrentAction("Patrol");
+		m_pSkeleton->setCurrentAction("Patrol Action");
 	}
 
 	
