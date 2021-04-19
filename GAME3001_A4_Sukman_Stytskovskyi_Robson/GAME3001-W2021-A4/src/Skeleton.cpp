@@ -39,6 +39,20 @@ Skeleton::Skeleton() : m_maxSpeed(20.0f)
 	TextureManager::Instance()->load("../Assets/textures/DyingSkeleton2.png", "DyingSkeleton2");
 	TextureManager::Instance()->load("../Assets/textures/DyingSkeleton3.png", "DyingSkeleton3");
 
+	TextureManager::Instance()->load("../Assets/textures/FRS1.png", "FRS1");
+	TextureManager::Instance()->load("../Assets/textures/FRS2.png", "FRS2");
+	TextureManager::Instance()->load("../Assets/textures/FRS3.png", "FRS3");
+	TextureManager::Instance()->load("../Assets/textures/BRS1.png", "BRS1");
+	TextureManager::Instance()->load("../Assets/textures/BRS2.png", "BRS2");
+	TextureManager::Instance()->load("../Assets/textures/BRS3.png", "BRS3");
+	TextureManager::Instance()->load("../Assets/textures/RWRS1.png", "RWRS1");
+	TextureManager::Instance()->load("../Assets/textures/RWRS2.png", "RWRS2");
+	TextureManager::Instance()->load("../Assets/textures/RWRS3.png", "RWRS3");
+	TextureManager::Instance()->load("../Assets/textures/LWRS1.png", "LWRS1");
+	TextureManager::Instance()->load("../Assets/textures/LWRS2.png", "LWRS2");
+	TextureManager::Instance()->load("../Assets/textures/LWRS3.png", "LWRS3");
+
+
 	SoundManager::Instance().allocateChannels(6);
 	SoundManager::Instance().load("../Assets/audio/skeleton_walk.ogg", "skeleton_walk", SOUND_SFX);
 	SoundManager::Instance().setSoundVolume(60);
@@ -94,20 +108,41 @@ void Skeleton::draw()
 	{
 		if (m_animationState == "WalkingDown")
 		{
-			if (m_frameCounter < 5)
+			if (m_variation == CLOSE_COMBAT)
 			{
-				TextureManager::Instance()->draw("IdleSkeleton1",
-					x, y, 0.0, 255, true);
+				if (m_frameCounter < 5)
+				{
+					TextureManager::Instance()->draw("IdleSkeleton1",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 10)
+				{
+					TextureManager::Instance()->draw("IdleSkeleton2",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 15)
+				{
+					TextureManager::Instance()->draw("IdleSkeleton3",
+						x, y, 0.0, 255, true);
+				}
 			}
-			else if (m_frameCounter < 10)
+			else if (m_variation == RANGE_COMBAT)
 			{
-				TextureManager::Instance()->draw("IdleSkeleton2",
-					x, y, 0.0, 255, true);
-			}
-			else if (m_frameCounter < 15)
-			{
-				TextureManager::Instance()->draw("IdleSkeleton3",
-					x, y, 0.0, 255, true);
+				if (m_frameCounter < 5)
+				{
+					TextureManager::Instance()->draw("FRS1",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 10)
+				{
+					TextureManager::Instance()->draw("FRS2",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 15)
+				{
+					TextureManager::Instance()->draw("FRS3",
+						x, y, 0.0, 255, true);
+				}
 			}
 		}
 		if (m_animationState == "FWSdamage")
@@ -131,21 +166,43 @@ void Skeleton::draw()
 		}
 		if (m_animationState == "WalkingRight")
 		{
-			if (m_frameCounter < 5)
+			if (m_variation == CLOSE_COMBAT)
 			{
-				TextureManager::Instance()->draw("RightWalkingSkeleton1",
-					x, y, 0.0, 255, true);
-			}
-			else if (m_frameCounter < 10)
-			{
-				TextureManager::Instance()->draw("RightWalkingSkeleton2",
-					x, y, 0.0, 255, true);
-			}
-			else if (m_frameCounter < 15)
-			{
-				TextureManager::Instance()->draw("RightWalkingSkeleton3",
-					x, y, 0.0, 255, true);
+				if (m_frameCounter < 5)
+				{
+					TextureManager::Instance()->draw("RightWalkingSkeleton1",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 10)
+				{
+					TextureManager::Instance()->draw("RightWalkingSkeleton2",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 15)
+				{
+					TextureManager::Instance()->draw("RightWalkingSkeleton3",
+						x, y, 0.0, 255, true);
 
+				}
+			}
+			else if (m_variation == RANGE_COMBAT)
+			{
+				if (m_frameCounter < 5)
+				{
+					TextureManager::Instance()->draw("RWRS1",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 10)
+				{
+					TextureManager::Instance()->draw("RWRS2",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 15)
+				{
+					TextureManager::Instance()->draw("RWRS3",
+						x, y, 0.0, 255, true);
+
+				}
 			}
 		}
 		if (m_animationState == "RWSdamage")
@@ -169,21 +226,43 @@ void Skeleton::draw()
 		}
 		if (m_animationState == "WalkingLeft")
 		{
-			if (m_frameCounter < 5)
+			if (m_variation == CLOSE_COMBAT)
 			{
-				TextureManager::Instance()->draw("LeftWalkingSkeleton1",
-					x, y, 0.0, 255, true);
-			}
-			else if (m_frameCounter < 10)
-			{
-				TextureManager::Instance()->draw("LeftWalkingSkeleton2",
-					x, y, 0.0, 255, true);
-			}
-			else if (m_frameCounter < 15)
-			{
-				TextureManager::Instance()->draw("LeftWalkingSkeleton3",
-					x, y, 0.0, 255, true);
+				if (m_frameCounter < 5)
+				{
+					TextureManager::Instance()->draw("LeftWalkingSkeleton1",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 10)
+				{
+					TextureManager::Instance()->draw("LeftWalkingSkeleton2",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 15)
+				{
+					TextureManager::Instance()->draw("LeftWalkingSkeleton3",
+						x, y, 0.0, 255, true);
 
+				}
+			}
+			else if (m_variation == RANGE_COMBAT)
+			{
+				if (m_frameCounter < 5)
+				{
+					TextureManager::Instance()->draw("LWRS1",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 10)
+				{
+					TextureManager::Instance()->draw("LWRS2",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 15)
+				{
+					TextureManager::Instance()->draw("LWRS3",
+						x, y, 0.0, 255, true);
+
+				}
 			}
 		}
 		if (m_animationState == "LWSdamage")
@@ -207,21 +286,43 @@ void Skeleton::draw()
 		}
 		if (m_animationState == "WalkingUp")
 		{
-			if (m_frameCounter < 5)
+			if (m_variation == CLOSE_COMBAT)
 			{
-				TextureManager::Instance()->draw("BackwardSkeleton1",
-					x, y, 0.0, 255, true);
-			}
-			else if (m_frameCounter < 10)
-			{
-				TextureManager::Instance()->draw("BackwardSkeleton2",
-					x, y, 0.0, 255, true);
-			}
-			else if (m_frameCounter < 15)
-			{
-				TextureManager::Instance()->draw("BackwardSkeleton3",
-					x, y, 0.0, 255, true);
+				if (m_frameCounter < 5)
+				{
+					TextureManager::Instance()->draw("BackwardSkeleton1",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 10)
+				{
+					TextureManager::Instance()->draw("BackwardSkeleton2",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 15)
+				{
+					TextureManager::Instance()->draw("BackwardSkeleton3",
+						x, y, 0.0, 255, true);
 
+				}
+			}
+			else if (m_variation == RANGE_COMBAT)
+			{
+				if (m_frameCounter < 5)
+				{
+					TextureManager::Instance()->draw("BRS1",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 10)
+				{
+					TextureManager::Instance()->draw("BRS2",
+						x, y, 0.0, 255, true);
+				}
+				else if (m_frameCounter < 15)
+				{
+					TextureManager::Instance()->draw("BRS3",
+						x, y, 0.0, 255, true);
+
+				}
 			}
 		}
 		if (m_animationState == "BWSdamage")
@@ -267,20 +368,41 @@ void Skeleton::draw()
 	}
 	else
 	{
-		if (m_frameCounter < 5)
+		if (m_variation == CLOSE_COMBAT)
 		{
-			TextureManager::Instance()->draw("IdleSkeleton1",
-				x, y, 0.0, 255, true);
+			if (m_frameCounter < 5)
+			{
+				TextureManager::Instance()->draw("IdleSkeleton1",
+					x, y, 0.0, 255, true);
+			}
+			else if (m_frameCounter < 10)
+			{
+				TextureManager::Instance()->draw("IdleSkeleton2",
+					x, y, 0.0, 255, true);
+			}
+			else if (m_frameCounter < 15)
+			{
+				TextureManager::Instance()->draw("IdleSkeleton3",
+					x, y, 0.0, 255, true);
+			}
 		}
-		else if (m_frameCounter < 10)
+		else if (m_variation == RANGE_COMBAT)
 		{
-			TextureManager::Instance()->draw("IdleSkeleton2",
-				x, y, 0.0, 255, true);
-		}
-		else if (m_frameCounter < 15)
-		{
-			TextureManager::Instance()->draw("IdleSkeleton3",
-				x, y, 0.0, 255, true);
+			if (m_frameCounter < 5)
+			{
+				TextureManager::Instance()->draw("FRS1",
+					x, y, 0.0, 255, true);
+			}
+			else if (m_frameCounter < 10)
+			{
+				TextureManager::Instance()->draw("FRS2",
+					x, y, 0.0, 255, true);
+			}
+			else if (m_frameCounter < 15)
+			{
+				TextureManager::Instance()->draw("FRS3",
+					x, y, 0.0, 255, true);
+			}
 		}
 	}
 
@@ -295,7 +417,6 @@ void Skeleton::draw()
 
 	m_healthBar.draw();
 }
-
 
 void Skeleton::update()
 {
