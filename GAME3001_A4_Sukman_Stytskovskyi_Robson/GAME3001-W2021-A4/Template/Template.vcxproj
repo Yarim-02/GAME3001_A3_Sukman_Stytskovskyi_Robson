@@ -163,6 +163,7 @@
     <ClCompile Include="..\include\IMGUI_SDL\imgui_sdl.cpp" />
     <ClCompile Include="..\src\Agent.cpp" />
     <ClCompile Include="..\src\AttackAction.cpp" />
+    <ClCompile Include="..\src\Bone.cpp" />
     <ClCompile Include="..\src\Bullet.cpp" />
     <ClCompile Include="..\src\Bullet.h" />
     <ClCompile Include="..\src\Button.cpp" />
@@ -183,6 +184,9 @@
     <ClCompile Include="..\src\PathNode.cpp" />
     <ClCompile Include="..\src\PatrolAction.cpp" />
     <ClCompile Include="..\src\RadiusCondition.cpp" />
+    <ClCompile Include="..\src\DestructibleObstacle.cpp" />
+    <ClCompile Include="..\src\SkeletonClose.cpp" />
+    <ClCompile Include="..\src\SkeletonRanged.cpp" />
     <ClCompile Include="..\src\SpaceShip.cpp" />
     <ClCompile Include="..\src\Sprite.cpp" />
     <ClCompile Include="..\src\Tile.cpp" />
@@ -221,6 +225,7 @@
     <ClInclude Include="..\src\Agent.h" />
     <ClInclude Include="..\src\Animation.h" />
     <ClInclude Include="..\src\AttackAction.h" />
+    <ClInclude Include="..\src\Bone.h" />
     <ClInclude Include="..\src\Button.h" />
     <ClInclude Include="..\src\CloseCombatCondition.h" />
     <ClInclude Include="..\src\CollisionManager.h" />
@@ -240,7 +245,7 @@
     <ClInclude Include="..\src\MoveToPlayerAction.h" />
     <ClInclude Include="..\src\NavigationObject.h" />
     <ClInclude Include="..\src\NeighbourTile.h" />
-    <ClInclude Include="..\src\Obstacle.h" />
+    <ClInclude Include="..\src\Obstacles.h" />
     <ClInclude Include="..\src\PathNode.h" />
     <ClInclude Include="..\src\PatrolAction.h" />
     <ClInclude Include="..\src\RadiusCondition.h" />
@@ -273,7 +278,7 @@
     <ClInclude Include="..\src\Scene.h" />
     <ClInclude Include="..\src\SceneState.h" />
     <ClInclude Include="..\src\ShapeType.h" />
-    <ClInclude Include="..\src\Skeleton.h" />
+    <ClInclude Include="..\src\Skeletons.h" />
     <ClInclude Include="..\src\SoundManager.h" />
     <ClInclude Include="..\src\SpriteSheet.h" />
     <ClInclude Include="..\src\StartScene.h" />

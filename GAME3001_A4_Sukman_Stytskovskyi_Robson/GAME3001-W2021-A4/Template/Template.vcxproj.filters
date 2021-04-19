@@ -49,6 +49,15 @@
     <Filter Include="Decision\Core Components">
       <UniqueIdentifier>{134c0998-20f1-41f7-b91a-02c5d19a2ef3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Objects\Obstacles">
+      <UniqueIdentifier>{0b295ebd-ec48-47b4-8107-b7a50568c3fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Decision\Agents\Skeletons">
+      <UniqueIdentifier>{32f817aa-b196-4e9e-a3f6-563559cc39ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Objects\Projectiles">
+      <UniqueIdentifier>{0b77e7f6-f191-4339-bab8-6c56a346e621}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\StartScene.cpp">
@@ -138,9 +147,6 @@
     <ClCompile Include="..\src\SpaceShip.cpp">
       <Filter>Game Objects</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Obstacle.cpp">
-      <Filter>Game Objects</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Tile.cpp">
       <Filter>Navigation</Filter>
     </ClCompile>
@@ -149,9 +155,6 @@
     </ClCompile>
     <ClCompile Include="..\src\Target.cpp">
       <Filter>Game Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Skeleton.cpp">
-      <Filter>Decision\Agents</Filter>
     </ClCompile>
     <ClCompile Include="..\src\AttackAction.cpp">
       <Filter>Decision\Actions</Filter>
@@ -180,20 +183,11 @@
     <ClCompile Include="..\src\DecisionTree.cpp">
       <Filter>Decision</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Bullet.h">
-      <Filter>Game Objects</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\HealthBar.cpp">
-      <Filter>Game Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Bullet.cpp">
       <Filter>Game Objects</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Gunner.cpp">
       <Filter>Decision\Agents</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Melee.cpp">
-      <Filter>Game Objects</Filter>
     </ClCompile>
     <ClCompile Include="..\src\PathNode.cpp">
       <Filter>Decision\Agents</Filter>
@@ -206,6 +200,33 @@
     </ClCompile>
     <ClCompile Include="..\src\MoveBehindCoverAction.cpp">
       <Filter>Decision\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Obstacle.cpp">
+      <Filter>Game Objects\Obstacles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DestructibleObstacle.cpp">
+      <Filter>Game Objects\Obstacles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Skeleton.cpp">
+      <Filter>Decision\Agents\Skeletons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SkeletonRanged.cpp">
+      <Filter>Decision\Agents\Skeletons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Bullet.h">
+      <Filter>Game Objects\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Bullet.cpp">
+      <Filter>Game Objects\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Melee.cpp">
+      <Filter>Game Objects\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Bone.cpp">
+      <Filter>Game Objects\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SkeletonClose.cpp">
+      <Filter>Decision\Agents\Skeletons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -338,9 +359,6 @@
     <ClInclude Include="..\src\SpaceShip.h">
       <Filter>Game Objects</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Obstacle.h">
-      <Filter>Game Objects</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Tile.h">
       <Filter>Navigation</Filter>
     </ClInclude>
@@ -358,9 +376,6 @@
     </ClInclude>
     <ClInclude Include="..\src\Target.h">
       <Filter>Game Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Skeleton.h">
-      <Filter>Decision\Agents</Filter>
     </ClInclude>
     <ClInclude Include="..\src\PatrolAction.h">
       <Filter>Decision\Actions</Filter>
@@ -407,9 +422,6 @@
     <ClInclude Include="..\src\Gunner.h">
       <Filter>Decision\Agents</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Melee.h">
-      <Filter>Game Objects</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\PathNode.h">
       <Filter>Decision\Agents</Filter>
     </ClInclude>
@@ -421,6 +433,18 @@
     </ClInclude>
     <ClInclude Include="..\src\MoveBehindCoverAction.h">
       <Filter>Decision\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Obstacles.h">
+      <Filter>Game Objects\Obstacles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Skeletons.h">
+      <Filter>Decision\Agents\Skeletons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Melee.h">
+      <Filter>Game Objects\Projectiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Bone.h">
+      <Filter>Game Objects\Projectiles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
