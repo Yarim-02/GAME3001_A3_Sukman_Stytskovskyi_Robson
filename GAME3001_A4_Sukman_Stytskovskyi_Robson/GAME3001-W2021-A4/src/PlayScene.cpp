@@ -596,7 +596,6 @@ void PlayScene::update()
 			getTransform()->position) < 5)
 		{
 			m_pSkeletonClose->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonClose->getTransform()->position));
-			m_pSkeletonClose->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonClose->getTransform()->position));
 		}
 		//m_pSkeletonClose->m_Seek(m_findClosestLOSPathNode(m_pSkeletonClose));
 	}
@@ -610,7 +609,6 @@ void PlayScene::update()
 		if (Util::distance(m_pSkeletonRanged->getTransform()->position, m_findClosestLOSPathNode(m_pSkeletonRanged)->
 			getTransform()->position) < 5)
 		{
-			m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position));
 			m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position));
 		}
 		//m_pSkeletonClose->m_Seek(m_findClosestLOSPathNode(m_pSkeletonClose));
@@ -976,7 +974,7 @@ void PlayScene::m_CheckPathNodeLOS()
 {
 	for (auto path_node : m_pGrid)
 	{
-		auto targetDirection = -path_node->getTransform()->position;
+		auto targetDirection = m_pPlayer->getTransform()->position - path_node->getTransform()->position;
 		auto normalizedDirection = Util::normalize(targetDirection);
 		path_node->setCurrentDirection(normalizedDirection);
 		m_CheckAgentLOS(path_node, m_pPlayer);
