@@ -52,7 +52,7 @@ private:
 	
 	bool m_CheckAgentLOS(Agent* agent, DisplayObject* object);
 	void m_CheckPathNodeLOS();
-	void m_CheckShipDR(DisplayObject* object);
+	void m_CheckAgentDR(DisplayObject* object, Agent* agent);
 
 	DecisionTree* decisionTree;
 
@@ -71,7 +71,9 @@ private:
 
 	//Tile Stuff
 	std::vector<Tile*> m_pTileGrid;
-	std::vector<Tile*> m_pPatrolPath;
+	std::vector<Tile*> m_pRangedPatrolPath;
+	std::vector<Tile*> m_pClosePatrolPath;
+	
 	void m_buildTileGrid();
 	Tile* m_getTile(int col, int row);
 	Tile* m_getTile(glm::vec2 grid_position);
@@ -90,7 +92,8 @@ private:
 
 	int m_frameCounter = 0;
 	bool m_randomSwitch = 0;
-	int m_patrolPathPosition = 0;
+	int m_rangedPatrolPathPosition = 0;
+	int m_closePatrolPathPosition = 0;
 	int mouseX, mouseY;
 
 	glm::vec2 m_lastCloseEnemyPosition;
