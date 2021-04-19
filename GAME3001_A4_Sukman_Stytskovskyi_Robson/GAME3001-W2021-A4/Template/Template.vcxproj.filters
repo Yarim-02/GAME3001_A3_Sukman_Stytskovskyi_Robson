@@ -231,6 +231,9 @@
     <ClCompile Include="..\src\RangedCombatCondition.cpp">
       <Filter>Decision\Conditions</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\MoveBehindCoverCondition.cpp">
+      <Filter>Decision\Conditions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -450,6 +453,9 @@
       <Filter>Game Objects\Projectiles</Filter>
     </ClInclude>
     <ClInclude Include="..\src\RangedCombatCondition.h">
+      <Filter>Decision\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MoveBehindCoverCondition.h">
       <Filter>Decision\Conditions</Filter>
     </ClInclude>
   </ItemGroup>

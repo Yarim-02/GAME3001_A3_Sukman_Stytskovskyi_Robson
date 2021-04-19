@@ -177,6 +177,7 @@
     <ClCompile Include="..\src\LOSCondition.cpp" />
     <ClCompile Include="..\src\Melee.cpp" />
     <ClCompile Include="..\src\MoveBehindCoverAction.cpp" />
+    <ClCompile Include="..\src\MoveBehindCoverCondition.cpp" />
     <ClCompile Include="..\src\MoveToLOSAction.cpp" />
     <ClCompile Include="..\src\MoveToPlayerAction.cpp" />
     <ClCompile Include="..\src\NavigationObject.cpp" />
@@ -242,6 +243,7 @@
     <ClInclude Include="..\src\LOSCondition.h" />
     <ClInclude Include="..\src\Melee.h" />
     <ClInclude Include="..\src\MoveBehindCoverAction.h" />
+    <ClInclude Include="..\src\MoveBehindCoverCondition.h" />
     <ClInclude Include="..\src\MoveToLOSAction.h" />
     <ClInclude Include="..\src\MoveToPlayerAction.h" />
     <ClInclude Include="..\src\NavigationObject.h" />

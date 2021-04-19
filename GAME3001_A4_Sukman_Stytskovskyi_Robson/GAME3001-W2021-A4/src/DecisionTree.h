@@ -4,6 +4,7 @@
 #include "Agent.h"
 #include "CloseCombatCondition.h"
 #include "RangedCombatCondition.h"
+#include "MoveBehindCoverCondition.h"
 #include "LOSCondition.h"
 #include "FleeCondition.h"
 #include "RadiusCondition.h"
@@ -37,6 +38,7 @@ private:
 	RadiusCondition* m_RadiusNode;
 	CloseCombatCondition* m_CloseCombatNode;
 	RangedCombatCondition* m_RangedCombatNode;
+	MoveBehindCoverCondition* m_MoveBehindCoverNode;
 
 	void m_buildTree(bool isRanged);
 

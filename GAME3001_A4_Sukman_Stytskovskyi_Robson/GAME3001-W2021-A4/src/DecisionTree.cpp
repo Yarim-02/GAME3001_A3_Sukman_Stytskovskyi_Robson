@@ -112,7 +112,12 @@ void DecisionTree::m_buildTree(bool isRanged)
 		AddNode(m_LOSNode, m_RangedCombatNode, RIGHT_TREE_NODE);
 		m_treeNodeList.push_back(m_RangedCombatNode);
 
-		// ADD LEFT NODE HERE
+		//m_MoveBehindCoverNode = new MoveBehindCoverCondition();
+		//AddNode(m_LOSNode, m_MoveBehindCoverNode, LEFT_TREE_NODE);
+		//m_treeNodeList.push_back(m_MoveBehindCoverNode);
+
+		TreeNode* coverNode = AddNode(m_RangedCombatNode, new MoveBehindCoverAction(),LEFT_TREE_NODE);
+		m_treeNodeList.push_back(coverNode);
 
 		TreeNode* attackNode = AddNode(m_RangedCombatNode, new AttackAction(), RIGHT_TREE_NODE);
 		m_treeNodeList.push_back(attackNode);
