@@ -234,6 +234,15 @@
     <ClCompile Include="..\src\MoveBehindCoverCondition.cpp">
       <Filter>Decision\Conditions</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\WaitInCoverCondition.cpp">
+      <Filter>Decision\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WaitInCoverAction.cpp">
+      <Filter>Decision\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MoveToRangeAction.cpp">
+      <Filter>Decision\Actions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -457,6 +466,15 @@
     </ClInclude>
     <ClInclude Include="..\src\MoveBehindCoverCondition.h">
       <Filter>Decision\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\WaitInCoverCondition.h">
+      <Filter>Decision\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\WaitInCoverAction.h">
+      <Filter>Decision\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MoveToRangeAction.h">
+      <Filter>Decision\Actions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

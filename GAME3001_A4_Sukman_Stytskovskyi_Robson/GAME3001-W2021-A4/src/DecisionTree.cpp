@@ -2,10 +2,12 @@
 #include <iostream>
 
 #include "MoveBehindCoverAction.h"
+#include "WaitInCoverAction.h"
 #include "AttackAction.h"
 #include "MoveToLOSAction.h"
-#include "FleeAction.h"
+#include "MoveToRangeAction.h"
 #include "MoveToPlayerAction.h"
+#include "FleeAction.h"
 #include "PatrolAction.h"
 #include "Skeletons.h"
 
@@ -91,10 +93,25 @@ void DecisionTree::m_buildTree(bool isRanged)
 	TreeNode* fleeNode = AddNode(m_FleeNode, new FleeAction(), RIGHT_TREE_NODE);
 	m_treeNodeList.push_back(fleeNode);
 
-	// add the root node
-	m_LOSNode = new LOSCondition();
-	AddNode(m_FleeNode, m_LOSNode, LEFT_TREE_NODE);
-	m_treeNodeList.push_back(m_LOSNode); 
+	if (isRanged == true)
+	{
+		m_MoveBehindCoverNode = new MoveBehindCoverCondition();
+		AddNode(m_FleeNode, m_MoveBehindCoverNode, LEFT_TREE_NODE);
+		m_treeNodeList.push_back(m_MoveBehindCoverNode);
+
+		TreeNode* coverNode = AddNode(m_MoveBehindCoverNode, new MoveBehindCoverAction(), RIGHT_TREE_NODE);
+		m_treeNodeList.push_back(coverNode);
+
+		m_LOSNode = new LOSCondition();
+		AddNode(m_MoveBehindCoverNode, m_LOSNode, LEFT_TREE_NODE);
+		m_treeNodeList.push_back(m_LOSNode);
+	}
+	else if (isRanged == false)
+	{
+		m_LOSNode = new LOSCondition();
+		AddNode(m_FleeNode, m_LOSNode, LEFT_TREE_NODE);
+		m_treeNodeList.push_back(m_LOSNode);
+	}
 
 	m_RadiusNode = new RadiusCondition();
 	AddNode(m_LOSNode, m_RadiusNode, LEFT_TREE_NODE);
@@ -108,16 +125,12 @@ void DecisionTree::m_buildTree(bool isRanged)
 
 	if (isRanged == true)
 	{
+		TreeNode* moveToRangeNode = AddNode(m_LOSNode, new MoveToRangeAction(), RIGHT_TREE_NODE);
+		m_treeNodeList.push_back(moveToRangeNode);
+
 		m_RangedCombatNode = new RangedCombatCondition();
-		AddNode(m_LOSNode, m_RangedCombatNode, RIGHT_TREE_NODE);
+		AddNode(moveToRangeNode, m_RangedCombatNode, RIGHT_TREE_NODE);
 		m_treeNodeList.push_back(m_RangedCombatNode);
-
-		//m_MoveBehindCoverNode = new MoveBehindCoverCondition();
-		//AddNode(m_LOSNode, m_MoveBehindCoverNode, LEFT_TREE_NODE);
-		//m_treeNodeList.push_back(m_MoveBehindCoverNode);
-
-		TreeNode* coverNode = AddNode(m_RangedCombatNode, new MoveBehindCoverAction(),LEFT_TREE_NODE);
-		m_treeNodeList.push_back(coverNode);
 
 		TreeNode* attackNode = AddNode(m_RangedCombatNode, new AttackAction(), RIGHT_TREE_NODE);
 		m_treeNodeList.push_back(attackNode);

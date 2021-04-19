@@ -5,6 +5,7 @@
 #include "CloseCombatCondition.h"
 #include "RangedCombatCondition.h"
 #include "MoveBehindCoverCondition.h"
+#include "WaitInCoverCondition.h"
 #include "LOSCondition.h"
 #include "FleeCondition.h"
 #include "RadiusCondition.h"
