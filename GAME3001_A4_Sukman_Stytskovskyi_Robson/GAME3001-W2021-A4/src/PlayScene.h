@@ -37,7 +37,6 @@ private:
 	std::string m_guiTitle;
 	glm::vec2 m_mousePosition;
 
-	Target* m_pTarget;
 	//Skeleton* m_pSkeletonClose;
 	SkeletonClose* m_pSkeletonClose;
 	SkeletonRanged* m_pSkeletonRanged;
@@ -47,14 +46,13 @@ private:
 	std::vector <Melee*> m_pMelee;
 	std::vector<Obstacle*> m_pObstacle;
 	std::vector<DestructibleObstacle*> m_pObstacleDestructible;
-	Obstacle* m_pObstacle2;
-	Obstacle* m_pObstacle3;
 	
 	bool m_CheckAgentLOS(Agent* agent, DisplayObject* object);
 	void m_CheckPathNodeLOS();
 	void m_CheckAgentDR(DisplayObject* object, Agent* agent);
 
-	DecisionTree* decisionTree;
+	DecisionTree* TreeMelee;
+	DecisionTree* TreeRanged;
 
 	std::vector<Label*> m_pGameStatus;
 	int m_enemiesAlive,

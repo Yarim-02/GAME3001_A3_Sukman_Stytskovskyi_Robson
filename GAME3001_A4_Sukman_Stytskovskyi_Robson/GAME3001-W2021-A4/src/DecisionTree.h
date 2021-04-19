@@ -13,7 +13,7 @@ class DecisionTree
 {
 public:
 	// constructor and destructor
-	DecisionTree();
+	DecisionTree(bool isRanged);
 	~DecisionTree();
 
 	// getters and setters
@@ -36,7 +36,9 @@ private:
 	RadiusCondition* m_RadiusNode;
 	CloseCombatCondition* m_CloseCombatNode;
 
-	void m_buildTree();
+	void m_buildTree(bool isRanged);
+
+	bool m_Ranged;
 
 	std::vector<TreeNode*> m_treeNodeList;
 };

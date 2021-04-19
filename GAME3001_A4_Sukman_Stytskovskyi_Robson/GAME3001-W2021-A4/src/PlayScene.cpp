@@ -197,14 +197,13 @@ void PlayScene::update()
 	//** AI STUFF **
 	//**************
 
-	decisionTree->setAgent(m_pSkeletonRanged);
-	m_pSkeletonRanged->setCurrentAction(decisionTree->MakeDecision());
-	decisionTree->setAgent(m_pSkeletonClose);
-	m_pSkeletonClose->setCurrentAction(decisionTree->MakeDecision());
-	std::cout << "------------------------" << std::endl;
-	std::cout << decisionTree->MakeDecision() << std::endl;
-	std::cout << "------------------------\n" << std::endl;
-	std::cout << "------------------------\n" << std::endl;
+	//decisionTree->setAgent(m_pSkeletonRanged);
+	//m_pSkeletonRanged->setCurrentAction(decisionTree->MakeDecision());
+	//m_pSkeletonClose->setCurrentAction(decisionTree->MakeDecision());
+
+	//std::cout << "------------------------" << std::endl;
+	//std::cout << decisionTree->MakeDecision() << std::endl;
+	//std::cout << "------------------------\n" << std::endl;
 
 	//if (m_pSkeletonClose->hasLOS())
 	//{
@@ -227,13 +226,13 @@ void PlayScene::update()
 	//else
 	//decisionTree->setAgent(m_pSkeletonClose);
 	if (m_pSkeletonClose->getCurrentAction() != "Idle")
-		//m_pSkeletonClose->setCurrentAction(decisionTree->MakeDecision());
+		m_pSkeletonClose->setCurrentAction(TreeMelee->MakeDecision());
+
+	if (m_pSkeletonRanged->getCurrentAction() != "Idle")
+		m_pSkeletonRanged->setCurrentAction(TreeRanged->MakeDecision());
 
 	if (m_pSkeletonClose->getHealthBar().getHealthPoints() <= 25)
 		m_pSkeletonClose->setFleeing(true);
-
-	if (m_pSkeletonRanged->getCurrentAction() != "Idle")
-		//m_pSkeletonRanged->setCurrentAction(decisionTree->MakeDecision());  //change to separate decision tree
 
 	if (m_pSkeletonRanged->getHealthBar().getHealthPoints() <= 16)
 			m_pSkeletonRanged->setFleeing(true);
@@ -854,10 +853,15 @@ void PlayScene::start()
 	
 	
 
-	// create a dummy DecisionTree
-	decisionTree = new DecisionTree();
-	decisionTree->setAgent(m_pSkeletonClose);
-	decisionTree->Display();
+	// create a CC DecisionTree
+	TreeMelee = new DecisionTree(false);
+	TreeMelee->setAgent(m_pSkeletonClose);
+	TreeMelee->Display();
+
+	// create a RC DecisionTree
+	TreeRanged = new DecisionTree(true);
+	TreeRanged->setAgent(m_pSkeletonRanged);
+	TreeRanged->Display();
 }
 
 void PlayScene::GUI_Function() 
