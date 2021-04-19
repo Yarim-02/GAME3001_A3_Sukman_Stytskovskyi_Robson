@@ -1154,14 +1154,23 @@ PathNode* PlayScene::m_findClosestCoverPathNode(Agent* agent)
 	PathNode* closestPathNode = nullptr;
 	for (auto path_node : m_pGrid)
 	{
-		const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
-		if (distance < min)
+		for (auto obstacle : m_pObstacle)
 		{
-			
-			if (path_node->hasLOS() == false)
+			for (auto destructible_obstacle : m_pObstacleDestructible)
 			{
-				closestPathNode = path_node;
-				min = distance;
+				if (!CollisionManager::AABBCheck(path_node, obstacle) && !CollisionManager::AABBCheck(path_node, destructible_obstacle))
+				{
+					const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
+					if (distance < min)
+					{
+
+						if (path_node->hasLOS() == false)
+						{
+							closestPathNode = path_node;
+							min = distance;
+						}
+					}
+				}
 			}
 		}
 	}
