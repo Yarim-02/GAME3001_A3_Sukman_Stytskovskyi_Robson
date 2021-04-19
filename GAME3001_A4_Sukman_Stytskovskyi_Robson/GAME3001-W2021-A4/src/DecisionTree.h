@@ -3,6 +3,7 @@
 #define __DECISION_TREE__
 #include "Agent.h"
 #include "CloseCombatCondition.h"
+#include "RangedCombatCondition.h"
 #include "LOSCondition.h"
 #include "FleeCondition.h"
 #include "RadiusCondition.h"
@@ -35,6 +36,7 @@ private:
 	FleeCondition* m_FleeNode;
 	RadiusCondition* m_RadiusNode;
 	CloseCombatCondition* m_CloseCombatNode;
+	RangedCombatCondition* m_RangedCombatNode;
 
 	void m_buildTree(bool isRanged);
 

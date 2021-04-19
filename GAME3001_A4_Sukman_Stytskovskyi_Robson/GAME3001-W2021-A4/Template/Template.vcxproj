@@ -185,6 +185,7 @@
     <ClCompile Include="..\src\PatrolAction.cpp" />
     <ClCompile Include="..\src\RadiusCondition.cpp" />
     <ClCompile Include="..\src\DestructibleObstacle.cpp" />
+    <ClCompile Include="..\src\RangedCombatCondition.cpp" />
     <ClCompile Include="..\src\SkeletonClose.cpp" />
     <ClCompile Include="..\src\SkeletonRanged.cpp" />
     <ClCompile Include="..\src\SpaceShip.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="..\src\PathNode.h" />
     <ClInclude Include="..\src\PatrolAction.h" />
     <ClInclude Include="..\src\RadiusCondition.h" />
+    <ClInclude Include="..\src\RangedCombatCondition.h" />
     <ClInclude Include="..\src\SoundType.h" />
     <ClInclude Include="..\src\SpaceShip.h" />
     <ClInclude Include="..\src\Sprite.h" />

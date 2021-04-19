@@ -228,6 +228,9 @@
     <ClCompile Include="..\src\SkeletonClose.cpp">
       <Filter>Decision\Agents\Skeletons</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\RangedCombatCondition.cpp">
+      <Filter>Decision\Conditions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -445,6 +448,9 @@
     </ClInclude>
     <ClInclude Include="..\src\Bone.h">
       <Filter>Game Objects\Projectiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RangedCombatCondition.h">
+      <Filter>Decision\Conditions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

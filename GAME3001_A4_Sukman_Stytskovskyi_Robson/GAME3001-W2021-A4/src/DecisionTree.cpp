@@ -61,8 +61,8 @@ void DecisionTree::Update()
 
 	if (m_Ranged)
 	{
-		//m_RangedCombatNode->setIsWithinCombatRange(static_cast<SkeletonRanged*>(m_agent)->getRangedCombatRange());
-		m_CloseCombatNode->setIsWithinCombatRange(static_cast<SkeletonRanged*>(m_agent)->getRangedCombatRange());
+		m_RangedCombatNode->setIsWithinCombatRange(static_cast<SkeletonRanged*>(m_agent)->getRangedCombatRange());
+		
 	}
 	else if (!m_Ranged)
 		m_CloseCombatNode->setIsWithinCombatRange(static_cast<SkeletonClose*>(m_agent)->getCloseCombatRange());
@@ -108,8 +108,12 @@ void DecisionTree::m_buildTree(bool isRanged)
 		TreeNode* moveToLOSNode = AddNode(m_RadiusNode, new MoveToLOSAction(), RIGHT_TREE_NODE);
 		m_treeNodeList.push_back(moveToLOSNode);
 
-		//TreeNode* attackNode = AddNode(m_RangedCombatNode, new AttackAction(), RIGHT_TREE_NODE);
-		//m_treeNodeList.push_back(attackNode);
+		m_RangedCombatNode = new RangedCombatCondition();
+		AddNode(m_LOSNode, m_RangedCombatNode, RIGHT_TREE_NODE);
+		m_treeNodeList.push_back(m_RangedCombatNode);
+
+		TreeNode* attackNode = AddNode(m_RangedCombatNode, new AttackAction(), RIGHT_TREE_NODE);
+		m_treeNodeList.push_back(attackNode);
 	}
 	else if (isRanged == false)
 	{
