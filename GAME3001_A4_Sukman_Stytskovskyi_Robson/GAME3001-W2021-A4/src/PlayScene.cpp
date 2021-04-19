@@ -110,13 +110,13 @@ void PlayScene::update()
 	for (int i = 0; i < m_pObstacle.size(); i++)
 	{
 		CollisionManager::ObstacleColCheck(m_pPlayer, m_pObstacle[i]);
-		CollisionManager::ObstacleColCheck(m_pSkeleton, m_pObstacle[i]);
+		CollisionManager::ObstacleColCheck(m_pSkeletonClose, m_pObstacle[i]);
 	}
 
 	for (int i = 0; i < m_pObstacleDestructible.size(); i++)
 	{
 		CollisionManager::ObstacleColCheck(m_pPlayer, m_pObstacleDestructible[i]);
-		CollisionManager::ObstacleColCheck(m_pSkeleton, m_pObstacleDestructible[i]);
+		CollisionManager::ObstacleColCheck(m_pSkeletonClose, m_pObstacleDestructible[i]);
 	}
 
 	//Projectiles and Obstacles
@@ -166,20 +166,30 @@ void PlayScene::update()
 	//Bullet and Enemy collision
 	for (int i = 0; i < m_pBullet.size(); i++)
 	{
-		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pSkeleton) && !skeletonDead)
+		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pSkeletonClose) && !skeletonCloseDead)
 		{
-			damageActor(m_pSkeleton);
-			m_pSkeleton->flipTakingDamage();
+			damageActor(m_pSkeletonClose);
+			m_pSkeletonClose->flipTakingDamage();
+		}
+		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pSkeletonRanged) && !skeletonRangedDead)
+		{
+			damageActor(m_pSkeletonRanged);
+			m_pSkeletonRanged->flipTakingDamage();
 		}
 	}
 
 	//Melee and Enemy collision
 	for (int i = 0; i < m_pMelee.size(); i++)
 	{
-		if (CollisionManager::circleAABBCheck(m_pMelee[i], m_pSkeleton) && !skeletonDead)
+		if (CollisionManager::circleAABBCheck(m_pMelee[i], m_pSkeletonClose) && !skeletonCloseDead)
 		{
-			damageActor(m_pSkeleton);
-			m_pSkeleton->flipTakingDamage();
+			damageActor(m_pSkeletonClose);
+			m_pSkeletonClose->flipTakingDamage();
+		}
+		if (CollisionManager::circleAABBCheck(m_pMelee[i], m_pSkeletonRanged) && !skeletonRangedDead)
+		{
+			damageActor(m_pSkeletonRanged);
+			m_pSkeletonRanged->flipTakingDamage();
 		}
 	}
 
@@ -191,35 +201,42 @@ void PlayScene::update()
 	std::cout << decisionTree->MakeDecision() << std::endl;
 	std::cout << "------------------------\n" << std::endl;
 
-	//if (m_pSkeleton->hasLOS())
+	//if (m_pSkeletonClose->hasLOS())
 	//{
-	//	m_pSkeleton->setHadLOS(true);
+	//	m_pSkeletonClose->setHadLOS(true);
 	//	m_LOSCounter = 90;
 	//}
 	//
-	//if (m_pSkeleton->getHadLOS())
+	//if (m_pSkeletonClose->getHadLOS())
 	//{
 	//	m_LOSCounter--;
 	//
 	//	if (m_LOSCounter <= 0)
 	//	{
-	//		m_pSkeleton->setHadLOS(false);
+	//		m_pSkeletonClose->setHadLOS(false);
 	//	}
 	//}
 	//
-	//if (m_pSkeleton->getHadLOS())
-	//	m_pSkeleton->setCurrentAction("Move To Player Action");
+	//if (m_pSkeletonClose->getHadLOS())
+	//	m_pSkeletonClose->setCurrentAction("Move To Player Action");
 	//else
-	if (m_pSkeleton->getCurrentAction() != "Idle")
-		m_pSkeleton->setCurrentAction(decisionTree->MakeDecision());
+	decisionTree->setAgent(m_pSkeletonClose);
+	if (m_pSkeletonClose->getCurrentAction() != "Idle")
+		m_pSkeletonClose->setCurrentAction(decisionTree->MakeDecision());
 
-		if (m_pSkeleton->getHealthBar().getHealthPoints() <= 25)
-			m_pSkeleton->setFleeing(true);
+		if (m_pSkeletonClose->getHealthBar().getHealthPoints() <= 25)
+			m_pSkeletonClose->setFleeing(true);
+
+		if (m_pSkeletonRanged->getCurrentAction() != "Idle")
+			m_pSkeletonRanged->setCurrentAction(decisionTree->MakeDecision());  //change to separate decision tree
+
+		if (m_pSkeletonRanged->getHealthBar().getHealthPoints() <= 16)
+			m_pSkeletonRanged->setFleeing(true);
 
 	//Enemy death
-	if (m_pSkeleton->getHealthBar().getHealthPoints() <= 0)
+	if (m_pSkeletonClose->getHealthBar().getHealthPoints() <= 0)
 	{
-		m_pSkeleton->setCurrentAction("Dying");
+		m_pSkeletonClose->setCurrentAction("Dying");
 
 		//m_pShip->setEnabled(false);
 
@@ -246,13 +263,47 @@ void PlayScene::update()
 		for (int i = 0; i < m_pGameStatus.size(); i++)
 			addChild(m_pGameStatus[i]);
 
-		skeletonDead = true;
+		skeletonCloseDead = true;
 	}
 
+	if (m_pSkeletonRanged->getHealthBar().getHealthPoints() <= 0)
+	{
+		m_pSkeletonRanged->setCurrentAction("Dying");
+
+		//m_pShip->setEnabled(false);
+
+		m_enemiesAlive = 0;
+		m_enemiesDead += 1;
+
+		for (int i = 0; i < m_pGameStatus.size(); i++)
+		{
+			removeChild(m_pGameStatus[i]);
+			m_pGameStatus[i] = nullptr;
+			m_pGameStatus.erase(m_pGameStatus.begin() + i);
+			m_pGameStatus.shrink_to_fit();
+		}
+
+		const SDL_Color orange = { 213,110,43, 205 };
+		const SDL_Color white = { 255,255,255, 205 };
+
+		std::string enemiesA = "Enemies left: ";
+		std::string enemiesD = "Enemies eliminated: ";
+
+		m_pGameStatus.push_back(new Label(enemiesA + std::to_string(m_enemiesAlive), "Teko", 30, white, glm::vec2(178.f, 75.f)));
+		m_pGameStatus.push_back(new Label(enemiesD + std::to_string(m_enemiesDead), "Teko", 30, white, glm::vec2(140.f, 50.f)));
+
+		for (int i = 0; i < m_pGameStatus.size(); i++)
+			addChild(m_pGameStatus[i]);
+
+		skeletonRangedDead = true;
+	}
+
+	
 	if (m_frameCounter % 5 == 0)
 	{
-		m_lastEnemyPosition = m_pSkeleton->getTransform()->position;
+		m_lastCloseEnemyPosition = m_pSkeletonClose->getTransform()->position;
 
+		m_lastRangedEnemyPosition = m_pSkeletonRanged->getTransform()->position;
 		/*int newHealth = (m_pShip->getHealthBar().getHealthPoints()) - 10;
 		m_pShip->getHealthBar().setHealthPoints(newHealth - 10);*/
 	}
@@ -261,72 +312,150 @@ void PlayScene::update()
 	updateDisplayList();
 
 	m_CheckShipDR(m_pPlayer);
-
-	if (m_pSkeleton->getCurrentAction() == "Patrol Action")
+	//Close patrol
+	if (m_pSkeletonClose->getCurrentAction() == "Patrol Action")
 	{
-		m_pSkeleton->setCurrentDirection(Util::normalize(glm::vec2((m_pPatrolPath[m_patrolPathPosition + 1]->
-			getTransform()->position.x + offset.x - m_pSkeleton->getTransform()->position.x), (m_pPatrolPath[m_patrolPathPosition
-				+ 1]->getTransform()->position.y + offset.y - m_pSkeleton->getTransform()->position.y))));
+		m_pSkeletonClose->setCurrentDirection(Util::normalize(glm::vec2((m_pPatrolPath[m_patrolPathPosition + 1]->
+			getTransform()->position.x + offset.x - m_pSkeletonClose->getTransform()->position.x), (m_pPatrolPath[m_patrolPathPosition
+				+ 1]->getTransform()->position.y + offset.y - m_pSkeletonClose->getTransform()->position.y))));
 
 
-		if (Util::distance(m_pSkeleton->getTransform()->position, m_pPatrolPath[m_patrolPathPosition + 1]->getTransform()->position + offset) < 5.0f)
+		if (Util::distance(m_pSkeletonClose->getTransform()->position, m_pPatrolPath[m_patrolPathPosition + 1]->getTransform()->position + offset) < 5.0f)
 		{
 			m_patrolPathPosition++;
 			std::cout << m_patrolPathPosition << std::endl;
-			std::cout << m_pSkeleton->getCurrentDirection().x << ", " << m_pSkeleton->getCurrentDirection().y;
+			std::cout << m_pSkeletonClose->getCurrentDirection().x << ", " << m_pSkeletonClose->getCurrentDirection().y;
 		}
 		if (m_patrolPathPosition == 3)
 		{
 			m_patrolPathPosition = -1;
 		}
 	}
-	if (m_pSkeleton->getCurrentAction() == "Patrol Action" || m_pSkeleton->getCurrentAction() == "Wandering" ||
-		m_pSkeleton->getCurrentAction() == "Taking Damage" || m_pSkeleton->getCurrentAction() == "Move To Player Action" ||
-		m_pSkeleton->getCurrentAction() == "Flee Action" || m_pSkeleton->getCurrentAction() == "Move Behind Cover Action")
+	//Ranged patrol
+	if (m_pSkeletonRanged->getCurrentAction() == "Patrol Action")
 	{
-		m_pSkeleton->moveForward();
-		m_pSkeleton->move();
-		if (m_pSkeleton->getCurrentAction() != "Taking Damage")
+		m_pSkeletonRanged->setCurrentDirection(Util::normalize(glm::vec2((m_pPatrolPath[m_patrolPathPosition + 1]->
+			getTransform()->position.x + offset.x - m_pSkeletonRanged->getTransform()->position.x), (m_pPatrolPath[m_patrolPathPosition
+				+ 1]->getTransform()->position.y + offset.y - m_pSkeletonRanged->getTransform()->position.y))));
+
+
+		if (Util::distance(m_pSkeletonRanged->getTransform()->position, m_pPatrolPath[m_patrolPathPosition + 1]->getTransform()->position + offset) < 5.0f)
 		{
-			if ((m_pSkeleton->getTransform()->position.x > m_lastEnemyPosition.x) && !(m_pSkeleton->getTransform()->position.y
-		> m_lastEnemyPosition.y + 2) && !(m_pSkeleton->getTransform()->position.y
-			< m_lastEnemyPosition.y - 2))
+			m_patrolPathPosition++;
+			std::cout << m_patrolPathPosition << std::endl;
+			std::cout << m_pSkeletonRanged->getCurrentDirection().x << ", " << m_pSkeletonRanged->getCurrentDirection().y;
+		}
+		if (m_patrolPathPosition == 3)
+		{
+			m_patrolPathPosition = -1;
+		}
+	}
+
+	//Close
+	if (m_pSkeletonClose->getCurrentAction() == "Patrol Action" || m_pSkeletonClose->getCurrentAction() == "Wandering" ||
+		m_pSkeletonClose->getCurrentAction() == "Taking Damage" || m_pSkeletonClose->getCurrentAction() == "Move To Player Action" ||
+		m_pSkeletonClose->getCurrentAction() == "Flee Action" || m_pSkeletonClose->getCurrentAction() == "Move Behind Cover Action")
+	{
+		m_pSkeletonClose->moveForward();
+		m_pSkeletonClose->move();
+		if (m_pSkeletonClose->getCurrentAction() != "Taking Damage")
+		{
+			if ((m_pSkeletonClose->getTransform()->position.x > m_lastCloseEnemyPosition.x) && !(m_pSkeletonClose->getTransform()->position.y
+		> m_lastCloseEnemyPosition.y + 2) && !(m_pSkeletonClose->getTransform()->position.y
+			< m_lastCloseEnemyPosition.y - 2))
 			{
-				m_pSkeleton->setAnimationState("WalkingRight");
+				m_pSkeletonClose->setAnimationState("WalkingRight");
 				
 			}
-			if ((m_pSkeleton->getTransform()->position.y > m_lastEnemyPosition.y) && !(m_pSkeleton->getTransform()->position.x
-					> m_lastEnemyPosition.x + 2) && !(m_pSkeleton->getTransform()->position.x
-						< m_lastEnemyPosition.x - 2))
+			if ((m_pSkeletonClose->getTransform()->position.y > m_lastCloseEnemyPosition.y) && !(m_pSkeletonClose->getTransform()->position.x
+					> m_lastCloseEnemyPosition.x + 2) && !(m_pSkeletonClose->getTransform()->position.x
+						< m_lastCloseEnemyPosition.x - 2))
 			{
-				m_pSkeleton->setAnimationState("WalkingDown");
+				m_pSkeletonClose->setAnimationState("WalkingDown");
 			}
-			if ((m_pSkeleton->getTransform()->position.x < m_lastEnemyPosition.x) && !(m_pSkeleton->getTransform()->position.y
-			> m_lastEnemyPosition.y + 2) && !(m_pSkeleton->getTransform()->position.y
-				< m_lastEnemyPosition.y - 2))
+			if ((m_pSkeletonClose->getTransform()->position.x < m_lastCloseEnemyPosition.x) && !(m_pSkeletonClose->getTransform()->position.y
+			> m_lastCloseEnemyPosition.y + 2) && !(m_pSkeletonClose->getTransform()->position.y
+				< m_lastCloseEnemyPosition.y - 2))
 			{
-				m_pSkeleton->setAnimationState("WalkingLeft");
-				m_pSkeleton->setGoingRight(false);
+				m_pSkeletonClose->setAnimationState("WalkingLeft");
+				m_pSkeletonClose->setGoingRight(false);
 			}
-			if ((m_pSkeleton->getTransform()->position.y < m_lastEnemyPosition.y))
+			if ((m_pSkeletonClose->getTransform()->position.y < m_lastCloseEnemyPosition.y))
 			{
-				m_pSkeleton->setAnimationState("WalkingUp");
+				m_pSkeletonClose->setAnimationState("WalkingUp");
 			}
 		}
 	}
-	if (m_pSkeleton->getCurrentAction() == "Move To Player Action")
+
+	//Ranged 
+	if (m_pSkeletonRanged->getCurrentAction() == "Patrol Action" || m_pSkeletonRanged->getCurrentAction() == "Wandering" ||
+		m_pSkeletonRanged->getCurrentAction() == "Taking Damage" || m_pSkeletonRanged->getCurrentAction() == "Move To Player Action" ||
+		m_pSkeletonRanged->getCurrentAction() == "Flee Action" || m_pSkeletonRanged->getCurrentAction() == "Move Behind Cover Action")
 	{
-		m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeleton->getTransform()->position) );
-		m_pSkeleton->setArrivalPoint(m_pPlayer->getTransform()->position);
+		m_pSkeletonRanged->moveForward();
+		m_pSkeletonRanged->move();
+		if (m_pSkeletonRanged->getCurrentAction() != "Taking Damage")
+		{
+			if ((m_pSkeletonRanged->getTransform()->position.x > m_lastRangedEnemyPosition.x) && !(m_pSkeletonRanged->getTransform()->position.y
+				> m_lastRangedEnemyPosition.y + 2) && !(m_pSkeletonClose->getTransform()->position.y
+					< m_lastRangedEnemyPosition.y - 2))
+			{
+				m_pSkeletonRanged->setAnimationState("WalkingRight");
+
+			}
+			if ((m_pSkeletonRanged->getTransform()->position.y > m_lastRangedEnemyPosition.y) && !(m_pSkeletonRanged->getTransform()->position.x
+						> m_lastRangedEnemyPosition.x + 2) && !(m_pSkeletonRanged->getTransform()->position.x
+							< m_lastRangedEnemyPosition.x - 2))
+			{
+				m_pSkeletonRanged->setAnimationState("WalkingDown");
+			}
+			if ((m_pSkeletonRanged->getTransform()->position.x < m_lastRangedEnemyPosition.x) && !(m_pSkeletonRanged->getTransform()->position.y
+			> m_lastRangedEnemyPosition.y + 2) && !(m_pSkeletonRanged->getTransform()->position.y
+				< m_lastRangedEnemyPosition.y - 2))
+			{
+				m_pSkeletonRanged->setAnimationState("WalkingLeft");
+				m_pSkeletonRanged->setGoingRight(false);
+			}
+			if ((m_pSkeletonRanged->getTransform()->position.y < m_lastRangedEnemyPosition.y))
+			{
+				m_pSkeletonRanged->setAnimationState("WalkingUp");
+			}
+		}
+	}
+
+
+	//Close
+	if (m_pSkeletonClose->getCurrentAction() == "Move To Player Action")
+	{
+		m_pSkeletonClose->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonClose->getTransform()->position) );
+		m_pSkeletonClose->setArrivalPoint(m_pPlayer->getTransform()->position);
 	}
 	else
 	{
-		m_pSkeleton->setArrivalPoint(glm::vec2(-100, 0));
-		m_pSkeleton->setMaxSpeed(2);
+		m_pSkeletonClose->setArrivalPoint(glm::vec2(-100, 0));
+		m_pSkeletonClose->setMaxSpeed(2);
 	}
-	if (m_pSkeleton->getCurrentAction() == "Flee Action")
+	//Ranged
+	if (m_pSkeletonRanged->getCurrentAction() == "Move To Player Action")
 	{
-		m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeleton->getTransform()->position) * -1.f);
+		m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position));
+		m_pSkeletonRanged->setArrivalPoint(m_pPlayer->getTransform()->position);
+	}
+	else
+	{
+		m_pSkeletonRanged->setArrivalPoint(glm::vec2(-100, 0));
+		m_pSkeletonRanged->setMaxSpeed(2);
+	}
+
+	//Close
+	if (m_pSkeletonClose->getCurrentAction() == "Flee Action")
+	{
+		m_pSkeletonClose->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonClose->getTransform()->position) * -1.f);
+	}
+	//Ranged
+	if (m_pSkeletonRanged->getCurrentAction() == "Flee Action")
+	{
+		m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position) * -1.f);
 	}
 
 
@@ -338,92 +467,160 @@ void PlayScene::update()
 
 	//for each (auto & Obstacle in m_pObstacle)
 	//{
-	//	if (CollisionManager::lineRectCheck(m_pSkeleton->getTransform()->position, m_pSkeleton->getTransform()->position + m_pSkeleton->getCurrentDirection() * 25.0f, Obstacle->getTransform()->position, Obstacle->getWidth(), Obstacle->getHeight()))
+	//	if (CollisionManager::lineRectCheck(m_pSkeletonClose->getTransform()->position, m_pSkeletonClose->getTransform()->position + m_pSkeletonClose->getCurrentDirection() * 25.0f, Obstacle->getTransform()->position, Obstacle->getWidth(), Obstacle->getHeight()))
 	//	{
-	//		m_pSkeleton->getRigidBody()->isColliding == true;
+	//		m_pSkeletonClose->getRigidBody()->isColliding == true;
 	//		std::cout << "Enemy collision with obstacle\n";
-	//		m_pSkeleton->setCurrentAction("Stopped");
+	//		m_pSkeletonClose->setCurrentAction("Stopped");
 	//		//if (m_randomSwitch == 0)
-	//		m_pSkeleton->turnRight();
+	//		m_pSkeletonClose->turnRight();
 	//		//else if (m_randomSwitch == 1)
 	//			//m_pShip->turnLeft();
 	//	}
 	//}
-	if (m_pSkeleton->getCurrentAction() == "Wander") // no need to check collission with impassable border tiles
+	//
+	//Close
+	if (m_pSkeletonClose->getCurrentAction() == "Wander") // no need to check collission with impassable border tiles
 	{											// while on patrol path as enemy will turn on it's own
 		for each (auto & Tile in m_pTileGrid)
 		{
 			if (Tile->getTileStatus() == IMPASSABLE)
 			{
-				if (CollisionManager::lineRectCheck(m_pSkeleton->getTransform()->position, m_pSkeleton->getTransform()->position + m_pSkeleton->getCurrentDirection() * 25.0f, Tile->getTransform()->position, Tile->getWidth(), Tile->getHeight()))
+				if (CollisionManager::lineRectCheck(m_pSkeletonClose->getTransform()->position, m_pSkeletonClose->getTransform()->position + m_pSkeletonClose->getCurrentDirection() * 25.0f, Tile->getTransform()->position, Tile->getWidth(), Tile->getHeight()))
 				{
-					m_pSkeleton->getRigidBody()->isColliding == true;
+					m_pSkeletonClose->getRigidBody()->isColliding == true;
 					std::cout << "Enemy collision with obstacle\n";
-					m_pSkeleton->setCurrentAction("Stopped");
+					m_pSkeletonClose->setCurrentAction("Stopped");
 					//if (m_randomSwitch == 0)
-					m_pSkeleton->turnRight();
+					m_pSkeletonClose->turnRight();
 					//else if (m_randomSwitch == 1)
 						//m_pShip->turnLeft();
 				}
 			}
 		}
 	}
-	if (m_pSkeleton->getCurrentAction() == "Stopped")
+	//Ranged
+	if (m_pSkeletonRanged->getCurrentAction() == "Wander") // no need to check collission with impassable border tiles
+	{											// while on patrol path as enemy will turn on it's own
+		for each (auto & Tile in m_pTileGrid)
+		{
+			if (Tile->getTileStatus() == IMPASSABLE)
+			{
+				if (CollisionManager::lineRectCheck(m_pSkeletonRanged->getTransform()->position, m_pSkeletonRanged->getTransform()->position + m_pSkeletonRanged->getCurrentDirection() * 25.0f, Tile->getTransform()->position, Tile->getWidth(), Tile->getHeight()))
+				{
+					m_pSkeletonRanged->getRigidBody()->isColliding == true;
+					std::cout << "Enemy collision with obstacle\n";
+					m_pSkeletonRanged->setCurrentAction("Stopped");
+					//if (m_randomSwitch == 0)
+					m_pSkeletonRanged->turnRight();
+					//else if (m_randomSwitch == 1)
+						//m_pShip->turnLeft();
+				}
+			}
+		}
+	}
+	//Close
+	if (m_pSkeletonClose->getCurrentAction() == "Stopped")
 	{
-		m_pSkeleton->moveForward();
-		m_pSkeleton->move();
-		m_pSkeleton->setCurrentAction("Wandering");
+		m_pSkeletonClose->moveForward();
+		m_pSkeletonClose->move();
+		m_pSkeletonClose->setCurrentAction("Wandering");
+	}
+	//Ranged
+	if (m_pSkeletonRanged->getCurrentAction() == "Stopped")
+	{
+		m_pSkeletonRanged->moveForward();
+		m_pSkeletonRanged->move();
+		m_pSkeletonRanged->setCurrentAction("Wandering");
+	}
+	//Close
+	if (m_pSkeletonClose->getHealthBar().getHealthPoints() == 0 && m_pSkeletonClose->getCurrentAction() != "Dead")
+	{
+		m_pSkeletonClose->setCurrentAction("Dying");
+	}
+	//Ranged
+	if (m_pSkeletonRanged->getHealthBar().getHealthPoints() == 0 && m_pSkeletonRanged->getCurrentAction() != "Dead")
+	{
+		m_pSkeletonRanged->setCurrentAction("Dying");
+	}
+	//Close
+	if (m_pSkeletonClose->getCurrentAction() == "Dying" && m_frameCounter % 40 == 0)
+	{
+		m_pSkeletonClose->setCurrentAction("Dead");
+	}
+	//Ranged
+	if (m_pSkeletonRanged->getCurrentAction() == "Dying" && m_frameCounter % 40 == 0)
+	{
+		m_pSkeletonRanged->setCurrentAction("Dead");
+	}
+	//Close
+	if (m_pSkeletonClose->getCurrentAction() == "Taking Damage" && m_frameCounter % 20 == 0)
+	{
+		m_pSkeletonClose->setCurrentAction("Patrol Action");
+	}
+	//Ranged
+	if (m_pSkeletonRanged->getCurrentAction() == "Taking Damage" && m_frameCounter % 20 == 0)
+	{
+		m_pSkeletonRanged->setCurrentAction("Patrol Action");
 	}
 
-	if (m_pSkeleton->getHealthBar().getHealthPoints() == 0 && m_pSkeleton->getCurrentAction() != "Dead")
-	{
-		m_pSkeleton->setCurrentAction("Dying");
-	}
-
-	if (m_pSkeleton->getCurrentAction() == "Dying" && m_frameCounter % 40 == 0)
-	{
-		m_pSkeleton->setCurrentAction("Dead");
-	}
-
-	if (m_pSkeleton->getCurrentAction() == "Taking Damage" && m_frameCounter % 20 == 0)
-	{
-		m_pSkeleton->setCurrentAction("Patrol Action");
-	}
-
-	std::cout << m_pSkeleton->getCurrentAction()<< "\n";
+	std::cout << m_pSkeletonClose->getCurrentAction()<< "\n";
+	std::cout << m_pSkeletonRanged->getCurrentAction() << "\n";
+	
 
 	m_CheckPathNodeLOS();
-	m_CheckAgentLOS(m_pSkeleton, m_pPlayer);
+	m_CheckAgentLOS(m_pSkeletonClose, m_pPlayer);
+	m_CheckAgentLOS(m_pSkeletonRanged, m_pPlayer);
 
-	if (m_pSkeleton->getCurrentAction() == "Move Behind Cover Action")
+	//Ranged
+	if (m_pSkeletonRanged->getCurrentAction() == "Move Behind Cover Action")
 	{
-		m_pSkeleton->setCurrentDirection(Util::normalize(m_findClosestCoverPathNode(m_pSkeleton)->getTransform()->position
-			- m_pSkeleton->getTransform()->position));
+		m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_findClosestCoverPathNode(m_pSkeletonRanged)->getTransform()->position
+			- m_pSkeletonRanged->getTransform()->position));
 	}
-	if (m_pSkeleton->getCurrentAction() == "Move To LOS Action")
+	//Close
+	if (m_pSkeletonClose->getCurrentAction() == "Move To LOS Action")
 	{
-		m_pSkeleton->setCurrentDirection(Util::normalize(m_findClosestLOSPathNode(m_pSkeleton)->getTransform()->
-			position - m_pSkeleton->getTransform()->position));
-		m_pSkeleton->moveForward();
-		m_pSkeleton->move();
-		if (Util::distance(m_pSkeleton->getTransform()->position, m_findClosestLOSPathNode(m_pSkeleton)->
+		m_pSkeletonClose->setCurrentDirection(Util::normalize(m_findClosestLOSPathNode(m_pSkeletonClose)->getTransform()->
+			position - m_pSkeletonClose->getTransform()->position));
+		m_pSkeletonClose->moveForward();
+		m_pSkeletonClose->move();
+		if (Util::distance(m_pSkeletonClose->getTransform()->position, m_findClosestLOSPathNode(m_pSkeletonClose)->
 			getTransform()->position) < 5)
 		{
-			m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeleton->getTransform()->position));
-			m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeleton->getTransform()->position));
+			m_pSkeletonClose->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonClose->getTransform()->position));
+			m_pSkeletonClose->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonClose->getTransform()->position));
 		}
-		//m_pSkeleton->m_Seek(m_findClosestLOSPathNode(m_pSkeleton));
+		//m_pSkeletonClose->m_Seek(m_findClosestLOSPathNode(m_pSkeletonClose));
 	}
-	if (m_pSkeleton->inDR() == true)
+	//Ranged
+	if (m_pSkeletonRanged->getCurrentAction() == "Move To LOS Action")
 	{
-		auto ShipToTargetDistance = Util::distance(m_pSkeleton->getTransform()->position, m_pPlayer->getTransform()->position);
+		m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_findClosestLOSPathNode(m_pSkeletonRanged)->getTransform()->
+			position - m_pSkeletonRanged->getTransform()->position));
+		m_pSkeletonRanged->moveForward();
+		m_pSkeletonRanged->move();
+		if (Util::distance(m_pSkeletonRanged->getTransform()->position, m_findClosestLOSPathNode(m_pSkeletonRanged)->
+			getTransform()->position) < 5)
+		{
+			m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position));
+			m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position));
+		}
+		//m_pSkeletonClose->m_Seek(m_findClosestLOSPathNode(m_pSkeletonClose));
+	}
+	//Close
+	if (m_pSkeletonClose->inDR() == true)
+	{
+		auto ShipToTargetDistance = Util::distance(m_pSkeletonClose->getTransform()->position, m_pPlayer->getTransform()->position);
 		if (ShipToTargetDistance <= 30)
 		{
-			m_pSkeleton->setCloseCombatRange(true);
+			m_pSkeletonClose->setCloseCombatRange(true);
 		}
 		else
-			m_pSkeleton->setCloseCombatRange(false);
+			m_pSkeletonClose->setCloseCombatRange(false);
 	}
+
+
 	
 }
 
@@ -510,7 +707,7 @@ void PlayScene::handleEvents()
 	{
 		m_dbgMode = !m_dbgMode;
 
-		m_pSkeleton->flipDbg();
+		m_pSkeletonClose->flipDbg();
 		m_pPlayer->flipDbg();
 
 		m_gridVisible = !m_gridVisible;
@@ -527,10 +724,10 @@ void PlayScene::handleEvents()
 	}
 
 
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_dbgMode && m_PressCounter >= 6 && !skeletonDead)
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_dbgMode && m_PressCounter >= 6 && !skeletonCloseDead)
 	{
-		damageActor(m_pSkeleton);
-		m_pSkeleton->flipTakingDamage();
+		damageActor(m_pSkeletonClose);
+		m_pSkeletonClose->flipTakingDamage();
 		////std::cout << "Enemy damaged, new health value: " << m_pShip->getHealthBar().getHealthPoints() << "\n";
 
 		m_PressCounter = 0;
@@ -539,10 +736,10 @@ void PlayScene::handleEvents()
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_P) && m_dbgMode && m_PressCounter >= 6)
 	{
-		if(m_pSkeleton->getCurrentAction() == "Patrol Action")
-			m_pSkeleton->setCurrentAction("Idle");
-		else if (m_pSkeleton->getCurrentAction() == "Idle")
-			m_pSkeleton->setCurrentAction("Patrol Action");
+		if(m_pSkeletonClose->getCurrentAction() == "Patrol Action")
+			m_pSkeletonClose->setCurrentAction("Idle");
+		else if (m_pSkeletonClose->getCurrentAction() == "Idle")
+			m_pSkeletonClose->setCurrentAction("Patrol Action");
 
 		m_PressCounter = 0;
 	}
@@ -582,7 +779,7 @@ void PlayScene::start()
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	//Build node grid for overlaying map
 
-	m_enemiesAlive = 1;
+	m_enemiesAlive = 2;
 
 	m_buildTileGrid();
 	m_buildGrid();
@@ -593,12 +790,21 @@ void PlayScene::start()
 	m_pPlayer->getTransform()->position = glm::vec2(200.0f, 300.0f);
 	addChild(m_pPlayer);
 
-	// add the ship to the scene as a start point
-	m_pSkeleton = new Skeleton();
-	m_pSkeleton->getTransform()->position = m_getTile(1, 1)->getTransform()->position + offset;
-	addChild(m_pSkeleton, 2);
-	m_pSkeleton->setAnimationState("WalkingDown");
-	m_pSkeleton->setMaxSpeed(2.0f);
+	// add the Close Enemy to the scene as a start point
+	m_pSkeletonClose = new SkeletonClose();
+	m_pSkeletonClose->getTransform()->position = m_getTile(1, 1)->getTransform()->position + offset;
+	addChild(m_pSkeletonClose, 2);
+	m_pSkeletonClose->setAnimationState("WalkingDown");
+	m_pSkeletonClose->setMaxSpeed(2.0f);
+
+	// add the Ranged Enemy to the scene as a start point
+	m_pSkeletonRanged = new SkeletonRanged();
+	m_pSkeletonRanged->getTransform()->position = m_getTile(10, 1)->getTransform()->position + offset;
+	addChild(m_pSkeletonRanged, 2);
+	m_pSkeletonRanged->setAnimationState("WalkingRight");
+	m_pSkeletonRanged->setMaxSpeed(2.0f);
+
+	
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -637,7 +843,7 @@ void PlayScene::start()
 
 	// create a dummy DecisionTree
 	decisionTree = new DecisionTree();
-	decisionTree->setAgent(m_pSkeleton);
+	decisionTree->setAgent(m_pSkeletonClose);
 	decisionTree->Display();
 }
 
@@ -658,16 +864,16 @@ void PlayScene::GUI_Function()
 	static int angle;
 	if(ImGui::SliderInt("Skeleton Direction", &angle, -360, 360))
 	{
-		m_pSkeleton->setCurrentHeading(angle);
+		m_pSkeletonClose->setCurrentHeading(angle);
 	}
 	
 	ImGui::Separator();
 
-	static int shipPosition[] = { m_pSkeleton->getTransform()->position.x, m_pSkeleton->getTransform()->position.y };
+	static int shipPosition[] = { m_pSkeletonClose->getTransform()->position.x, m_pSkeletonClose->getTransform()->position.y };
 	if (ImGui::SliderInt2("Skeleton Position", shipPosition, 0, 800))
 	{
-		m_pSkeleton->getTransform()->position.x = shipPosition[0];
-		m_pSkeleton->getTransform()->position.y = shipPosition[1];
+		m_pSkeletonClose->getTransform()->position.x = shipPosition[0];
+		m_pSkeletonClose->getTransform()->position.y = shipPosition[1];
 
 		//std::cout << "------------------------" << std::endl;
 		//std::cout << decisionTree->MakeDecision() << std::endl;
@@ -765,16 +971,16 @@ void PlayScene::m_CheckPathNodeLOS()
 void PlayScene::m_CheckShipDR(DisplayObject* target_object)
 {
 	//if target is within the Detection Radius
-	auto ShipToTargetDistance = Util::distance(m_pSkeleton->getTransform()->position, target_object->getTransform()->position);
-	if (ShipToTargetDistance - 20 <= m_pSkeleton->getDetectionRadius())
+	auto ShipToTargetDistance = Util::distance(m_pSkeletonClose->getTransform()->position, target_object->getTransform()->position);
+	if (ShipToTargetDistance - 20 <= m_pSkeletonClose->getDetectionRadius())
 	{
 		std::vector<DisplayObject*> contactList;
 		contactList.push_back(target_object); // add the target to the end of the list
-		auto hasDR = CollisionManager::DRCheck(m_pSkeleton->getDetectionRadius(), contactList, target_object);
+		auto hasDR = CollisionManager::DRCheck(m_pSkeletonClose->getDetectionRadius(), contactList, target_object);
 
-		m_pSkeleton->setInDR(hasDR);
+		m_pSkeletonClose->setInDR(hasDR);
 	}
-	else m_pSkeleton->setInDR(false);
+	else m_pSkeletonClose->setInDR(false);
 }
 
 Tile* PlayScene::m_getTile(const int col, const int row)

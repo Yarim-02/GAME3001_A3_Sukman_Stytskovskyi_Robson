@@ -57,7 +57,7 @@ void DecisionTree::Update()
 	m_LOSNode->setLOS(m_agent->hasLOS());
 	m_FleeNode->setFleeing(m_agent->getFleeing());
 	m_RadiusNode->setIsWithinRadius(m_agent->inDR());
-	m_CloseCombatNode->setIsWithinCombatRange(static_cast<Skeleton*>(m_agent)->getCloseCombatRange());
+	m_CloseCombatNode->setIsWithinCombatRange(static_cast<SkeletonClose*>(m_agent)->getCloseCombatRange());
 }
 
 // in-order traversal

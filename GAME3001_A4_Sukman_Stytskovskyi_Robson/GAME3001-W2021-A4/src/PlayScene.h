@@ -38,7 +38,9 @@ private:
 	glm::vec2 m_mousePosition;
 
 	Target* m_pTarget;
-	Skeleton* m_pSkeleton;
+	//Skeleton* m_pSkeletonClose;
+	SkeletonClose* m_pSkeletonClose;
+	SkeletonRanged* m_pSkeletonRanged;
 	Gunner* m_pPlayer;
 	std::vector<Bullet*> m_pBullet;
 	std::vector<Bone*> m_pBone;
@@ -64,7 +66,8 @@ private:
 		m_LOSCounter;
 
 	bool m_dbgMode,
-		skeletonDead;
+		skeletonCloseDead,
+		skeletonRangedDead;
 
 	//Tile Stuff
 	std::vector<Tile*> m_pTileGrid;
@@ -90,7 +93,8 @@ private:
 	int m_patrolPathPosition = 0;
 	int mouseX, mouseY;
 
-	glm::vec2 m_lastEnemyPosition;
+	glm::vec2 m_lastCloseEnemyPosition;
+	glm::vec2 m_lastRangedEnemyPosition;
 };
 
 
