@@ -7,7 +7,7 @@
 
 #include "GameObject.h"
 #include "Gunner.h"
-#include "Skeleton.h"
+#include "Skeletons.h"
 #include <GLM/gtx/norm.hpp>
 #include "SoundManager.h"
 

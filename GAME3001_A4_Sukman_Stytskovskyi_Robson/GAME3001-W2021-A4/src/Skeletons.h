@@ -1,14 +1,16 @@
 #pragma once
-#ifndef __Skeleton__
-#define __Skeleton__
+#ifndef __Skeletons__
+#define __Skeletons__
 
 #include "TextureManager.h"
 #include <glm/vec4.hpp>
 #include "HealthBar.h"
-
+#include "Bone.h"
 #include "Agent.h"
 
-class Skeleton final : public Agent
+enum TYPE {BASE, RANGE_COMBAT, CLOSE_COMBAT};
+
+class Skeleton : public Agent
 {
 
 public:
@@ -34,7 +36,7 @@ public:
 	bool getHadLOS();
 	bool getTakingDamage();
 	HealthBar& getHealthBar();
-	bool getCloseCombatRange();
+	TYPE getVariation();
 
 	// setters
 	void setMaxSpeed(float newSpeed);
@@ -44,10 +46,9 @@ public:
 	void setAnimationState(std::string animationState);
 	void setCurrentAction(std::string currentAction);
 	void m_Seek(Agent* target);
-	void setCloseCombatRange(bool state);
 	void setArrivalPoint(glm::vec2 point);
 
-private:
+protected:
 	void m_checkBounds();
 	void m_reset();
 
@@ -56,12 +57,13 @@ private:
 
 	bool m_dbgMode;
 	bool m_takingDamage = false;
-	bool m_closeCombatRange = false;
 
 	std::string m_currentAction;
 	int m_frameCounter = 0;
 	int m_frameCounter2 = 0;
 	std::string m_animationState;
+
+	TYPE m_variation;
 
 	HealthBar m_healthBar;
 	glm::vec2 m_position;
@@ -71,8 +73,34 @@ private:
 	bool m_bHadLOS;
 };
 
+class SkeletonRanged : public Skeleton
+{
+public:
+	SkeletonRanged();
+	~SkeletonRanged();
 
 
+	void setRangedCombatRange(bool state);
+	bool getRangedCombatRange();
 
-#endif /* defined (__Skeleton__) */
+	void performAttack(glm::vec2 target);
+private:
+	bool m_rangedCombatRange = false;
+
+	std::vector<Bone*> m_pBone;
+};
+
+class SkeletonClose : public Skeleton
+{
+public:
+	SkeletonClose();
+	~SkeletonClose();
+
+	void setCloseCombatRange(bool state);
+	bool getCloseCombatRange();
+private:
+	bool m_closeCombatRange = false;
+};
+
+#endif /* defined (__Skeletons__) */
 

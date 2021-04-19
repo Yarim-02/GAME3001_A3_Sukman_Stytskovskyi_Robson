@@ -8,12 +8,13 @@ class Bullet : public DisplayObject
 public:
 	// constructor
 	Bullet(glm::vec2 position,glm::vec2 direction);
+	Bullet() { };
 
 	//destructor
 	~Bullet();
 
 	// life cycle functions
-	void draw();
+	void draw(); 
 	void update();
 	void clean();
 
@@ -28,7 +29,7 @@ public:
 	void setTurnRate(float rate);
 	float getAccelerationRate() const;
 	void setAccelerationRate(float rate);
-private:
+protected:
 	glm::vec2 m_destination;
 	glm::vec2 m_targetDirection;
 	glm::vec2 m_orientation;

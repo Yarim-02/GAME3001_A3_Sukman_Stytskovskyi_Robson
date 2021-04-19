@@ -7,7 +7,7 @@
 #include "FleeAction.h"
 #include "MoveToPlayerAction.h"
 #include "PatrolAction.h"
-#include "Skeleton.h"
+#include "Skeletons.h"
 
 DecisionTree::DecisionTree()
 {

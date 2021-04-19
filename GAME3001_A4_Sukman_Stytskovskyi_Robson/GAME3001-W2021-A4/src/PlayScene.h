@@ -7,7 +7,7 @@
 #include "DecisionTree.h"
 #include "Label.h"
 #include "Obstacles.h"
-#include "Skeleton.h"
+#include "Skeletons.h"
 #include "SpaceShip.h"
 #include "Target.h"
 #include "Tile.h"
@@ -41,6 +41,7 @@ private:
 	Skeleton* m_pSkeleton;
 	Gunner* m_pPlayer;
 	std::vector<Bullet*> m_pBullet;
+	std::vector<Bone*> m_pBone;
 	std::vector <Melee*> m_pMelee;
 	std::vector<Obstacle*> m_pObstacle;
 	std::vector<DestructibleObstacle*> m_pObstacleDestructible;

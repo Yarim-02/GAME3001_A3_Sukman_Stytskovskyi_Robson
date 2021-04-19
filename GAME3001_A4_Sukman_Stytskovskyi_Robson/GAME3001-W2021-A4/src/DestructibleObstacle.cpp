@@ -5,19 +5,13 @@
 #include "SoundManager.h"
 #include "TextureManager.h"
 
-DestructibleObstacle::DestructibleObstacle(std::string fileNameAndType, std::string FileName)
+DestructibleObstacle::DestructibleObstacle(std::string fileNameAndType, std::string FileName) : Obstacle(fileNameAndType, FileName)
 {
-	m_fileName = FileName;
-	TextureManager::Instance()->load("../Assets/textures/" + fileNameAndType, FileName);
-
 	auto size = TextureManager::Instance()->getTextureSize(FileName);
 	setWidth(size.x);
 	setHeight(size.y);
 
-	getTransform()->position = glm::vec2(300.0f, 300.0f);
-
 	setType(DESTRUCTIBLE_OBSTACLE);
-	getRigidBody()->isColliding = false;
 
 
 	m_healthBarDestRect = new SDL_Rect;
@@ -55,11 +49,6 @@ void DestructibleObstacle::update()
 
 void DestructibleObstacle::clean()
 {
-}
-
-void DestructibleObstacle::flipDbg()
-{
-	m_dbgMode = !m_dbgMode;
 }
 
 HealthBar& DestructibleObstacle::getHealthBar()

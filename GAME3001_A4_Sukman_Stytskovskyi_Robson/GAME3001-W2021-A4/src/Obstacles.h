@@ -41,8 +41,6 @@ public:
 	void update() override;
 	void clean() override;
 
-	void flipDbg();
-
 	HealthBar& getHealthBar();
 private:
 	HealthBar m_healthBar;

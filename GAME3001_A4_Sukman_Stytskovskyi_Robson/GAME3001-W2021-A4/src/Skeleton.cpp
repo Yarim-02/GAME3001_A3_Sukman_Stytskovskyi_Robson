@@ -1,4 +1,4 @@
-#include "Skeleton.h"
+#include "Skeletons.h"
 
 #include "Game.h"
 #include "glm/gtx/string_cast.hpp"
@@ -53,6 +53,8 @@ Skeleton::Skeleton() : m_maxSpeed(20.0f)
 	getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
 	getRigidBody()->isColliding = false;
 	setType(AGENT);
+
+	m_variation = BASE;
 
 	setCurrentHeading(0.0f);// current facing angle
 	setCurrentDirection(glm::vec2(1.0f, 0.0f)); // facing right
@@ -402,9 +404,9 @@ HealthBar& Skeleton::getHealthBar()
 	return m_healthBar;
 }
 
-bool Skeleton::getCloseCombatRange()
+TYPE Skeleton::getVariation()
 {
-	return m_closeCombatRange;
+	return m_variation;
 }
 
 void Skeleton::setMaxSpeed(float newSpeed)
@@ -509,11 +511,6 @@ void Skeleton::m_Seek(Agent* target)
 	getRigidBody()->velocity = Util::clamp(getRigidBody()->velocity, m_maxSpeed);
 
 	getTransform()->position += getRigidBody()->velocity;
-}
-
-void Skeleton::setCloseCombatRange(bool state)
-{
-	m_closeCombatRange = state;
 }
 
 void Skeleton::setArrivalPoint(glm::vec2 point)
