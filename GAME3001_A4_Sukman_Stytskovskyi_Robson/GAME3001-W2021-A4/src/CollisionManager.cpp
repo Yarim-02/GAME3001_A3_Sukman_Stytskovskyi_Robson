@@ -120,7 +120,7 @@ bool CollisionManager::ObstacleColCheck(Agent* object1, GameObject* object2)
 				std::cout << "Collision with Target!" << std::endl;
 				SoundManager::Instance().playSound("yay", 0);
 				break;
-			case OBSTACLE:
+			case OBSTACLE : case DESTRUCTIBLE_OBSTACLE:
 				std::cout << "Collision with Obstacle!" << std::endl;
 
 				//bottom
@@ -453,6 +453,12 @@ bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::ve
 		switch (object->getType())
 		{
 		case OBSTACLE:
+			if (lineRectCheck(start_point, end_point, rect_start, width, height))
+			{
+				return false;
+			}
+			break;
+		case DESTRUCTIBLE_OBSTACLE:
 			if (lineRectCheck(start_point, end_point, rect_start, width, height))
 			{
 				return false;

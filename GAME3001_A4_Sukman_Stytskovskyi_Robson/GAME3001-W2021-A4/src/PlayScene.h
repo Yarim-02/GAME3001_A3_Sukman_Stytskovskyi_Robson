@@ -6,7 +6,7 @@
 #include "Button.h"
 #include "DecisionTree.h"
 #include "Label.h"
-#include "Obstacle.h"
+#include "Obstacles.h"
 #include "Skeleton.h"
 #include "SpaceShip.h"
 #include "Target.h"
@@ -43,6 +43,7 @@ private:
 	std::vector<Bullet*> m_pBullet;
 	std::vector <Melee*> m_pMelee;
 	std::vector<Obstacle*> m_pObstacle;
+	std::vector<DestructibleObstacle*> m_pObstacleDestructible;
 	Obstacle* m_pObstacle2;
 	Obstacle* m_pObstacle3;
 	

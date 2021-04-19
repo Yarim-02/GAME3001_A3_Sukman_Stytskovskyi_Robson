@@ -54,10 +54,6 @@ void PlayScene::draw()
 		}
 	}
 
-
-	//Util::DrawLine(m_pShip->getTransform()->position, m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * 25.0f, glm::vec4(1, 0, 1, 1));
-
-
 	if(EventManager::Instance().isIMGUIActive())
 	{
 		GUI_Function();	
@@ -110,10 +106,61 @@ void PlayScene::update()
 		}
 	}
 	
-	for (int i = 0; i < 5; i++)
+	// Actors and Obstacles
+	for (int i = 0; i < m_pObstacle.size(); i++)
 	{
 		CollisionManager::ObstacleColCheck(m_pPlayer, m_pObstacle[i]);
 		CollisionManager::ObstacleColCheck(m_pSkeleton, m_pObstacle[i]);
+	}
+
+	for (int i = 0; i < m_pObstacleDestructible.size(); i++)
+	{
+		CollisionManager::ObstacleColCheck(m_pPlayer, m_pObstacleDestructible[i]);
+		CollisionManager::ObstacleColCheck(m_pSkeleton, m_pObstacleDestructible[i]);
+	}
+
+	//Projectiles and Obstacles
+
+	for (int i = 0; i < m_pObstacle.size(); i++)
+	{
+		for (int j = 0; j < m_pBullet.size(); j++)
+		{
+			if (CollisionManager::AABBCheck(m_pObstacle[i], m_pBullet[j]))
+			{
+				removeChild(m_pBullet[j]);
+				m_pBullet[j] = nullptr;
+				m_pBullet.erase(m_pBullet.begin() + j);
+				m_pBullet.shrink_to_fit();
+			}
+		}
+	}
+
+	for (int i = 0; i < m_pObstacleDestructible.size(); i++)
+	{
+		for (int j = 0; j < m_pBullet.size(); j++)
+		{
+			if (CollisionManager::AABBCheck(m_pObstacleDestructible[i], m_pBullet[j]))
+			{
+				removeChild(m_pBullet[j]);
+				m_pBullet[j] = nullptr;
+				m_pBullet.erase(m_pBullet.begin() + j);
+				m_pBullet.shrink_to_fit();
+
+				m_pObstacleDestructible[i]->getHealthBar().setHealthPoints
+				(m_pObstacleDestructible[i]->getHealthBar().getHealthPoints() - 10);
+			}
+		}
+	}
+
+	for (int i = 0; i < m_pObstacleDestructible.size(); i++)
+	{
+		if (m_pObstacleDestructible[i]->getHealthBar().getHealthPoints() <= 0)
+		{
+			removeChild(m_pObstacleDestructible[i]);
+			m_pObstacleDestructible[i] = nullptr;
+			m_pObstacleDestructible.erase(m_pObstacleDestructible.begin() + i);
+			m_pObstacleDestructible.shrink_to_fit();
+		}
 	}
 
 	//Bullet and Enemy collision
@@ -472,6 +519,9 @@ void PlayScene::handleEvents()
 		for (int i = 0; i < m_pObstacle.size(); i++)
 			m_pObstacle[i]->flipDbg();
 
+		for (int i = 0; i < m_pObstacleDestructible.size(); i++)
+			m_pObstacleDestructible[i]->flipDbg();
+
 		m_PressCounter = 0;
 
 	}
@@ -569,12 +619,15 @@ void PlayScene::start()
 	m_pObstacle[4]->getTransform()->position = m_getTile(15, 6)->getTransform()->position;
 	addChild(m_pObstacle[4]);
 
-	
-	
-	// added the target to the scene a goal
-	/*m_pTarget = new Target();
-	m_pTarget->getTransform()->position = m_getTile(16, 8)->getTransform()->position + offset;
-	addChild(m_pTarget);*/
+	for (int i = 0; i < 2; i++)
+	{
+		m_pObstacleDestructible.push_back(new DestructibleObstacle("Rock.png", "Rock"));
+	}
+	m_pObstacleDestructible[0]->getTransform()->position = m_getTile(7, 2)->getTransform()->position;
+	addChild(m_pObstacleDestructible[0]);
+
+	m_pObstacleDestructible[1]->getTransform()->position = m_getTile(3, 7)->getTransform()->position;
+	addChild(m_pObstacleDestructible[1]);
 
 	// build patrol path list
 	m_pPatrolPath.push_back(m_getTile(1, 1));
@@ -723,8 +776,6 @@ void PlayScene::m_CheckShipDR(DisplayObject* target_object)
 	}
 	else m_pSkeleton->setInDR(false);
 }
-
-
 
 Tile* PlayScene::m_getTile(const int col, const int row)
 {

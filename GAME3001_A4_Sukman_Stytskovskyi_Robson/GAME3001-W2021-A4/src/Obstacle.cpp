@@ -1,4 +1,4 @@
-#include "Obstacle.h"
+#include "Obstacles.h"
 
 
 #include "Util.h"
@@ -20,8 +20,6 @@ Obstacle::Obstacle(std::string fileNameAndType, std::string fileName)
 	getRigidBody()->isColliding = false;
 
 	m_dbgMode = false;
-
-	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
 }
 
 Obstacle::~Obstacle()
