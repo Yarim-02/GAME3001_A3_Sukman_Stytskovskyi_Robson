@@ -34,6 +34,7 @@ public:
 	bool getHadLOS();
 	bool getTakingDamage();
 	HealthBar& getHealthBar();
+	bool getCloseCombatRange();
 
 	// setters
 	void setMaxSpeed(float newSpeed);
@@ -43,6 +44,7 @@ public:
 	void setAnimationState(std::string animationState);
 	void setCurrentAction(std::string currentAction);
 	void m_Seek(Agent* target);
+	void setCloseCombatRange(bool state);
 
 private:
 	void m_checkBounds();
@@ -53,6 +55,7 @@ private:
 
 	bool m_dbgMode;
 	bool m_takingDamage = false;
+	bool m_closeCombatRange = false;
 
 	std::string m_currentAction;
 	int m_frameCounter = 0;

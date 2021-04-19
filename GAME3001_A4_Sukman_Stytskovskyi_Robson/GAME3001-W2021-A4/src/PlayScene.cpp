@@ -357,9 +357,19 @@ void PlayScene::update()
 			getTransform()->position) < 5)
 		{
 			m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeleton->getTransform()->position));
+			m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeleton->getTransform()->position));
 		}
 		//m_pSkeleton->m_Seek(m_findClosestLOSPathNode(m_pSkeleton));
 	}
+	if (m_pSkeleton->inDR() == true)
+	{
+		auto ShipToTargetDistance = Util::distance(m_pSkeleton->getTransform()->position, m_pPlayer->getTransform()->position);
+		if (ShipToTargetDistance <= 30)
+		{
+			m_pSkeleton->setCloseCombatRange(true);
+		}
+	}
+	
 }
 
 void PlayScene::clean()

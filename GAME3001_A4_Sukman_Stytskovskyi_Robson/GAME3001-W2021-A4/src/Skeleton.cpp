@@ -389,6 +389,11 @@ HealthBar& Skeleton::getHealthBar()
 	return m_healthBar;
 }
 
+bool Skeleton::getCloseCombatRange()
+{
+	return m_closeCombatRange;
+}
+
 void Skeleton::setMaxSpeed(float newSpeed)
 {
 	m_maxSpeed = newSpeed;
@@ -491,5 +496,10 @@ void Skeleton::m_Seek(Agent* target)
 	getRigidBody()->velocity = Util::clamp(getRigidBody()->velocity, m_maxSpeed);
 
 	getTransform()->position += getRigidBody()->velocity;
+}
+
+void Skeleton::setCloseCombatRange(bool state)
+{
+	m_closeCombatRange = state;
 }
 
