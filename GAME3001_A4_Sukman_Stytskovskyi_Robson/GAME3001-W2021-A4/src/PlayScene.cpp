@@ -270,6 +270,12 @@ void PlayScene::update()
 	if (m_pSkeleton->getCurrentAction() == "Move To Player Action")
 	{
 		m_pSkeleton->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeleton->getTransform()->position) );
+		m_pSkeleton->setArrivalPoint(m_pPlayer->getTransform()->position);
+	}
+	else
+	{
+		m_pSkeleton->setArrivalPoint(glm::vec2(-100, 0));
+		m_pSkeleton->setMaxSpeed(2);
 	}
 	if (m_pSkeleton->getCurrentAction() == "Flee Action")
 	{
@@ -368,6 +374,8 @@ void PlayScene::update()
 		{
 			m_pSkeleton->setCloseCombatRange(true);
 		}
+		else
+			m_pSkeleton->setCloseCombatRange(false);
 	}
 	
 }

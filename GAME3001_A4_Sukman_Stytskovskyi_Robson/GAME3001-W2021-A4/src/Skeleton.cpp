@@ -7,7 +7,7 @@
 #include "SoundManager.h"
 #include "Util.h"
 
-Skeleton::Skeleton() : m_maxSpeed(10.0f)
+Skeleton::Skeleton() : m_maxSpeed(20.0f)
 {
 
 	TextureManager::Instance()->load("../Assets/textures/IdleSkeleton1.png", "Skeleton");
@@ -308,6 +308,19 @@ void Skeleton::update()
 	{
 		SoundManager::Instance().playSound("skeleton_walk", 0, -1);
 	}
+	auto distance = abs(abs(m_arrivalPoint.x - getTransform()->position.x) - abs(m_arrivalPoint.y - getTransform()->position.y));
+
+	if (m_arrivalPoint.x > -10)
+	{
+		if (distance < 50)
+		{
+			setMaxSpeed(0.5f);
+			//std::cout << distance << std::endl;
+		}
+		else
+			setMaxSpeed(02.0f);
+	}
+	//std::cout << m_maxSpeed;
 
 	m_frameCounter2++;
 	m_frameCounter++;
@@ -501,5 +514,10 @@ void Skeleton::m_Seek(Agent* target)
 void Skeleton::setCloseCombatRange(bool state)
 {
 	m_closeCombatRange = state;
+}
+
+void Skeleton::setArrivalPoint(glm::vec2 point)
+{
+	m_arrivalPoint = point;
 }
 

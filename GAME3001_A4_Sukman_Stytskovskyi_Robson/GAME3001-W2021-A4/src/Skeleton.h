@@ -45,6 +45,7 @@ public:
 	void setCurrentAction(std::string currentAction);
 	void m_Seek(Agent* target);
 	void setCloseCombatRange(bool state);
+	void setArrivalPoint(glm::vec2 point);
 
 private:
 	void m_checkBounds();
@@ -64,6 +65,7 @@ private:
 
 	HealthBar m_healthBar;
 	glm::vec2 m_position;
+	glm::vec2 m_arrivalPoint;
 	SDL_Rect* m_healthBarDestRect;
 	
 	bool m_bHadLOS;
