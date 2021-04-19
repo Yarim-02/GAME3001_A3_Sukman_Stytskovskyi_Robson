@@ -64,7 +64,7 @@ void DecisionTree::Update()
 	if (m_Ranged)
 	{
 		m_RangedCombatNode->setIsWithinCombatRange(static_cast<SkeletonRanged*>(m_agent)->getRangedCombatRange());
-		
+		m_MoveBehindCoverNode->setGotHit(static_cast<SkeletonRanged*>(m_agent)->getTakingDamage());
 	}
 	else if (!m_Ranged)
 		m_CloseCombatNode->setIsWithinCombatRange(static_cast<SkeletonClose*>(m_agent)->getCloseCombatRange());

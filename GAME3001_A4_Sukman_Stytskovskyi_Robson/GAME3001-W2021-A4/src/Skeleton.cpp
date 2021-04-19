@@ -67,6 +67,7 @@ Skeleton::Skeleton() : m_maxSpeed(20.0f)
 	setDRColour((glm::vec4(1, 0, 0, 1)));
 
 	m_dbgMode = false;
+	m_takingDamage = false;
 
 	setFleeing(false);
 	m_currentAction = "Patrol";
@@ -299,8 +300,22 @@ void Skeleton::draw()
 void Skeleton::update()
 {
 	auto size = TextureManager::Instance()->getTextureSize("Skeleton");
-	/*move();
-	m_checkBounds();*/
+	/*move();*/
+
+	//if (m_GotHitCounter >= 0)
+	//	m_GotHitCounter--;
+	//
+	//if (m_GotHitCounter <= 0)
+	//	m_takingDamage = false;
+	//
+	//if (getTakingDamage() && m_GotHitCounter <= 0)
+	//{ 
+	//	m_GotHitCounter = 600;
+	//}
+
+	if (m_currentAction != "Flee Action")
+		m_checkBounds();
+
 	if (m_frameCounter > 13)
 		m_frameCounter = 0;
 	if (m_frameCounter2 > 600)
@@ -445,24 +460,24 @@ void Skeleton::setCurrentAction(std::string currentAction)
 void Skeleton::m_checkBounds()
 {
 
-	if (getTransform()->position.x > Config::SCREEN_WIDTH)
+	if (getTransform()->position.x > Config::SCREEN_WIDTH - 40.f)
 	{
-		getTransform()->position = glm::vec2(0.0f, getTransform()->position.y);
+		getTransform()->position = glm::vec2(760.0f, getTransform()->position.y);
 	}
 
-	if (getTransform()->position.x < 0)
+	if (getTransform()->position.x < 40.f)
 	{
-		getTransform()->position = glm::vec2(800.0f, getTransform()->position.y);
+		getTransform()->position = glm::vec2(40.0f, getTransform()->position.y);
 	}
 
-	if (getTransform()->position.y > Config::SCREEN_HEIGHT)
+	if (getTransform()->position.y > Config::SCREEN_HEIGHT +40.f)
 	{
-		getTransform()->position = glm::vec2(getTransform()->position.x, 0.0f);
+		getTransform()->position = glm::vec2(getTransform()->position.x, 640.0f);
 	}
 
-	if (getTransform()->position.y < 0)
+	if (getTransform()->position.y < 40.f)
 	{
-		getTransform()->position = glm::vec2(getTransform()->position.x, 600.0f);
+		getTransform()->position = glm::vec2(getTransform()->position.x, 40.0f);
 	}
 
 }

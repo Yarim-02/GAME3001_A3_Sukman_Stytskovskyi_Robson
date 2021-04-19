@@ -236,10 +236,8 @@ void PlayScene::update()
 
 	if (m_pSkeletonRanged->getHealthBar().getHealthPoints() <= 16)
 			m_pSkeletonRanged->setFleeing(true);
+	
 
-	//Enemy death
-	
-	
 	
 	if (m_frameCounter % 5 == 0)
 	{
@@ -255,24 +253,6 @@ void PlayScene::update()
 
 	m_CheckAgentDR(m_pPlayer, m_pSkeletonRanged);
 	m_CheckAgentDR(m_pPlayer, m_pSkeletonClose);
-	
-	//Close patrol
-	
-	//Ranged patrol
-	
-	//Close
-	
-	//Ranged 
-	
-
-	//Close
-	
-	//Ranged
-	
-	//Close
-	
-	//Ranged
-	
 
 
 	m_frameCounter++;
@@ -295,18 +275,6 @@ void PlayScene::update()
 	//	}
 	//}
 	//
-	//Close
-	
-	//Close
-	
-	//Close
-	
-	
-	//Close
-	
-	
-	//Close
-	
 
 	std::cout << m_pSkeletonClose->getCurrentAction()<< "\n";
 	std::cout << m_pSkeletonRanged->getCurrentAction() << "\n";
@@ -848,7 +816,7 @@ void PlayScene::start()
 	{
 		m_pObstacle.push_back(new Obstacle("Rock.png", "Rock"));
 	}
-	m_pObstacle[0]->getTransform()->position = m_getTile(9, 2)->getTransform()->position;
+	m_pObstacle[0]->getTransform()->position = m_getTile(9, 3)->getTransform()->position;
 	addChild(m_pObstacle[0]);
 
 	m_pObstacle[1]->getTransform()->position = m_getTile(9, 7)->getTransform()->position;
@@ -867,7 +835,7 @@ void PlayScene::start()
 	{
 		m_pObstacleDestructible.push_back(new DestructibleObstacle("Rock.png", "Rock"));
 	}
-	m_pObstacleDestructible[0]->getTransform()->position = m_getTile(7, 2)->getTransform()->position;
+	m_pObstacleDestructible[0]->getTransform()->position = m_getTile(7, 3)->getTransform()->position;
 	addChild(m_pObstacleDestructible[0]);
 
 	m_pObstacleDestructible[1]->getTransform()->position = m_getTile(3, 7)->getTransform()->position;

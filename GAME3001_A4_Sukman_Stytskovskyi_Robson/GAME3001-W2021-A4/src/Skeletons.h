@@ -61,6 +61,7 @@ protected:
 	std::string m_currentAction;
 	int m_frameCounter = 0;
 	int m_frameCounter2 = 0;
+	int m_GotHitCounter = 0;
 	std::string m_animationState;
 
 	TYPE m_variation;
