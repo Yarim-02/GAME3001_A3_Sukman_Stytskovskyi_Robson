@@ -88,6 +88,9 @@ void DecisionTree::m_buildTree(bool isRanged)
 	m_FleeNode = new FleeCondition();  
 	m_treeNodeList.push_back(m_FleeNode);
 
+	TreeNode* fleeNode = AddNode(m_FleeNode, new FleeAction(), RIGHT_TREE_NODE);
+	m_treeNodeList.push_back(fleeNode);
+
 	// add the root node
 	m_LOSNode = new LOSCondition();
 	AddNode(m_FleeNode, m_LOSNode, LEFT_TREE_NODE);
@@ -97,20 +100,19 @@ void DecisionTree::m_buildTree(bool isRanged)
 	AddNode(m_LOSNode, m_RadiusNode, LEFT_TREE_NODE);
 	m_treeNodeList.push_back(m_RadiusNode); 
 
-	TreeNode* fleeNode = AddNode(m_FleeNode, new FleeAction(), RIGHT_TREE_NODE);
-	m_treeNodeList.push_back(fleeNode);
-
 	TreeNode* patrolNode = AddNode(m_RadiusNode, new PatrolAction(), LEFT_TREE_NODE);
 	m_treeNodeList.push_back(patrolNode); 
 
+	TreeNode* moveToLOSNode = AddNode(m_RadiusNode, new MoveToLOSAction(), RIGHT_TREE_NODE);
+	m_treeNodeList.push_back(moveToLOSNode);
+
 	if (isRanged == true)
 	{
-		TreeNode* moveToLOSNode = AddNode(m_RadiusNode, new MoveToLOSAction(), RIGHT_TREE_NODE);
-		m_treeNodeList.push_back(moveToLOSNode);
-
 		m_RangedCombatNode = new RangedCombatCondition();
 		AddNode(m_LOSNode, m_RangedCombatNode, RIGHT_TREE_NODE);
 		m_treeNodeList.push_back(m_RangedCombatNode);
+
+		// ADD LEFT NODE HERE
 
 		TreeNode* attackNode = AddNode(m_RangedCombatNode, new AttackAction(), RIGHT_TREE_NODE);
 		m_treeNodeList.push_back(attackNode);
