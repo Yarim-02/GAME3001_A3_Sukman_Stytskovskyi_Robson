@@ -50,15 +50,15 @@ void StartScene::start()
 	m_pStartLabel->setParent(this);
 	addChild(m_pStartLabel);
 
-	m_pInstructionsLabel = new Label("Sean Sukman", "JosefinSans", 30, tan, glm::vec2(400.0f, 120.0f));
+	m_pInstructionsLabel = new Label("Sean Sukman 101308390", "JosefinSans", 30, tan, glm::vec2(400.0f, 120.0f));
 	m_pInstructionsLabel->setParent(this);
 	addChild(m_pInstructionsLabel);
 
-	m_pInstructionsLabel = new Label("Nikolai Stytskovskyi", "JosefinSans", 30, tan, glm::vec2(400.0f, 240.0f));
+	m_pInstructionsLabel = new Label("Nikolai Stytskovskyi 101300758", "JosefinSans", 30, tan, glm::vec2(400.0f, 240.0f));
 	m_pInstructionsLabel->setParent(this);
 	addChild(m_pInstructionsLabel);
 
-	m_pInstructionsLabel = new Label("Callum Robson", "JosefinSans", 30, tan, glm::vec2(400.0f, 360.0f));
+	m_pInstructionsLabel = new Label("Callum Robson 101081274", "JosefinSans", 30, tan, glm::vec2(400.0f, 360.0f));
 	m_pInstructionsLabel->setParent(this);
 	addChild(m_pInstructionsLabel);
 
