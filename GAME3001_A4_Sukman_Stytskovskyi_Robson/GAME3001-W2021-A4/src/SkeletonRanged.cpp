@@ -8,6 +8,7 @@ SkeletonRanged::SkeletonRanged()
 
 	m_healthBar.setHealthPoints(65);
 	m_waitInCoverTimer = 0;
+	m_timerNotOut = true;
 	m_isBehindCover = false;
 	setMaxSpeed(0.25f);
 }
@@ -45,14 +46,14 @@ bool SkeletonRanged::getIsBehindCover()
 	return m_isBehindCover;
 }
 
-void SkeletonRanged::setIsTimerOut(bool state)
+void SkeletonRanged::setTimerNotOut(bool state)
 {
-	m_isTimerOut = state;
+	m_timerNotOut = state;
 }
 
-bool SkeletonRanged::getIsTimerOut()
+bool SkeletonRanged::getTimerNotOut()
 {
-	return m_isTimerOut;
+	return m_timerNotOut;
 }
 
 void SkeletonRanged::performAttack(glm::vec2 target)

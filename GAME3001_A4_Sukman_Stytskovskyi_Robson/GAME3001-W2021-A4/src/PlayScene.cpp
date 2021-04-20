@@ -639,7 +639,7 @@ void PlayScene::update()
 	}
 	if (m_pSkeletonRanged->getWaintInCoverTimer() > 180)
 	{
-		m_pSkeletonRanged->setIsTimerOut(true);
+		m_pSkeletonRanged->setTimerNotOut(false);
 		m_pSkeletonRanged->setWaitInCoverTimer(0);
 	}
 
@@ -651,7 +651,7 @@ void PlayScene::update()
 	}
 	if (m_pSkeletonRanged->getCurrentAction() == "Leave Cover Action")
 	{
-		m_pSkeletonRanged->setIsTimerOut(true);
+		m_pSkeletonRanged->setTimerNotOut(false);
 		m_pSkeletonRanged->setTakingDamage(false);
 	}
 	
