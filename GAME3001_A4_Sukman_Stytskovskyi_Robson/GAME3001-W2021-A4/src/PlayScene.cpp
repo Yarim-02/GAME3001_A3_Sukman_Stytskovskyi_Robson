@@ -82,14 +82,14 @@ void PlayScene::update()
 
 	//for melee attacks
 	m_MeleeCounter++;
-	if (m_MeleeCounter >= 12 && !m_pMelee.empty())
+	if (m_MeleeCounter >= 12 && !m_pMeleePlayer.empty())
 	{
-		for (int i = 0; i < m_pMelee.size(); i++)
+		for (int i = 0; i < m_pMeleePlayer.size(); i++)
 		{
-			removeChild(m_pMelee[i]);
-			m_pMelee[i] = nullptr;
-			m_pMelee.erase(m_pMelee.begin() + i);
-			m_pMelee.shrink_to_fit();
+			removeChild(m_pMeleePlayer[i]);
+			m_pMeleePlayer[i] = nullptr;
+			m_pMeleePlayer.erase(m_pMeleePlayer.begin() + i);
+			m_pMeleePlayer.shrink_to_fit();
 		}
 	}
 
@@ -168,7 +168,7 @@ void PlayScene::update()
 	{
 		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pSkeletonClose) && !skeletonCloseDead)
 		{
-			damageActor(m_pSkeletonClose);
+			damageSkeleton(m_pSkeletonClose);
 			m_pSkeletonClose->setTakingDamage(true);
 			//m_pSkeletonClose->flipTakingDamage();
 
@@ -179,7 +179,7 @@ void PlayScene::update()
 		}
 		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pSkeletonRanged) && !skeletonRangedDead)
 		{
-			damageActor(m_pSkeletonRanged);
+			damageSkeleton(m_pSkeletonRanged);
 			m_pSkeletonRanged->setTakingDamage(true);
 			//m_pSkeletonRanged->flipTakingDamage();
 
@@ -191,19 +191,35 @@ void PlayScene::update()
 	}
 
 	//Melee and Enemy collision
-	for (int i = 0; i < m_pMelee.size(); i++)
+	for (int i = 0; i < m_pMeleePlayer.size(); i++)
 	{
-		if (CollisionManager::circleAABBCheck(m_pMelee[i], m_pSkeletonClose) && !skeletonCloseDead)
+		if (CollisionManager::circleAABBCheck(m_pMeleePlayer[i], m_pSkeletonClose) && !skeletonCloseDead)
 		{
-			damageActor(m_pSkeletonClose);
+			damageSkeleton(m_pSkeletonClose);
 			m_pSkeletonClose->setTakingDamage(true);
 			//m_pSkeletonClose->flipTakingDamage();
 		}
-		if (CollisionManager::circleAABBCheck(m_pMelee[i], m_pSkeletonRanged) && !skeletonRangedDead)
+		if (CollisionManager::circleAABBCheck(m_pMeleePlayer[i], m_pSkeletonRanged) && !skeletonRangedDead)
 		{
-			damageActor(m_pSkeletonRanged);
+			damageSkeleton(m_pSkeletonRanged);
 			m_pSkeletonRanged->setTakingDamage(true);
 			//m_pSkeletonRanged->flipTakingDamage();
+		}
+	}
+
+	// Enemy Melee and Player collision
+	for (int i = 0; i < m_pMeleeEnemy.size(); i++)
+	{
+		if (CollisionManager::circleAABBCheck(m_pMeleeEnemy[i], m_pPlayer))
+		{
+			SoundManager::Instance().playSound("skeleton_damaged");
+
+			m_pPlayer->getHealthBar().setHealthPoints(m_pPlayer->getHealthBar().getHealthPoints() - 10);
+
+			removeChild(m_pMeleeEnemy[i]);
+			m_pMeleeEnemy[i] = nullptr;
+			m_pMeleeEnemy.erase(m_pMeleeEnemy.begin() + i);
+			m_pMeleeEnemy.shrink_to_fit();
 		}
 	}
 
@@ -506,6 +522,10 @@ void PlayScene::update()
 	//#######
 	//#######
 	//Close Actions Start
+
+	if (m_EnemyMelee <= 60)
+		m_EnemyMelee++;
+
 	if (m_pSkeletonClose->getHealthBar().getHealthPoints() <= 0)
 	{
 		m_pSkeletonClose->setCurrentAction("Dying");
@@ -602,6 +622,15 @@ void PlayScene::update()
 	if (m_pSkeletonClose->getCurrentAction() == "Flee Action")
 	{
 		m_pSkeletonClose->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonClose->getTransform()->position) * -1.f);
+	}
+	if (m_pSkeletonClose->getCurrentAction() == "Attack Action" && m_EnemyMelee >= 60)
+	{
+		m_pMeleeEnemy.push_back(new Melee(m_pSkeletonClose->getTransform()->position, m_pPlayer->getTransform()->position));
+
+		for (int i = 0; i < m_pMeleeEnemy.size(); i++)
+			addChild(m_pMeleeEnemy[i]);
+
+		m_EnemyMelee = 0;
 	}
 	if (m_pSkeletonClose->getCurrentAction() == "Wander") // no need to check collission with impassable border tiles
 	{											// while on patrol path as enemy will turn on it's own
@@ -734,11 +763,11 @@ void PlayScene::handleEvents()
 	
 	if(EventManager::Instance().getMouseButton(2) && m_PressCounter >= 6 && m_MeleeCounter >= 12)
 	{
-		m_pMelee.push_back(new Melee(m_pPlayer->getTransform()->position + m_pPlayer->getOrientation() + 
+		m_pMeleePlayer.push_back(new Melee(m_pPlayer->getTransform()->position + m_pPlayer->getOrientation() + 
 			glm::vec2(m_pPlayer->getWidth() * 0.5f, m_pPlayer->getHeight() * 0.5f), glm::vec2(mouseX, mouseY)));
 
-		for (int i = 0; i < m_pMelee.size(); i++)
-			addChild(m_pMelee[i]);
+		for (int i = 0; i < m_pMeleePlayer.size(); i++)
+			addChild(m_pMeleePlayer[i]);
 
 		m_MeleeCounter = 0;
 		m_PressCounter = 0;
@@ -771,7 +800,7 @@ void PlayScene::handleEvents()
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K) && m_dbgMode && m_PressCounter >= 6 && !skeletonCloseDead)
 	{
-		damageActor(m_pSkeletonClose);
+		damageSkeleton(m_pSkeletonClose);
 		m_pSkeletonClose->flipTakingDamage();
 		////std::cout << "Enemy damaged, new health value: " << m_pShip->getHealthBar().getHealthPoints() << "\n";
 
@@ -820,6 +849,8 @@ void PlayScene::start()
 	SoundManager::Instance().playMusic("bkgMusic", -1, 0);
 
 	m_PressCounter = 0;
+	m_EnemyMelee = 0;
+	m_EnemyProjectile = 0;
 
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	//Build node grid for overlaying map
@@ -1218,7 +1249,7 @@ PathNode* PlayScene::m_findClosestCoverPathNode(Agent* agent)
 }
 
 
-void PlayScene::damageActor(Skeleton* actor)
+void PlayScene::damageSkeleton(Skeleton* actor)
 {
 	int newHealth = actor->getHealthBar().getHealthPoints() - 10;
 	actor->getHealthBar().setHealthPoints(newHealth);

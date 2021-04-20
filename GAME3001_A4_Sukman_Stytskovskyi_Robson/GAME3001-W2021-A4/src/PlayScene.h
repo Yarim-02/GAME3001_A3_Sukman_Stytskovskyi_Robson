@@ -43,7 +43,8 @@ private:
 	Gunner* m_pPlayer;
 	std::vector<Bullet*> m_pBullet;
 	std::vector<Bone*> m_pBone;
-	std::vector <Melee*> m_pMelee;
+	std::vector <Melee*> m_pMeleePlayer;
+	std::vector <Melee*> m_pMeleeEnemy;
 	std::vector<Obstacle*> m_pObstacle;
 	std::vector<DestructibleObstacle*> m_pObstacleDestructible;
 	
@@ -59,6 +60,8 @@ private:
 		m_enemiesDead;
 
 	int m_MeleeCounter,
+		m_EnemyMelee,
+		m_EnemyProjectile,
 		m_BulletCounter,
 		m_PressCounter,
 		m_LOSCounter;
@@ -86,7 +89,7 @@ private:
 	PathNode* m_findClosestLOSPathNode(Agent* agent);
 	PathNode* m_findClosestCoverPathNode(Agent* agent);
 	
-	void damageActor(Skeleton* actor);
+	void damageSkeleton(Skeleton *actor);
 
 	int m_frameCounter = 0;
 	bool m_randomSwitch = 0;

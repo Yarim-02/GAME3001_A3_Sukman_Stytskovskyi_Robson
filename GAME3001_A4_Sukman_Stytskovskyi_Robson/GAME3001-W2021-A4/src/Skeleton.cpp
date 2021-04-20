@@ -442,7 +442,9 @@ void Skeleton::update()
 	if (m_frameCounter2 > 600)
 		m_frameCounter2 = 0;
 
-	if (m_frameCounter2 % 60 == 0 && (m_currentAction == "Patrol" || m_currentAction == "Wandering"))
+	if (m_frameCounter2 % 60 == 0 && (getCurrentAction() == "Patrol Action" || getCurrentAction() == "Wandering" ||
+		getCurrentAction() == "Taking Damage" || getCurrentAction() == "Move To Player Action" ||
+		getCurrentAction() == "Flee Action"))
 	{
 		SoundManager::Instance().playSound("skeleton_walk", 0, -1);
 	}
