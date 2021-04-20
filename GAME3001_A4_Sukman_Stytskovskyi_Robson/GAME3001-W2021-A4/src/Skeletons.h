@@ -91,14 +91,14 @@ public:
 	void setIsBehindCover(bool state);
 	bool getIsBehindCover();
 
-	void setIsTimerOut(bool state);
-	bool getIsTimerOut();
+	void setTimerNotOut(bool state);
+	bool getTimerNotOut();
 
 	void performAttack(glm::vec2 target);
 private:
 	bool m_rangedCombatRange = false;
 	bool m_isBehindCover = false;
-	bool m_isTimerOut;
+	bool m_timerNotOut;
 	int m_waitInCoverTimer;
 	
 
