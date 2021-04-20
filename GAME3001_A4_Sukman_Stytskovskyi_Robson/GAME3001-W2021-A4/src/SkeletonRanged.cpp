@@ -64,5 +64,5 @@ void SkeletonRanged::performAttack(glm::vec2 target)
 		m_pBone[i]->draw();
 		m_pBone[i]->update();
 	}
-	SoundManager::Instance().playSound("shoot_sound", 0, 1);
+	//SoundManager::Instance().playSound("shoot_sound", 0, 1);
 }
