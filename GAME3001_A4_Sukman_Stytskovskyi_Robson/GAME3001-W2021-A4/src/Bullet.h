@@ -18,6 +18,7 @@ public:
 	void update();
 	void clean();
 
+	bool outOfBounds();
 	// Setters and Getters
 	void setDestination(glm::vec2 destination);
 	void setMaxSpeed(float speed);

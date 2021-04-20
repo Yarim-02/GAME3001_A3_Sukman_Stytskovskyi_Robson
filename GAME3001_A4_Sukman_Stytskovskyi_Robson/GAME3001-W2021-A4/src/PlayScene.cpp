@@ -94,15 +94,26 @@ void PlayScene::update()
 	}
 
 	//for bullet delition
-	m_BulletCounter++;
-	if (m_BulletCounter >= 36 && !m_pBullet.empty())
+	for (int i = 0; i < m_pBullet.size(); i++)
 	{
-		for (int i = 0; i < m_pBullet.size(); i++)
+		if (m_pBullet[i]->outOfBounds())
 		{
 			removeChild(m_pBullet[i]);
 			m_pBullet[i] = nullptr;
 			m_pBullet.erase(m_pBullet.begin() + i);
 			m_pBullet.shrink_to_fit();
+		}
+	}
+
+	//for bone delition
+	for (int i = 0; i < m_pBone.size(); i++)
+	{
+		if (m_pBone[i]->outOfBounds())
+		{
+			removeChild(m_pBone[i]);
+			m_pBone[i] = nullptr;
+			m_pBone.erase(m_pBone.begin() + i);
+			m_pBone.shrink_to_fit();
 		}
 	}
 	

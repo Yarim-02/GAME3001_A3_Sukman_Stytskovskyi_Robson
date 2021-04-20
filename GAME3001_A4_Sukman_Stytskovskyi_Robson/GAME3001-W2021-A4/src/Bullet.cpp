@@ -111,3 +111,12 @@ float Bullet::getRotation() const
 void Bullet::clean()
 {
 }
+
+bool Bullet::outOfBounds()
+{
+	if (getTransform()->position.x > Config::SCREEN_WIDTH || getTransform()->position.x < 0.f ||
+		getTransform()->position.y > Config::SCREEN_HEIGHT || getTransform()->position.y < 0.f)
+		return true;
+	else
+		return false;
+}
