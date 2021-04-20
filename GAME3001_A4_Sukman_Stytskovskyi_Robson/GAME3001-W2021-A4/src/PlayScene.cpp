@@ -177,7 +177,7 @@ void PlayScene::update()
 			m_pBullet.erase(m_pBullet.begin() + i);
 			m_pBullet.shrink_to_fit();
 		}
-		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pSkeletonRanged) && !skeletonRangedDead)
+		else if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pSkeletonRanged) && !skeletonRangedDead)
 		{
 			damageSkeleton(m_pSkeletonRanged);
 			m_pSkeletonRanged->setTakingDamage(true);
@@ -222,39 +222,27 @@ void PlayScene::update()
 			m_pMeleeEnemy.shrink_to_fit();
 		}
 	}
+	
+	// Enemy Projectile and Player collision
+	for (int i = 0; i < m_pBone.size(); i++)
+	{
+		if (CollisionManager::circleAABBCheck(m_pBone[i], m_pPlayer))
+		{
+			SoundManager::Instance().playSound("skeleton_damaged");
 
-	//**************
-	//** AI STUFF **
-	//**************
+			m_pPlayer->getHealthBar().setHealthPoints(m_pPlayer->getHealthBar().getHealthPoints() - 10);
 
-	//decisionTree->setAgent(m_pSkeletonRanged);
-	//m_pSkeletonRanged->setCurrentAction(decisionTree->MakeDecision());
-	//m_pSkeletonClose->setCurrentAction(decisionTree->MakeDecision());
+			removeChild(m_pBone[i]);
+			m_pBone[i] = nullptr;
+			m_pBone.erase(m_pBone.begin() + i);
+			m_pBone.shrink_to_fit();
+		}
+	}
 
-	//std::cout << "------------------------" << std::endl;
-	//std::cout << decisionTree->MakeDecision() << std::endl;
-	//std::cout << "------------------------\n" << std::endl;
+	//**************\\
+	//** AI STUFF **\\
+	//**************\\
 
-	//if (m_pSkeletonClose->hasLOS())
-	//{
-	//	m_pSkeletonClose->setHadLOS(true);
-	//	m_LOSCounter = 90;
-	//}
-	//
-	//if (m_pSkeletonClose->getHadLOS())
-	//{
-	//	m_LOSCounter--;
-	//
-	//	if (m_LOSCounter <= 0)
-	//	{
-	//		m_pSkeletonClose->setHadLOS(false);
-	//	}
-	//}
-	//
-	//if (m_pSkeletonClose->getHadLOS())
-	//	m_pSkeletonClose->setCurrentAction("Move To Player Action");
-	//else
-	//decisionTree->setAgent(m_pSkeletonClose);
 	if (m_pSkeletonClose->getCurrentAction() != "Idle")
 		m_pSkeletonClose->setCurrentAction(TreeMelee->MakeDecision());
 
@@ -318,6 +306,18 @@ void PlayScene::update()
 	//#######
 	//#######
 	//Ranged Actions Start
+
+	if (m_EnemyProjectile <= 90)
+		m_EnemyProjectile++;
+
+	if (Util::distance(m_pSkeletonRanged->getTransform()->position, m_pPlayer->getTransform()->position) < m_pSkeletonRanged->getLOSDistance() * 0.6 &&
+		Util::distance(m_pSkeletonRanged->getTransform()->position, m_pPlayer->getTransform()->position) > m_pSkeletonRanged->getLOSDistance() * 0.4)
+	{
+		m_pSkeletonRanged->setRangedCombatRange(true);
+	}
+	else
+		m_pSkeletonRanged->setRangedCombatRange(false);
+
 	if (m_pSkeletonRanged->getHealthBar().getHealthPoints() <= 0)
 	{
 		m_pSkeletonRanged->setCurrentAction("Dying");
@@ -460,6 +460,15 @@ void PlayScene::update()
 	{
 		m_pSkeletonRanged->setCurrentAction("Patrol Action");
 	}
+	if (m_pSkeletonRanged->getCurrentAction() == "Attack Action" && m_EnemyProjectile >= 90)
+	{
+		m_pBone.push_back(new Bone(m_pSkeletonRanged->getTransform()->position, m_pPlayer->getTransform()->position));
+
+		for (int i = 0; i < m_pBone.size(); i++)
+			addChild(m_pBone[i]);
+
+		m_EnemyProjectile = 0;
+	}
 	if (m_pSkeletonRanged->getCurrentAction() == "Dying" && m_frameCounter % 40 == 0)
 	{
 		m_pSkeletonRanged->setCurrentAction("Dead");
@@ -478,15 +487,18 @@ void PlayScene::update()
 	{
 		auto distance = Util::distance(m_pSkeletonRanged->getTransform()->position, m_pPlayer->getTransform()->position);
 
-		if (distance > m_pSkeletonRanged->getLOSDistance() * 0.75f)
+		if (distance != m_pSkeletonRanged->getLOSDistance() * 0.5f)
 		{
-			m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position));
-			m_pSkeletonRanged->getTransform()->position += Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position) * 0.5f;
-		}
-		else if (distance < m_pSkeletonRanged->getLOSDistance() * .75f)
-		{
-			m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position));
-			m_pSkeletonRanged->getTransform()->position += -Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position) * 0.5f;
+			if (distance > m_pSkeletonRanged->getLOSDistance() * 0.5f)
+			{
+				m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position));
+				m_pSkeletonRanged->getTransform()->position += Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position);
+			}
+			else if (distance < m_pSkeletonRanged->getLOSDistance() * .5f)
+			{
+				m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position));
+				m_pSkeletonRanged->getTransform()->position += -Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position) * 0.5f;
+			}
 		}
 	}
 	if (m_pSkeletonRanged->getCurrentAction() == "Wait In Cover Action")
