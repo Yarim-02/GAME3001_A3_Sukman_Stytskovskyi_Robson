@@ -46,7 +46,7 @@ void StartScene::handleEvents()
 void StartScene::start()
 {
 	const SDL_Color tan = { 178, 157, 105, 255 };
-	m_pStartLabel = new Label("Assignment 3 brought to you by: ", "JosefinSans", 40, tan, glm::vec2(400.0f, 40.0f));
+	m_pStartLabel = new Label("Assignment 4 brought to you by: ", "JosefinSans", 40, tan, glm::vec2(400.0f, 40.0f));
 	m_pStartLabel->setParent(this);
 	addChild(m_pStartLabel);
 

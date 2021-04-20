@@ -984,15 +984,26 @@ void PlayScene::start()
 	m_pObstacle[4]->getTransform()->position = m_getTile(15, 6)->getTransform()->position;
 	addChild(m_pObstacle[4]);
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		m_pObstacleDestructible.push_back(new DestructibleObstacle("Rock.png", "Rock"));
 	}
 	m_pObstacleDestructible[0]->getTransform()->position = m_getTile(7, 3)->getTransform()->position;
 	addChild(m_pObstacleDestructible[0]);
 
-	m_pObstacleDestructible[1]->getTransform()->position = m_getTile(3, 7)->getTransform()->position;
+	m_pObstacleDestructible[1]->getTransform()->position = m_getTile(3, 5)->getTransform()->position;
 	addChild(m_pObstacleDestructible[1]);
+
+	m_pObstacleDestructible[2]->getTransform()->position = m_getTile(2, 7)->getTransform()->position;
+	addChild(m_pObstacleDestructible[2]);
+
+	m_pObstacleDestructible[3]->getTransform()->position = m_getTile(5, 7)->getTransform()->position;
+	addChild(m_pObstacleDestructible[3]);
+
+	m_pObstacleDestructible[4]->getTransform()->position = m_getTile(3, 8)->getTransform()->position;
+	addChild(m_pObstacleDestructible[4]);
+
+
 
 	// build patrol path list
 	m_pRangedPatrolPath.push_back(m_getTile(1, 1));
