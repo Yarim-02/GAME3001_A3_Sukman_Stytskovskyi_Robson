@@ -125,13 +125,16 @@ void PlayScene::update()
 	{
 		CollisionManager::ObstacleColCheck(m_pPlayer, m_pObstacle[i]);
 		CollisionManager::ObstacleColCheck(m_pSkeletonClose, m_pObstacle[i]);
+		CollisionManager::ObstacleColCheck(m_pSkeletonRanged, m_pObstacle[i]);
 	}
 
 	for (int i = 0; i < m_pObstacleDestructible.size(); i++)
 	{
 		CollisionManager::ObstacleColCheck(m_pPlayer, m_pObstacleDestructible[i]);
 		CollisionManager::ObstacleColCheck(m_pSkeletonClose, m_pObstacleDestructible[i]);
+		CollisionManager::ObstacleColCheck(m_pSkeletonRanged, m_pObstacleDestructible[i]);
 	}
+
 
 	//Projectiles and Obstacles
 
