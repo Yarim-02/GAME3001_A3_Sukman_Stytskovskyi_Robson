@@ -99,6 +99,9 @@ private:
 
 	glm::vec2 m_lastCloseEnemyPosition;
 	glm::vec2 m_lastRangedEnemyPosition;
+
+	void resetRangedSkeleton();
+	void resetCloseSkeleton();
 };
 
 

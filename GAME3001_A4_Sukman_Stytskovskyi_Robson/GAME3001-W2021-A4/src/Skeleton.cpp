@@ -444,9 +444,11 @@ void Skeleton::update()
 
 	if (m_frameCounter2 % 60 == 0 && (getCurrentAction() == "Patrol Action" || getCurrentAction() == "Wandering" ||
 		getCurrentAction() == "Taking Damage" || getCurrentAction() == "Move To Player Action" ||
-		getCurrentAction() == "Flee Action"))
+		getCurrentAction() == "Flee Action" || getCurrentAction() == "Move To Range Action" || getCurrentAction() == "Move To LOS Action" ||
+		getCurrentAction() == "Move Behind Cover Action" || getCurrentAction() == "Leave Cover Action"))
 	{
-		SoundManager::Instance().playSound("skeleton_walk", 0, -1);
+		if (m_offScreenCounter < 1)
+			SoundManager::Instance().playSound("skeleton_walk", 0, -1);
 	}
 	auto distance = abs(abs(m_arrivalPoint.x - getTransform()->position.x) - abs(m_arrivalPoint.y - getTransform()->position.y));
 
@@ -545,6 +547,16 @@ HealthBar& Skeleton::getHealthBar()
 TYPE Skeleton::getVariation()
 {
 	return m_variation;
+}
+
+int Skeleton::getOffscreenCounter()
+{
+	return m_offScreenCounter;
+}
+
+void Skeleton::setOffscreenCounter(int seconds)
+{
+	m_offScreenCounter = seconds;
 }
 
 void Skeleton::setMaxSpeed(float newSpeed)

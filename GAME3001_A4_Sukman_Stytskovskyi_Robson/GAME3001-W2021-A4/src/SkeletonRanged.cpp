@@ -16,6 +16,7 @@ SkeletonRanged::SkeletonRanged()
 SkeletonRanged::~SkeletonRanged()
 = default;
 
+
 void SkeletonRanged::setRangedCombatRange(bool state)
 {
 	m_rangedCombatRange = state;

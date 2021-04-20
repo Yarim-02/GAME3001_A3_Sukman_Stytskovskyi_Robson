@@ -37,6 +37,7 @@ public:
 	bool getTakingDamage();
 	HealthBar& getHealthBar();
 	TYPE getVariation();
+	int getOffscreenCounter();
 
 	// setters
 	void setMaxSpeed(float newSpeed);
@@ -48,6 +49,7 @@ public:
 	void setCurrentAction(std::string currentAction);
 	void m_Seek(Agent* target);
 	void setArrivalPoint(glm::vec2 point);
+	void setOffscreenCounter(int seconds);
 
 protected:
 	void m_checkBounds();
@@ -63,6 +65,7 @@ protected:
 	int m_frameCounter = 0;
 	int m_frameCounter2 = 0;
 	int m_GotHitCounter = 0;
+	int m_offScreenCounter = 0;
 	std::string m_animationState;
 
 	TYPE m_variation;
@@ -80,7 +83,6 @@ class SkeletonRanged : public Skeleton
 public:
 	SkeletonRanged();
 	~SkeletonRanged();
-
 
 	void setRangedCombatRange(bool state);
 	bool getRangedCombatRange();
