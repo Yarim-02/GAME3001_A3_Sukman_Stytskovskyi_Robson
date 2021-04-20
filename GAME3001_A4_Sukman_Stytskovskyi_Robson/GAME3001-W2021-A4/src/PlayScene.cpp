@@ -169,12 +169,14 @@ void PlayScene::update()
 		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pSkeletonClose) && !skeletonCloseDead)
 		{
 			damageActor(m_pSkeletonClose);
-			m_pSkeletonClose->flipTakingDamage();
+			m_pSkeletonClose->setTakingDamage(true);
+			//m_pSkeletonClose->flipTakingDamage();
 		}
 		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pSkeletonRanged) && !skeletonRangedDead)
 		{
 			damageActor(m_pSkeletonRanged);
-			m_pSkeletonRanged->flipTakingDamage();
+			m_pSkeletonRanged->setTakingDamage(true);
+			//m_pSkeletonRanged->flipTakingDamage();
 		}
 	}
 
@@ -184,12 +186,14 @@ void PlayScene::update()
 		if (CollisionManager::circleAABBCheck(m_pMelee[i], m_pSkeletonClose) && !skeletonCloseDead)
 		{
 			damageActor(m_pSkeletonClose);
-			m_pSkeletonClose->flipTakingDamage();
+			m_pSkeletonClose->setTakingDamage(true);
+			//m_pSkeletonClose->flipTakingDamage();
 		}
 		if (CollisionManager::circleAABBCheck(m_pMelee[i], m_pSkeletonRanged) && !skeletonRangedDead)
 		{
 			damageActor(m_pSkeletonRanged);
-			m_pSkeletonRanged->flipTakingDamage();
+			m_pSkeletonRanged->setTakingDamage(true);
+			//m_pSkeletonRanged->flipTakingDamage();
 		}
 	}
 
@@ -644,6 +648,11 @@ void PlayScene::update()
 		if (Util::distance(m_findClosestCoverPathNode(m_pSkeletonRanged)->getTransform()->position,
 			m_pSkeletonRanged->getTransform()->position) < 5)
 			m_pSkeletonRanged->setIsBehindCover(true);
+	}
+	if (m_pSkeletonRanged->getCurrentAction() == "Leave Cover Action")
+	{
+		m_pSkeletonRanged->setIsTimerOut(true);
+		m_pSkeletonRanged->setTakingDamage(false);
 	}
 	
 	//Close End

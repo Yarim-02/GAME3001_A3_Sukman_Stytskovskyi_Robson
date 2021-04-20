@@ -42,6 +42,7 @@ public:
 	void setMaxSpeed(float newSpeed);
 	void flipDbg();
 	void flipTakingDamage();
+	void setTakingDamage(bool state);
 	void setHadLOS(bool b);
 	void setAnimationState(std::string animationState);
 	void setCurrentAction(std::string currentAction);

@@ -560,6 +560,11 @@ void Skeleton::flipTakingDamage()
 	m_takingDamage = !m_takingDamage;
 }
 
+void Skeleton::setTakingDamage(bool state)
+{
+	m_takingDamage = state;
+}
+
 void Skeleton::setHadLOS(bool b)
 {
 	m_bHadLOS = b;
