@@ -324,8 +324,11 @@ void PlayScene::update()
 
 		//m_pShip->setEnabled(false);
 
-		m_enemiesAlive--;
-		m_enemiesDead++;
+		if (!skeletonRangedDead)
+		{
+			m_enemiesAlive--;
+			m_enemiesDead++;
+		}
 
 		for (int i = 0; i < m_pGameStatus.size(); i++)
 		{
@@ -544,8 +547,11 @@ void PlayScene::update()
 
 		//m_pShip->setEnabled(false);
 
-		m_enemiesAlive--;
-		m_enemiesDead++;
+		if (!skeletonCloseDead)
+		{
+			m_enemiesAlive--;
+			m_enemiesDead++;
+		}
 
 		for (int i = 0; i < m_pGameStatus.size(); i++)
 		{
@@ -839,7 +845,9 @@ void PlayScene::start()
 	TextureManager::Instance()->load("../Assets/textures/tree.png", "tree");
 	TextureManager::Instance()->load("../Assets/textures/log.png", "log");
 
-	
+	m_enemiesAlive = 2;
+	m_enemiesDead = 0;
+
 	const SDL_Color orange = { 213,110,43, 205 };
 	const SDL_Color white = { 255,255,255, 205 };
 
