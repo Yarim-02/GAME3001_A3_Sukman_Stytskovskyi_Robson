@@ -68,8 +68,8 @@ void DecisionTree::Update()
 	{
 		m_RangedCombatConditionNode->setIsWithinCombatRange(static_cast<SkeletonRanged*>(m_agent)->getRangedCombatRange());
 		m_MoveBehindCoverConditionNode->setGotHit(static_cast<SkeletonRanged*>(m_agent)->getTakingDamage());
-		m_WaitInCoverConditionNode->setIsTimerOut(static_cast<SkeletonRanged*>(m_agent)->getTimerNotOut()); // still need to trigger
-		m_IsBehindCoverConditionNode->setBehindCover(static_cast<SkeletonRanged*>(m_agent)->getIsBehindCover()); //still need to trigger
+		m_WaitInCoverConditionNode->setIsTimerOut(static_cast<SkeletonRanged*>(m_agent)->getTimerNotOut()); 
+		m_IsBehindCoverConditionNode->setBehindCover(static_cast<SkeletonRanged*>(m_agent)->getIsBehindCover()); 
 		
 	}
 	else if (!m_Ranged)

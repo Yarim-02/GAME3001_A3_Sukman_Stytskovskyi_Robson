@@ -171,12 +171,22 @@ void PlayScene::update()
 			damageActor(m_pSkeletonClose);
 			m_pSkeletonClose->setTakingDamage(true);
 			//m_pSkeletonClose->flipTakingDamage();
+
+			removeChild(m_pBullet[i]);
+			m_pBullet[i] = nullptr;
+			m_pBullet.erase(m_pBullet.begin() + i);
+			m_pBullet.shrink_to_fit();
 		}
 		if (CollisionManager::circleAABBCheck(m_pBullet[i], m_pSkeletonRanged) && !skeletonRangedDead)
 		{
 			damageActor(m_pSkeletonRanged);
 			m_pSkeletonRanged->setTakingDamage(true);
 			//m_pSkeletonRanged->flipTakingDamage();
+
+			removeChild(m_pBullet[i]);
+			m_pBullet[i] = nullptr;
+			m_pBullet.erase(m_pBullet.begin() + i);
+			m_pBullet.shrink_to_fit();
 		}
 	}
 
@@ -463,6 +473,28 @@ void PlayScene::update()
 			m_pSkeletonRanged->getTransform()->position += -Util::normalize(m_pPlayer->getTransform()->position - m_pSkeletonRanged->getTransform()->position) * 0.5f;
 		}
 	}
+	if (m_pSkeletonRanged->getCurrentAction() == "Wait In Cover Action")
+	{
+		m_pSkeletonRanged->setWaitInCoverTimer(m_pSkeletonRanged->getWaintInCoverTimer() + 1);
+	}
+	if (m_pSkeletonRanged->getWaintInCoverTimer() > 180)
+	{
+		m_pSkeletonRanged->setTimerNotOut(false);
+		m_pSkeletonRanged->setWaitInCoverTimer(0);
+	}
+
+	if (m_pSkeletonRanged->getCurrentAction() == "Move Behind Cover Action")
+	{
+		if (Util::distance(m_findClosestCoverPathNode(m_pSkeletonRanged)->getTransform()->position,
+			m_pSkeletonRanged->getTransform()->position) < 5)
+			m_pSkeletonRanged->setIsBehindCover(true);
+	}
+	if (m_pSkeletonRanged->getCurrentAction() == "Leave Cover Action")
+	{
+		m_pSkeletonRanged->setTimerNotOut(false);
+		m_pSkeletonRanged->setIsBehindCover(false);
+		m_pSkeletonRanged->setTakingDamage(false);
+	}
 	//Ranged End
 	//#########
 	
@@ -632,29 +664,6 @@ void PlayScene::update()
 		else
 			m_pSkeletonClose->setCloseCombatRange(false);
 	}
-
-	if (m_pSkeletonRanged->getCurrentAction() == "Wait In Cover Action")
-	{
-		m_pSkeletonRanged->setWaitInCoverTimer(m_pSkeletonRanged->getWaintInCoverTimer() + 1);
-	}
-	if (m_pSkeletonRanged->getWaintInCoverTimer() > 180)
-	{
-		m_pSkeletonRanged->setTimerNotOut(false);
-		m_pSkeletonRanged->setWaitInCoverTimer(0);
-	}
-
-	if (m_pSkeletonRanged->getCurrentAction() == "Move Behind Cover Action")
-	{
-		if (Util::distance(m_findClosestCoverPathNode(m_pSkeletonRanged)->getTransform()->position,
-			m_pSkeletonRanged->getTransform()->position) < 5)
-			m_pSkeletonRanged->setIsBehindCover(true);
-	}
-	if (m_pSkeletonRanged->getCurrentAction() == "Leave Cover Action")
-	{
-		m_pSkeletonRanged->setTimerNotOut(false);
-		m_pSkeletonRanged->setTakingDamage(false);
-	}
-	
 	//Close End
 	//#########
 }
