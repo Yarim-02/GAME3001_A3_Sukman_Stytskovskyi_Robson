@@ -60,6 +60,8 @@ bool SkeletonRanged::getTimerNotOut()
 void SkeletonRanged::performAttack(glm::vec2 target)
 {
 	m_pBone.push_back(new Bone(getTransform()->position, target));
+	
+	//std::cout << "shootinjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjg" << std::endl;
 
 	for (int i = 0; i < m_pBone.size(); i++)
 	{

@@ -4,7 +4,7 @@
 
 Bone::Bone(glm::vec2 position, glm::vec2 direction) : Bullet(position, direction)
 {
-	TextureManager::Instance()->load("../Assets/textures/circle.png", "circle");
+	TextureManager::Instance()->load("../Assets/textures/bone.png", "circle");
 
 	setMaxSpeed(7.5f);
 	setAccelerationRate(7.5f);

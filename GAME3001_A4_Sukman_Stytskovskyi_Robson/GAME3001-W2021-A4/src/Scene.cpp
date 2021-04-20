@@ -39,13 +39,13 @@ void Scene::removeChild(DisplayObject* child)
 
 void Scene::removeAllChildren()
 {
-	for (auto& count : m_displayList)
+	/*for (auto& count : m_displayList)
 	{
 		delete count;
 		count = nullptr;
 	}
 
-	m_displayList.clear();
+	m_displayList.clear();*/
 }
 
 

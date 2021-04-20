@@ -195,6 +195,7 @@ void PlayScene::update()
 		if (m_pObstacleDestructible[i]->getHealthBar().getHealthPoints() <= 0)
 		{
 			removeChild(m_pObstacleDestructible[i]);
+			SoundManager::Instance().playSound("rockbreak", 0, 1);
 			m_pObstacleDestructible[i] = nullptr;
 			m_pObstacleDestructible.erase(m_pObstacleDestructible.begin() + i);
 			m_pObstacleDestructible.shrink_to_fit();
@@ -278,6 +279,9 @@ void PlayScene::update()
 			m_pBone.shrink_to_fit();
 		}
 	}
+
+	if (m_enemiesAlive <= 0)
+		TheGame::Instance()->changeSceneState(END_SCENE);
 
 	//**************\\
 	//** AI STUFF **\\
@@ -517,6 +521,8 @@ void PlayScene::update()
 	if (m_pSkeletonRanged->getCurrentAction() == "Attack Action" && m_EnemyProjectile >= 90)
 	{
 		m_pBone.push_back(new Bone(m_pSkeletonRanged->getTransform()->position, m_pPlayer->getTransform()->position));
+
+		SoundManager::Instance().playSound("skeletonshot", 0, 1);
 
 		for (int i = 0; i < m_pBone.size(); i++)
 			addChild(m_pBone[i]);
@@ -920,6 +926,8 @@ void PlayScene::start()
 	SoundManager::Instance().load("../Assets/audio/Music.mp3", "bkgMusic", SOUND_MUSIC);
 	SoundManager::Instance().load("../Assets/audio/Gunshot.wav", "shoot_sound", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/Knife.wav", "knife_sound", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/SkeletonShot.wav", "skeletonshot", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/RockBreak.wav", "rockbreak", SOUND_SFX);
 	SoundManager::Instance().setMusicVolume(30);
 	SoundManager::Instance().playMusic("bkgMusic", -1, 0);
 
