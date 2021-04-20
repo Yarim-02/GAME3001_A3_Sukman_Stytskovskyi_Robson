@@ -80,6 +80,9 @@ void PlayScene::update()
 	if (m_PressCounter != 6)
 			m_PressCounter++;
 
+	if (m_BulletCounter >= 0)
+		m_BulletCounter--;
+
 	//for melee attacks
 	m_MeleeCounter++;
 	if (m_MeleeCounter >= 12 && !m_pMeleePlayer.empty())
@@ -225,7 +228,8 @@ void PlayScene::update()
 		{
 			SoundManager::Instance().playSound("skeleton_damaged");
 
-			m_pPlayer->getHealthBar().setHealthPoints(m_pPlayer->getHealthBar().getHealthPoints() - 10);
+			if (m_pPlayer->getHealthBar().getHealthPoints() >= 10)
+				m_pPlayer->getHealthBar().setHealthPoints(m_pPlayer->getHealthBar().getHealthPoints() - 10);
 
 			removeChild(m_pMeleeEnemy[i]);
 			m_pMeleeEnemy[i] = nullptr;
@@ -241,7 +245,8 @@ void PlayScene::update()
 		{
 			SoundManager::Instance().playSound("skeleton_damaged");
 
-			m_pPlayer->getHealthBar().setHealthPoints(m_pPlayer->getHealthBar().getHealthPoints() - 10);
+			if (m_pPlayer->getHealthBar().getHealthPoints() >= 10)
+				m_pPlayer->getHealthBar().setHealthPoints(m_pPlayer->getHealthBar().getHealthPoints() - 10);
 
 			removeChild(m_pBone[i]);
 			m_pBone[i] = nullptr;
@@ -414,6 +419,14 @@ void PlayScene::update()
 				m_pSkeletonRanged->setAnimationState("WalkingUp");
 			}
 		}
+	}
+	if (m_pSkeletonRanged->getCurrentAction() == "Dead")
+	{
+		removeChild(m_pSkeletonRanged);
+		m_pSkeletonRanged = nullptr;
+		//m_pBone.erase(m_pBone.begin() + i);
+		//m_pBone.shrink_to_fit();
+		delete m_pSkeletonRanged;
 	}
 	if (m_pSkeletonRanged->getCurrentAction() == "Move To Player Action")
 	{
@@ -777,7 +790,7 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->changeSceneState(END_SCENE);
 	}
 
-	if(EventManager::Instance().getMouseButton(0) && m_PressCounter >= 6)
+	if(EventManager::Instance().getMouseButton(0) && m_PressCounter >= 6 && m_BulletCounter <= 0)
 	{
 		m_pBullet.push_back(new Bullet(m_pPlayer->getTransform()->position, glm::vec2(mouseX, mouseY)));
 
@@ -786,7 +799,7 @@ void PlayScene::handleEvents()
 
 		SoundManager::Instance().playSound("shoot_sound", 0, 1);
 
-		m_BulletCounter = 0;
+		m_BulletCounter = 40;
 		m_PressCounter = 0;
 	}
 	
