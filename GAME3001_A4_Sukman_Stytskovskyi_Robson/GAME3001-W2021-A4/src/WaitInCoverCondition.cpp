@@ -3,7 +3,7 @@
 WaitInCoverCondition::WaitInCoverCondition(bool timer_out)
 {
 	setIsTimerOut(timer_out);
-	name = "Move Behind Cover Condition";
+	name = "Wait In Cover Condition";
 }
 
 WaitInCoverCondition::~WaitInCoverCondition()

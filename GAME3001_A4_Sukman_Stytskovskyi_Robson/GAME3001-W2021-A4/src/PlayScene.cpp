@@ -407,8 +407,11 @@ void PlayScene::update()
 
 	if (m_pSkeletonRanged->getCurrentAction() == "Move Behind Cover Action")
 	{
-		m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_findClosestCoverPathNode(m_pSkeletonRanged)->getTransform()->position
-			- m_pSkeletonRanged->getTransform()->position));
+		if (Util::distance(m_pSkeletonRanged->getTransform()->position, m_findClosestCoverPathNode(m_pSkeletonRanged)->getTransform()->position) > 10)
+		{
+			m_pSkeletonRanged->setCurrentDirection(Util::normalize(m_findClosestCoverPathNode(m_pSkeletonRanged)->getTransform()->position
+				- m_pSkeletonRanged->getTransform()->position));
+		}
 	}
 	if (m_pSkeletonRanged->getCurrentAction() == "Move To LOS Action")
 	{
@@ -625,6 +628,24 @@ void PlayScene::update()
 		else
 			m_pSkeletonClose->setCloseCombatRange(false);
 	}
+
+	if (m_pSkeletonRanged->getCurrentAction() == "Wait In Cover Action")
+	{
+		m_pSkeletonRanged->setWaitInCoverTimer(m_pSkeletonRanged->getWaintInCoverTimer() + 1);
+	}
+	if (m_pSkeletonRanged->getWaintInCoverTimer() > 180)
+	{
+		m_pSkeletonRanged->setIsTimerOut(true);
+		m_pSkeletonRanged->setWaitInCoverTimer(0);
+	}
+
+	if (m_pSkeletonRanged->getCurrentAction() == "Move Behind Cover Action")
+	{
+		if (Util::distance(m_findClosestCoverPathNode(m_pSkeletonRanged)->getTransform()->position,
+			m_pSkeletonRanged->getTransform()->position) < 5)
+			m_pSkeletonRanged->setIsBehindCover(true);
+	}
+	
 	//Close End
 	//#########
 }

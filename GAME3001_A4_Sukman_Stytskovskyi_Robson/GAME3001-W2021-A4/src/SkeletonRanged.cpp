@@ -7,6 +7,8 @@ SkeletonRanged::SkeletonRanged()
 	m_variation = RANGE_COMBAT;
 
 	m_healthBar.setHealthPoints(65);
+	m_waitInCoverTimer = 0;
+	m_isBehindCover = false;
 	setMaxSpeed(0.25f);
 }
 
@@ -21,6 +23,36 @@ void SkeletonRanged::setRangedCombatRange(bool state)
 bool SkeletonRanged::getRangedCombatRange()
 {
 	return m_rangedCombatRange;
+}
+
+void SkeletonRanged::setWaitInCoverTimer(int seconds)
+{
+	m_waitInCoverTimer = seconds;
+}
+
+int SkeletonRanged::getWaintInCoverTimer()
+{
+	return m_waitInCoverTimer;
+}
+
+void SkeletonRanged::setIsBehindCover(bool state)
+{
+	m_isBehindCover = state;
+}
+
+bool SkeletonRanged::getIsBehindCover()
+{
+	return m_isBehindCover;
+}
+
+void SkeletonRanged::setIsTimerOut(bool state)
+{
+	m_isTimerOut = state;
+}
+
+bool SkeletonRanged::getIsTimerOut()
+{
+	return m_isTimerOut;
 }
 
 void SkeletonRanged::performAttack(glm::vec2 target)

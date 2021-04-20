@@ -3,6 +3,9 @@
 
 #include "MoveBehindCoverAction.h"
 #include "WaitInCoverAction.h"
+#include "IsBehindCoverCondition.h"
+#include "WaitInCoverAction.h"
+#include "LeaveCoverAction.h"
 #include "AttackAction.h"
 #include "MoveToLOSAction.h"
 #include "MoveToRangeAction.h"
@@ -57,17 +60,20 @@ void DecisionTree::Display()
 
 void DecisionTree::Update()
 {
-	m_LOSNode->setLOS(m_agent->hasLOS());
-	m_FleeNode->setFleeing(m_agent->getFleeing());
-	m_RadiusNode->setIsWithinRadius(m_agent->inDR());
+	m_LOSConditionNode->setLOS(m_agent->hasLOS());
+	m_FleeConditionNode->setFleeing(m_agent->getFleeing());
+	m_RadiusConditionNode->setIsWithinRadius(m_agent->inDR());
 
 	if (m_Ranged)
 	{
-		m_RangedCombatNode->setIsWithinCombatRange(static_cast<SkeletonRanged*>(m_agent)->getRangedCombatRange());
-		m_MoveBehindCoverNode->setGotHit(static_cast<SkeletonRanged*>(m_agent)->getTakingDamage());
+		m_RangedCombatConditionNode->setIsWithinCombatRange(static_cast<SkeletonRanged*>(m_agent)->getRangedCombatRange());
+		m_MoveBehindCoverConditionNode->setGotHit(static_cast<SkeletonRanged*>(m_agent)->getTakingDamage());
+		m_WaitInCoverConditionNode->setIsTimerOut(static_cast<SkeletonRanged*>(m_agent)->getIsTimerOut()); // still need to trigger
+		m_IsBehindCoverConditionNode->setBehindCover(static_cast<SkeletonRanged*>(m_agent)->getIsBehindCover()); //still need to trigger
+		
 	}
 	else if (!m_Ranged)
-		m_CloseCombatNode->setIsWithinCombatRange(static_cast<SkeletonClose*>(m_agent)->getCloseCombatRange());
+		m_CloseCombatConditionNode->setIsWithinCombatRange(static_cast<SkeletonClose*>(m_agent)->getCloseCombatRange());
 }
 
 // in-order traversal
@@ -87,64 +93,79 @@ std::string DecisionTree::MakeDecision()
 
 void DecisionTree::m_buildTree(bool isRanged)
 {
-	m_FleeNode = new FleeCondition();  
-	m_treeNodeList.push_back(m_FleeNode);
+	m_FleeConditionNode = new FleeCondition();  
+	m_treeNodeList.push_back(m_FleeConditionNode);
 
-	TreeNode* fleeNode = AddNode(m_FleeNode, new FleeAction(), RIGHT_TREE_NODE);
+	TreeNode* fleeNode = AddNode(m_FleeConditionNode, new FleeAction(), RIGHT_TREE_NODE);
 	m_treeNodeList.push_back(fleeNode);
 
 	if (isRanged == true)
 	{
-		m_MoveBehindCoverNode = new MoveBehindCoverCondition();
-		AddNode(m_FleeNode, m_MoveBehindCoverNode, LEFT_TREE_NODE);
-		m_treeNodeList.push_back(m_MoveBehindCoverNode);
+		m_MoveBehindCoverConditionNode = new MoveBehindCoverCondition();
+		AddNode(m_FleeConditionNode, m_MoveBehindCoverConditionNode, LEFT_TREE_NODE);
+		m_treeNodeList.push_back(m_MoveBehindCoverConditionNode);
 
-		TreeNode* coverNode = AddNode(m_MoveBehindCoverNode, new MoveBehindCoverAction(), RIGHT_TREE_NODE);
+		m_IsBehindCoverConditionNode = new IsBehindCoverCondition();
+		AddNode(m_MoveBehindCoverConditionNode, m_IsBehindCoverConditionNode, RIGHT_TREE_NODE);
+		m_treeNodeList.push_back(m_IsBehindCoverConditionNode);
+
+		TreeNode* coverNode = AddNode(m_IsBehindCoverConditionNode, new MoveBehindCoverAction(), LEFT_TREE_NODE);
 		m_treeNodeList.push_back(coverNode);
 
-		m_LOSNode = new LOSCondition();
-		AddNode(m_MoveBehindCoverNode, m_LOSNode, LEFT_TREE_NODE);
-		m_treeNodeList.push_back(m_LOSNode);
+		m_WaitInCoverConditionNode = new WaitInCoverCondition();
+		AddNode(m_IsBehindCoverConditionNode, m_WaitInCoverConditionNode, RIGHT_TREE_NODE);
+		m_treeNodeList.push_back(m_WaitInCoverConditionNode);
+
+		TreeNode* waitNode = AddNode(m_WaitInCoverConditionNode, new WaitInCoverAction(), RIGHT_TREE_NODE);
+		m_treeNodeList.push_back(waitNode);
+
+		TreeNode* leaveCoverNode = AddNode(m_WaitInCoverConditionNode, new LeaveCoverAction(), LEFT_TREE_NODE);
+		m_treeNodeList.push_back(leaveCoverNode);
+		
+		m_LOSConditionNode = new LOSCondition();
+		AddNode(m_MoveBehindCoverConditionNode, m_LOSConditionNode, LEFT_TREE_NODE);
+		m_treeNodeList.push_back(m_LOSConditionNode);
 	}
 	else if (isRanged == false)
 	{
-		m_LOSNode = new LOSCondition();
-		AddNode(m_FleeNode, m_LOSNode, LEFT_TREE_NODE);
-		m_treeNodeList.push_back(m_LOSNode);
+		m_LOSConditionNode = new LOSCondition();
+		AddNode(m_FleeConditionNode, m_LOSConditionNode, LEFT_TREE_NODE);
+		m_treeNodeList.push_back(m_LOSConditionNode);
 	}
 
-	m_RadiusNode = new RadiusCondition();
-	AddNode(m_LOSNode, m_RadiusNode, LEFT_TREE_NODE);
-	m_treeNodeList.push_back(m_RadiusNode); 
+	m_RadiusConditionNode = new RadiusCondition();
+	AddNode(m_LOSConditionNode, m_RadiusConditionNode, LEFT_TREE_NODE);
+	m_treeNodeList.push_back(m_RadiusConditionNode); 
 
-	TreeNode* patrolNode = AddNode(m_RadiusNode, new PatrolAction(), LEFT_TREE_NODE);
+	TreeNode* patrolNode = AddNode(m_RadiusConditionNode, new PatrolAction(), LEFT_TREE_NODE);
 	m_treeNodeList.push_back(patrolNode); 
 
-	TreeNode* moveToLOSNode = AddNode(m_RadiusNode, new MoveToLOSAction(), RIGHT_TREE_NODE);
+	TreeNode* moveToLOSNode = AddNode(m_RadiusConditionNode, new MoveToLOSAction(), RIGHT_TREE_NODE);
 	m_treeNodeList.push_back(moveToLOSNode);
 
 	if (isRanged == true)
 	{
-		TreeNode* moveToRangeNode = AddNode(m_LOSNode, new MoveToRangeAction(), RIGHT_TREE_NODE);
+		m_RangedCombatConditionNode = new RangedCombatCondition();
+		AddNode(m_LOSConditionNode, m_RangedCombatConditionNode, RIGHT_TREE_NODE);
+		m_treeNodeList.push_back(m_RangedCombatConditionNode);
+
+		TreeNode* moveToRangeNode = AddNode(m_RangedCombatConditionNode, new MoveToRangeAction(), LEFT_TREE_NODE);
 		m_treeNodeList.push_back(moveToRangeNode);
 
-		m_RangedCombatNode = new RangedCombatCondition();
-		AddNode(moveToRangeNode, m_RangedCombatNode, RIGHT_TREE_NODE);
-		m_treeNodeList.push_back(m_RangedCombatNode);
-
-		TreeNode* attackNode = AddNode(m_RangedCombatNode, new AttackAction(), RIGHT_TREE_NODE);
+		TreeNode* attackNode = AddNode(m_RangedCombatConditionNode, new AttackAction(), RIGHT_TREE_NODE);
 		m_treeNodeList.push_back(attackNode);
+		
 	}
 	else if (isRanged == false)
 	{
-		m_CloseCombatNode = new CloseCombatCondition();
-		AddNode(m_LOSNode, m_CloseCombatNode, RIGHT_TREE_NODE);
-		m_treeNodeList.push_back(m_CloseCombatNode);
+		m_CloseCombatConditionNode = new CloseCombatCondition();
+		AddNode(m_LOSConditionNode, m_CloseCombatConditionNode, RIGHT_TREE_NODE);
+		m_treeNodeList.push_back(m_CloseCombatConditionNode);
 
-		TreeNode* moveToPlayerNode = AddNode(m_CloseCombatNode, new MoveToPlayerAction(), LEFT_TREE_NODE);
+		TreeNode* moveToPlayerNode = AddNode(m_CloseCombatConditionNode, new MoveToPlayerAction(), LEFT_TREE_NODE);
 		m_treeNodeList.push_back(moveToPlayerNode);
 
-		TreeNode* attackNode = AddNode(m_CloseCombatNode, new AttackAction(), RIGHT_TREE_NODE);
+		TreeNode* attackNode = AddNode(m_CloseCombatConditionNode, new AttackAction(), RIGHT_TREE_NODE);
 		m_treeNodeList.push_back(attackNode);
 	}
 	

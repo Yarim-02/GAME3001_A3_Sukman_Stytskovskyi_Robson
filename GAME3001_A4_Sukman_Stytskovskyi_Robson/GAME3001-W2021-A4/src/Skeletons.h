@@ -84,9 +84,22 @@ public:
 	void setRangedCombatRange(bool state);
 	bool getRangedCombatRange();
 
+	void setWaitInCoverTimer(int seconds);
+	int getWaintInCoverTimer();
+
+	void setIsBehindCover(bool state);
+	bool getIsBehindCover();
+
+	void setIsTimerOut(bool state);
+	bool getIsTimerOut();
+
 	void performAttack(glm::vec2 target);
 private:
 	bool m_rangedCombatRange = false;
+	bool m_isBehindCover = false;
+	bool m_isTimerOut;
+	int m_waitInCoverTimer;
+	
 
 	std::vector<Bone*> m_pBone;
 };
